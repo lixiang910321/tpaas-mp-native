@@ -1,0 +1,135 @@
+<view class="page">
+  <view wx:if="{{loading}}" class="state-card">
+    <text class="state-text">加载中…</text>
+  </view>
+  <view wx:elif="{{error}}" class="state-card err">
+    <text class="state-text">{{error}}</text>
+  </view>
+  <scroll-view wx:else scroll-y class="scroll">
+    <view class="detail-card">
+      <view class="card-header">
+        <text class="header-title">维保任务详情</text>
+        <text class="header-status {{getStatusClass(task.status)}}">{{getStatusText(task.status)}}</text>
+      </view>
+      
+      <view class="card-body">
+        <view class="info-row">
+          <text class="info-label">区域</text>
+          <text class="info-value">{{task.areaName || '-'}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">作业项点</text>
+          <text class="info-value">{{task.projectPointName || '-'}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">设施</text>
+          <text class="info-value">{{task.facilityName || '-'}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">维保类型</text>
+          <text class="info-value">{{task.maintenanceTypeName || '-'}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">施工类别</text>
+          <text class="info-value">{{task.constructionCategoryName || '-'}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">计划开始时间</text>
+          <text class="info-value">{{task.planStartTime || '-'}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">计划结束时间</text>
+          <text class="info-value">{{task.planEndTime || '-'}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">创建时间</text>
+          <text class="info-value">{{formatTime(task.createTime)}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 申请信息 -->
+    <view wx:if="{{task.applySubmitTime}}" class="detail-card">
+      <view class="card-header">
+        <text class="header-title">申请信息</text>
+      </view>
+      <view class="card-body">
+        <view class="info-row">
+          <text class="info-label">申请人</text>
+          <text class="info-value">{{task.applyApplicantEmployeeName || '-'}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">提交人</text>
+          <text class="info-value">{{task.applySubmitEmployeeName || '-'}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">提交时间</text>
+          <text class="info-value">{{formatTime(task.applySubmitTime)}}</text>
+        </view>
+        <view wx:if="{{task.applyIotDeviceName}}" class="info-row">
+          <text class="info-label">物联设备</text>
+          <text class="info-value">{{task.applyIotDeviceName}}</text>
+        </view>
+        <view wx:if="{{task.applyBriefingFileUrls}}" class="info-row-vertical">
+          <text class="info-label">交底附图</text>
+          <view class="image-list">
+            <image wx:for="{{task.applyBriefingFileUrls}}" wx:key="index" class="image-item" src="{{item}}" mode="aspectFill" bindtap="previewImage" data-url="{{item}}" />
+          </view>
+        </view>
+        <view wx:if="{{task.applyMeasureFileUrls}}" class="info-row-vertical">
+          <text class="info-label">措施附图</text>
+          <view class="image-list">
+            <image wx:for="{{task.applyMeasureFileUrls}}" wx:key="index" class="image-item" src="{{item}}" mode="aspectFill" bindtap="previewImage" data-url="{{item}}" />
+          </view>
+        </view>
+        <view wx:if="{{task.applyCancelReason}}" class="info-row-vertical">
+          <text class="info-label">取消原因</text>
+          <text class="info-value cancel-text">{{task.applyCancelReason}}</text>
+        </view>
+        <view wx:if="{{task.applyCancelRemark}}" class="info-row-vertical">
+          <text class="info-label">取消备注</text>
+          <text class="info-value cancel-text">{{task.applyCancelRemark}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 提报信息 -->
+    <view wx:if="{{task.reportCompletionQty || task.reportCompletionFileUrls}}" class="detail-card">
+      <view class="card-header">
+        <text class="header-title">提报信息</text>
+      </view>
+      <view class="card-body">
+        <view wx:if="{{task.reportCompletionQty}}" class="info-row">
+          <text class="info-label">完成量</text>
+          <text class="info-value">{{task.reportCompletionQty}} {{task.reportCompletionUnit || '站'}}</text>
+        </view>
+        <view wx:if="{{task.reportCompletionFileUrls}}" class="info-row-vertical">
+          <text class="info-label">完成图片</text>
+          <view class="image-list">
+            <image wx:for="{{task.reportCompletionFileUrls}}" wx:key="index" class="image-item" src="{{item}}" mode="aspectFill" bindtap="previewImage" data-url="{{item}}" />
+          </view>
+        </view>
+        <view wx:if="{{task.reportCompletionRemark}}" class="info-row-vertical">
+          <text class="info-label">提报备注</text>
+          <text class="info-value">{{task.reportCompletionRemark}}</text>
+        </view>
+        <view wx:if="{{task.reportMaterialJson}}" class="info-row-vertical">
+          <text class="info-label">使用物料</text>
+          <view class="material-list">
+            <view wx:for="{{task.reportMaterialJson}}" wx:key="index" class="material-item">
+              <text class="material-name">{{item.materialName}}</text>
+              <text class="material-qty">{{item.quantity}} {{item.unit}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view wx:if="{{task.status === 30}}" class="action-card">
+      <button class="btn-primary" bindtap="onApply">去申请执行</button>
+    </view>
+    <view wx:elif="{{task.status === 40 || task.status === 50}}" class="action-card">
+      <button class="btn-primary" bindtap="onReport">{{task.status === 50 ? '重新提报' : '去提报'}}</button>
+    </view>
+  </scroll-view>
+</view>

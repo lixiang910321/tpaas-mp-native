@@ -1,0 +1,59 @@
+<view class="page">
+  <!-- 顶部导航栏 -->
+  <view class="header">
+    <view class="header-title">选择租户</view>
+    <view class="header-subtitle">请选择您要进入的租户</view>
+  </view>
+
+  <!-- 搜索框 -->
+  <view class="search-bar" wx:if="{{tenants.length > 5}}">
+    <view class="search-input-wrap">
+      <icon type="search" size="16" color="#999"/>
+      <input 
+        class="search-input" 
+        placeholder="搜索租户名称" 
+        value="{{searchKeyword}}"
+        bindinput="onSearchInput"
+        bindclear="onSearchClear"
+      />
+    </view>
+  </view>
+
+  <!-- 租户列表 -->
+  <scroll-view scroll-y class="scroll" :show-scrollbar="{{false}}">
+    <view wx:if="{{filteredList.length === 0}}" class="empty-state">
+      <text class="empty-text">未找到匹配的租户</text>
+    </view>
+    
+    <view 
+      wx:for="{{filteredList}}"
+      wx:key="tenantInfoId"
+      wx:for-item="item"
+      class="tenant-item {{item.selected ? 'tenant-item--active' : ''}}"
+      bindtap="onSelectTenant"
+      data-index="{{index}}"
+      data-tenant="{{item}}"
+      hover-class="tenant-item--hover"
+      hover-stay-time="100"
+    >
+      <view class="tenant-content">
+        <view class="tenant-name">{{item.tenantInfoName || '租户 ' + item.tenantInfoId}}</view>
+        <view class="tenant-id" wx:if="{{item.tenantInfoId}}">ID: {{item.tenantInfoId}}</view>
+      </view>
+      <view class="radio {{item.selected ? 'radio--checked' : ''}}">
+        <view wx:if="{{item.selected}}" class="radio-dot"></view>
+      </view>
+    </view>
+  </scroll-view>
+
+  <!-- 底部确认按钮 -->
+  <view class="footer safe-bottom">
+    <button 
+      class="confirm-btn {{selectedId ? 'confirm-btn--active' : ''}}" 
+      disabled="{{!selectedId}}"
+      bindtap="onConfirm"
+    >
+      确定
+    </button>
+  </view>
+</view>

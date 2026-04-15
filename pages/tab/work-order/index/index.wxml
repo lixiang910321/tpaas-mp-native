@@ -1,0 +1,67 @@
+<view class="page">
+  <!-- Figma: 0-2 工单 tab / 0-137 指派工单列表 -->
+  <view class="filters-card">
+    <view class="filters">
+      <picker mode="date" value="{{datePickerValue}}" bindchange="onDateChange">
+        <view class="filter-input">
+          <text class="filter-placeholder" wx:if="{{!filterDate}}">请选择指派日期</text>
+          <text class="filter-value" wx:else>{{filterDate}}</text>
+        </view>
+      </picker>
+      <view class="filter-input search-wrap">
+        <input
+          class="filter-search"
+          type="text"
+          confirm-type="search"
+          value="{{packageNoKeyword}}"
+          bindinput="onKeywordInput"
+          placeholder="请输入工单编号"
+          placeholder-class="filter-ph"
+          bindconfirm="onSearchConfirm"
+        />
+      </view>
+    </view>
+  </view>
+
+  <view wx:if="{{loading}}" class="state-card">
+    <text class="state-text">加载中…</text>
+  </view>
+  <view wx:elif="{{filteredList.length === 0}}" class="state-card">
+    <text class="state-text">暂无指派工单</text>
+    <text class="state-sub">数据来自任务库打包指派；请确认已登录且已绑定劳务并加入班组</text>
+  </view>
+  <view wx:else class="card-list">
+    <view wx:for="{{filteredList}}" wx:key="id" class="wo-card">
+      <view class="wo-rows">
+        <view class="wo-row">
+          <text class="wo-label">工单编号</text>
+          <text class="wo-val wo-val-strong">{{item.orderNo || '-'}}</text>
+        </view>
+        <view class="wo-row">
+          <text class="wo-label">工单状态</text>
+          <text class="wo-val wo-val-strong {{statusClass(item.status)}}">{{formatPackageStatus(item.status)}}</text>
+        </view>
+        <view class="wo-row">
+          <text class="wo-label">区域</text>
+          <text class="wo-val wo-val-strong">{{regionText(item)}}</text>
+        </view>
+        <view class="wo-row">
+          <text class="wo-label">创建时间</text>
+          <text class="wo-val wo-val-strong">{{formatTime(item.createTime)}}</text>
+        </view>
+        <view class="wo-row">
+          <text class="wo-label">需要时长</text>
+          <text class="wo-val wo-val-strong">—</text>
+        </view>
+        <view class="wo-row">
+          <text class="wo-label">任务数量</text>
+          <text class="wo-val wo-val-strong">{{item.taskCount != null ? item.taskCount : '-'}}</text>
+        </view>
+      </view>
+      <view class="wo-footer" bindtap="onDetail" data-item="{{item}}">
+        <text class="wo-detail">查看详情</text>
+        <text class="wo-chevron">›</text>
+      </view>
+    </view>
+  </view>
+</view>

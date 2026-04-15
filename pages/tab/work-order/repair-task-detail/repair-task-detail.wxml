@@ -1,0 +1,112 @@
+<view class="page">
+  <view wx:if="{{loading}}" class="state-card">
+    <text class="state-text">加载中…</text>
+  </view>
+  <view wx:elif="{{error}}" class="state-card err">
+    <text class="state-text">{{error}}</text>
+  </view>
+  <scroll-view wx:else scroll-y class="scroll">
+    <view class="detail-card">
+      <view class="card-header">
+        <text class="header-title">维修任务详情</text>
+        <text class="header-status {{getStatusClass(task.status)}}">{{getStatusText(task.status)}}</text>
+      </view>
+      
+      <!-- 病害接报信息 -->
+      <view class="section-title">病害接报信息</view>
+      <view class="card-body">
+        <view class="info-row">
+          <text class="info-label">令号</text>
+          <text class="info-value">{{task.cmdNum || '-'}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">作业项点</text>
+          <text class="info-value">{{task.projectPointName || '-'}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">设施</text>
+          <text class="info-value">{{task.facilityName || '-'}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">故障类型</text>
+          <text class="info-value">{{task.faultTypeName || '-'}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">故障等级</text>
+          <text class="info-value">{{task.faultLevel || '-'}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">预计耗时</text>
+          <text class="info-value">{{task.estimatedHours ? task.estimatedHours + '小时' : '-'}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">窗口时间</text>
+          <text class="info-value">{{task.windowTime || '-'}}</text>
+        </view>
+      </view>
+
+      <!-- 确认信息 -->
+      <view class="section-title">确认信息</view>
+      <view class="card-body">
+        <view class="info-row">
+          <text class="info-label">维修区域</text>
+          <text class="info-value">{{task.areaName || '-'}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">施工类别</text>
+          <text class="info-value">{{task.constructionCategoryName || '-'}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">确认人</text>
+          <text class="info-value">{{task.confirmEmployeeName || '-'}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">确认时间</text>
+          <text class="info-value">{{formatTime(task.confirmTime)}}</text>
+        </view>
+        <view class="info-row" wx:if="{{task.confirmRemark}}">
+          <text class="info-label">确认备注</text>
+          <text class="info-value">{{task.confirmRemark}}</text>
+        </view>
+      </view>
+
+      <!-- 申请信息 -->
+      <view class="section-title" wx:if="{{task.applyEmployeeName || task.applyTime}}">申请信息</view>
+      <view class="card-body" wx:if="{{task.applyEmployeeName || task.applyTime}}">
+        <view class="info-row">
+          <text class="info-label">报修人</text>
+          <text class="info-value">{{task.applyEmployeeName || '-'}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">报修时间</text>
+          <text class="info-value">{{task.applyTime || '-'}}</text>
+        </view>
+        <view class="info-row" wx:if="{{task.applyRemark}}">
+          <text class="info-label">申请备注</text>
+          <text class="info-value">{{task.applyRemark}}</text>
+        </view>
+      </view>
+
+      <!-- 其他信息 -->
+      <view class="section-title">其他信息</view>
+      <view class="card-body">
+        <view class="info-row">
+          <text class="info-label">创建时间</text>
+          <text class="info-value">{{formatTime(task.createTime)}}</text>
+        </view>
+        <view class="info-row" wx:if="{{task.suggestedTools}}">
+          <text class="info-label">建议工器具</text>
+          <text class="info-value">{{task.suggestedTools}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 根据状态显示不同操作 -->
+    <view wx:if="{{task.status === 30}}" class="action-card">
+      <button class="btn-primary" bindtap="onApply">去申请执行</button>
+    </view>
+    <view wx:elif="{{task.status === 40 || task.status === 50}}" class="action-card">
+      <button class="btn-primary" bindtap="onReport">{{task.status === 50 ? '重新提报' : '去提报'}}</button>
+    </view>
+  </scroll-view>
+</view>

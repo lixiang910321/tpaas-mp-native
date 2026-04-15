@@ -1,0 +1,70 @@
+<view class="page">
+  <!-- 状态筛选 -->
+  <view class="filters-card">
+    <view class="filters">
+      <picker mode="selector" range="{{statusOptions}}" range-key="label" value="{{statusIndex}}" bindchange="onStatusChange">
+        <view class="filter-input">
+          <text class="filter-placeholder" wx:if="{{statusIndex === 0}}">全部状态</text>
+          <text class="filter-value" wx:else>{{statusOptions[statusIndex].label}}</text>
+        </view>
+      </picker>
+    </view>
+  </view>
+
+  <!-- 加载中 -->
+  <view wx:if="{{loading}}" class="state-card">
+    <text class="state-text">加载中…</text>
+  </view>
+
+  <!-- 空状态 -->
+  <view wx:elif="{{list.length === 0}}" class="state-card">
+    <text class="state-text">暂无维修任务</text>
+  </view>
+
+  <!-- 任务列表 -->
+  <view wx:else class="card-list">
+    <view wx:for="{{list}}" wx:key="id" class="task-card" bindtap="onDetail" data-item="{{item}}">
+      <view class="task-header">
+        <text class="task-title">维修任务</text>
+        <text class="task-status {{getStatusClass(item.status)}}">{{getStatusText(item.status)}}</text>
+      </view>
+      
+      <view class="task-body">
+        <view class="task-row">
+          <text class="task-label">区域</text>
+          <text class="task-value">{{item.areaName || '-'}}</text>
+        </view>
+        <view class="task-row">
+          <text class="task-label">作业项点</text>
+          <text class="task-value">{{item.projectPointName || '-'}}</text>
+        </view>
+        <view class="task-row">
+          <text class="task-label">设施</text>
+          <text class="task-value">{{item.facilityName || '-'}}</text>
+        </view>
+        <view class="task-row">
+          <text class="task-label">故障类型</text>
+          <text class="task-value">{{item.faultTypeName || '-'}}</text>
+        </view>
+        <view class="task-row">
+          <text class="task-label">故障等级</text>
+          <text class="task-value fault-level level-{{item.faultLevel}}">{{item.faultLevel || '-'}}</text>
+        </view>
+        <view class="task-row">
+          <text class="task-label">创建时间</text>
+          <text class="task-value">{{formatTime(item.createTime)}}</text>
+        </view>
+      </view>
+
+      <view class="task-footer">
+        <text class="task-action">查看详情</text>
+        <text class="task-arrow">›</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 加载更多 -->
+  <view wx:if="{{hasMore && !loading}}" class="load-more" bindtap="loadMore">
+    <text>加载更多</text>
+  </view>
+</view>

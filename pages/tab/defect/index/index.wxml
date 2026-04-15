@@ -1,0 +1,46 @@
+<view class="page">
+  <!-- 列表 -->
+  <scroll-view scroll-y class="list" bindscrolltolower="loadMore" lower-threshold="100">
+    <view wx:if="{{loading && list.length === 0}}" class="loading">加载中...</view>
+    <view wx:elif="{{!loading && list.length === 0}}" class="empty">暂无数据</view>
+    <view wx:for="{{list}}" wx:key="id" class="item">
+      <view class="item-header" bindtap="goDetail" data-item="{{item}}">
+        <text class="cmd-num">令号:{{item.cmdNum || 'XXXXXXXXXXXXXX'}}</text>
+        <text class="arrow">></text>
+      </view>
+      <view class="item-body">
+        <view class="row">
+          <text class="label">区域：</text>
+          <text class="value">{{item.areaName || '-'}}</text>
+        </view>
+        <view class="row">
+          <text class="label">接报时间：</text>
+          <text class="value">{{item.reportTime || '-'}}</text>
+        </view>
+        <view class="row">
+          <text class="label">故障现象：</text>
+          <text class="value desc">{{item.description || 'XXXXXXXXXXXXXXXXXXXX'}}</text>
+        </view>
+        <view class="row">
+          <text class="label">来源：</text>
+          <text class="value">{{item.source || '-'}}</text>
+        </view>
+        <view class="row">
+          <text class="label">状态：</text>
+          <text class="value status {{getStatusClass(item.status)}}">{{getStatusText(item.status)}}</text>
+        </view>
+      </view>
+      <!-- 确认按钮：只有待确认状态才显示 -->
+      <view wx:if="{{item.status === 10}}" class="confirm-btn" bindtap="goConfirm" data-item="{{item}}">
+        <text class="confirm-text">确认</text>
+      </view>
+    </view>
+    <view wx:if="{{loading && list.length > 0}}" class="loading-more">加载中...</view>
+    <view wx:if="{{!hasMore && list.length > 0}}" class="no-more">没有更多了</view>
+  </scroll-view>
+
+  <!-- 新增按钮 -->
+  <view class="add-btn" bindtap="goAdd">
+    <text class="add-icon">+</text>
+  </view>
+</view>

@@ -1,0 +1,87 @@
+<view class="page">
+  <scroll-view scroll-y class="content">
+    <!-- 基本信息 -->
+    <view class="section">
+      <view class="section-title">基本信息</view>
+      <view class="info-row">
+        <text class="label">令号</text>
+        <text class="value">{{detail.cmdNum || '-'}}</text>
+      </view>
+      <view class="info-row">
+        <text class="label">接报时间</text>
+        <text class="value">{{detail.reportTime || '-'}}</text>
+      </view>
+      <view class="info-row">
+        <text class="label">区域</text>
+        <text class="value">{{detail.areaNames || '-'}}</text>
+      </view>
+      <view class="info-row">
+        <text class="label">驻站班组</text>
+        <text class="value">{{detail.stationDutyName || '-'}}</text>
+      </view>
+      <view class="info-row">
+        <text class="label">描述</text>
+        <text class="value">{{detail.description || '-'}}</text>
+      </view>
+    </view>
+
+    <!-- 确认信息 -->
+    <view wx:if="{{confirmDetail && confirmDetail.id}}" class="section">
+      <view class="section-title">确认信息</view>
+      <view class="info-row">
+        <text class="label">确认状态</text>
+        <text class="value {{getStatusClass(confirmDetail.status)}}">{{getStatusText(confirmDetail.status)}}</text>
+      </view>
+      <view class="info-row">
+        <text class="label">确认结果</text>
+        <text class="value">{{getResultText(confirmDetail.confirmResult)}}</text>
+      </view>
+      <view wx:if="{{confirmDetail.areaName}}" class="info-row">
+        <text class="label">确认区域</text>
+        <text class="value">{{confirmDetail.areaName}}</text>
+      </view>
+      <view wx:if="{{confirmDetail.projectPointName}}" class="info-row">
+        <text class="label">作业项点</text>
+        <text class="value">{{confirmDetail.projectPointName}}</text>
+      </view>
+      <view wx:if="{{confirmDetail.confirmRemark}}" class="info-row">
+        <text class="label">确认备注</text>
+        <text class="value">{{confirmDetail.confirmRemark}}</text>
+      </view>
+      <view wx:if="{{confirmDetail.confirmEmployeeName}}" class="info-row">
+        <text class="label">确认人</text>
+        <text class="value">{{confirmDetail.confirmEmployeeName}}</text>
+      </view>
+      <view wx:if="{{confirmDetail.confirmTime}}" class="info-row">
+        <text class="label">确认时间</text>
+        <text class="value">{{confirmDetail.confirmTime}}</text>
+      </view>
+    </view>
+
+    <!-- 施工前照片 -->
+    <view wx:if="{{beforePhotos.length > 0}}" class="section">
+      <view class="section-title">施工前照片</view>
+      <view class="photo-list">
+        <view wx:for="{{beforePhotos}}" wx:key="index" class="photo-item">
+          <image class="photo" src="{{item}}" mode="aspectFill" bindtap="previewPhoto" data-index="{{index}}" />
+        </view>
+      </view>
+    </view>
+
+    <!-- 建议工器具 -->
+    <view wx:if="{{suggestedTools.length > 0}}" class="section">
+      <view class="section-title">建议工器具</view>
+      <view class="tool-list">
+        <view wx:for="{{suggestedTools}}" wx:key="index" class="tool-item">
+          <text class="tool-name">{{item.name}}</text>
+          <text class="tool-qty">*{{item.qty}}</text>
+        </view>
+      </view>
+    </view>
+  </scroll-view>
+
+  <!-- 底部按钮 -->
+  <view wx:if="{{detail.status === 10}}" class="footer">
+    <button class="confirm-btn" bindtap="goConfirm">去确认</button>
+  </view>
+</view>

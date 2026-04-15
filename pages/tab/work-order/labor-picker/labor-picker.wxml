@@ -1,0 +1,37 @@
+<view class="page">
+  <view class="search-bar">
+    <input class="search-input" value="{{keyword}}" bindinput="onKeywordInput" placeholder="搜索劳务人员姓名" placeholder-class="search-ph" />
+  </view>
+
+  <view wx:if="{{loading}}" class="state-card">
+    <text class="state-text">加载中…</text>
+  </view>
+
+  <view wx:elif="{{list.length === 0}}" class="state-card">
+    <text class="state-text">暂无劳务人员</text>
+  </view>
+
+  <scroll-view wx:else scroll-y class="scroll">
+    <view class="list">
+      <view wx:for="{{list}}" wx:key="id" class="item {{item.selected ? 'item-selected' : ''}}" bindtap="onSelect" data-index="{{index}}">
+        <view class="item-avatar">
+          <text class="avatar-text">{{item.realName ? item.realName.charAt(0) : '?'}}</text>
+        </view>
+        <view class="item-info">
+          <text class="item-name">{{item.realName || '-'}}</text>
+          <text wx:if="{{item.professionTypeName}}" class="item-profession">{{item.professionTypeName}}</text>
+        </view>
+        <view class="item-check">
+          <text wx:if="{{item.selected}}" class="check-icon">✓</text>
+        </view>
+      </view>
+    </view>
+  </scroll-view>
+
+  <view class="footer" wx:if="{{selectedIds.length > 0}}">
+    <view class="footer-info">
+      <text class="footer-count">已选 {{selectedIds.length}} 人</text>
+    </view>
+    <button class="btn-confirm" bindtap="onConfirm">确认选择</button>
+  </view>
+</view>

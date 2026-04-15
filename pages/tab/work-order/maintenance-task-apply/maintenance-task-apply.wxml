@@ -1,0 +1,192 @@
+<view class="page">
+  <view wx:if="{{loading}}" class="loading-container">
+    <text class="loading-text">加载中…</text>
+  </view>
+  
+  <scroll-view wx:else scroll-y class="scroll">
+    <!-- 人员选择 -->
+    <view class="card">
+      <view class="card-header">
+        <text class="card-title">人员选择</text>
+      </view>
+      <view class="personnel-section" wx:for="{{form.personnelLines}}" wx:key="index">
+        <view class="personnel-header">
+          <view class="personnel-row">
+            <text class="personnel-label">工种</text>
+            <view class="personnel-type-wrap">
+              <text class="personnel-type">{{item.workTypeName}}</text>
+              <text class="personnel-required">需{{item.requiredQuantity || 0}}人</text>
+            </view>
+          </view>
+          <view class="personnel-delete" bindtap="onDeletePersonnelLine" data-index="{{index}}">
+            <text class="delete-icon">×</text>
+          </view>
+        </view>
+        <view class="personnel-list">
+          <view class="person-item" wx:for="{{item.persons}}" wx:for-item="person" wx:for-index="pIndex" wx:key="id">
+            <view class="person-info">
+              <text class="person-name">{{person.name}}</text>
+            </view>
+            <view class="person-delete" bindtap="onDeletePerson" data-line-index="{{index}}" data-person-index="{{pIndex}}">
+              <text class="delete-icon">×</text>
+            </view>
+          </view>
+          <view class="person-add" bindtap="onAddPerson" data-index="{{index}}">
+            <text class="add-icon">+</text>
+          </view>
+        </view>
+      </view>
+      <view class="add-line-btn" bindtap="onAddPersonnelLine">
+        <text class="add-line-icon">+</text>
+        <text class="add-line-text">新增工种</text>
+      </view>
+    </view>
+
+    <!-- 机械选择 -->
+    <view class="card">
+      <view class="card-header">
+        <text class="card-title">机械</text>
+        <view class="card-action" bindtap="onSelectMachine">
+          <text class="action-text">选择</text>
+          <text class="arrow">›</text>
+        </view>
+      </view>
+      <view wx:if="{{form.machines.length === 0}}" class="empty-row">
+        <text class="empty-text">请选择机械</text>
+      </view>
+      <view wx:else class="selected-list">
+        <view wx:for="{{form.machines}}" wx:key="id" class="selected-item">
+          <view class="item-info">
+            <text class="item-name">{{item.name}}</text>
+            <text wx:if="{{item.model}}" class="item-desc">{{item.model}}</text>
+          </view>
+          <view class="item-delete" bindtap="onDeleteMachine" data-index="{{index}}">
+            <text class="delete-icon">×</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 物联设备 -->
+    <view class="card">
+      <view class="card-header">
+        <text class="card-title">物联设备</text>
+        <view class="card-action" bindtap="onSelectIotDevice">
+          <text wx:if="{{form.iotDeviceName}}" class="action-text change-text">更换</text>
+          <text wx:else class="action-text">选择</text>
+          <text class="arrow">›</text>
+        </view>
+      </view>
+      <view wx:if="{{form.iotDeviceName}}" class="selected-iot">
+        <view class="selected-item">
+          <view class="item-info">
+            <text class="item-name">{{form.iotDeviceName}}</text>
+          </view>
+          <view class="item-delete" bindtap="onClearIotDevice">
+            <text class="delete-icon">×</text>
+          </view>
+        </view>
+      </view>
+      <view wx:else class="empty-row">
+        <text class="empty-text">请选择物联设备</text>
+      </view>
+    </view>
+
+    <!-- 完成量 -->
+    <view class="card">
+      <view class="form-row">
+        <text class="form-label">完成量</text>
+        <input class="form-input" type="number" value="{{form.completedQuantity}}" bindinput="onCompletedQuantityInput" placeholder="请填写数量" placeholder-class="input-placeholder" />
+        <text class="form-unit">站</text>
+      </view>
+    </view>
+
+    <!-- 完成图片 -->
+    <view class="card">
+      <view class="card-header">
+        <text class="card-title">完成图片</text>
+      </view>
+      <upload-images 
+        images="{{form.completedImages}}" 
+        max-count="9"
+        bind:change="onCompletedImagesChange"
+      />
+    </view>
+
+    <!-- 备注 -->
+    <view class="card">
+      <view class="card-header">
+        <text class="card-title">备注</text>
+      </view>
+      <textarea 
+        class="remark-textarea" 
+        value="{{form.remark}}" 
+        bindinput="onRemarkInput" 
+        placeholder="请填写备注信息" 
+        placeholder-class="textarea-placeholder"
+        maxlength="500"
+      />
+    </view>
+
+    <!-- 物料 -->
+    <view class="card">
+      <view class="card-header">
+        <text class="card-title">物料</text>
+      </view>
+      <view wx:if="{{form.materialLines.length === 0}}" class="empty-row">
+        <text class="empty-text">请选择物料</text>
+      </view>
+      <view wx:else class="material-list">
+        <view wx:for="{{form.materialLines}}" wx:key="index" class="material-item">
+          <view class="material-header">
+            <view class="material-category" bindtap="onSelectMaterial" data-index="{{index}}">
+              <text class="category-text">{{item.categoryName || '选择类别'}}</text>
+              <text class="arrow">›</text>
+            </view>
+            <text class="delete-btn" bindtap="onDeleteMaterial" data-index="{{index}}">删除</text>
+          </view>
+          <view class="material-row">
+            <text class="material-label">填写数量</text>
+            <input class="material-input" type="number" value="{{item.quantity}}" bindinput="onMaterialQuantityInput" data-index="{{index}}" placeholder="填写实际使用数量" placeholder-class="input-placeholder" />
+            <text class="material-unit">{{item.unit || '把'}}</text>
+          </view>
+        </view>
+      </view>
+      <view class="add-line-btn" bindtap="onAddMaterial">
+        <text class="add-line-icon">+</text>
+        <text class="add-line-text">新增物料</text>
+      </view>
+    </view>
+
+    <!-- 交底 -->
+    <view class="card">
+      <view class="card-header">
+        <text class="card-title">交底附图</text>
+      </view>
+      <upload-images 
+        fileList="{{form.briefingFiles}}"
+        maxCount="{{9}}"
+        placeholder="上传交底图片"
+        bind:change="onBriefingFilesChange"
+      />
+    </view>
+
+    <!-- 措施情况 -->
+    <view class="card">
+      <view class="card-header">
+        <text class="card-title">措施情况附图</text>
+      </view>
+      <upload-images 
+        fileList="{{form.measureFiles}}"
+        maxCount="{{9}}"
+        placeholder="上传措施图片"
+        bind:change="onMeasureFilesChange"
+      />
+    </view>
+
+    <!-- 提交按钮 -->
+    <view class="actions">
+      <button class="btn-submit" bindtap="onSubmit" loading="{{submitting}}" disabled="{{submitting}}">提交</button>
+    </view>
+  </scroll-view>
+</view>

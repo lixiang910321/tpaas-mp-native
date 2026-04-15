@@ -1,0 +1,120 @@
+.upload-images {
+  position: relative;
+}
+
+.image-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16rpx;
+  margin-bottom: 16rpx;
+}
+
+.image-item {
+  position: relative;
+  width: 200rpx;
+  height: 200rpx;
+  border-radius: 12rpx;
+  overflow: hidden;
+}
+
+.image {
+  width: 100%;
+  height: 100%;
+}
+
+.image-delete {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 48rpx;
+  height: 48rpx;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.delete-icon {
+  color: #fff;
+  font-size: 36rpx;
+  line-height: 1;
+  font-weight: 300;
+}
+
+.add-btn {
+  width: 200rpx;
+  height: 200rpx;
+  border: 2rpx dashed #c8c9cc;
+  border-radius: 12rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #fafafa;
+}
+
+.add-icon {
+  width: 80rpx;
+  height: 80rpx;
+  background: #f0f0f0;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12rpx;
+}
+
+.icon-text {
+  font-size: 56rpx;
+  color: #969799;
+  line-height: 1;
+  font-weight: 300;
+}
+
+.add-text {
+  font-size: 24rpx;
+  color: #969799;
+}
+
+/* 上传中遮罩 */
+.uploading-mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.uploading-content {
+  background: #fff;
+  padding: 48rpx;
+  border-radius: 16rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.loading {
+  width: 60rpx;
+  height: 60rpx;
+  border: 6rpx solid #f3f3f3;
+  border-top: 6rpx solid #7b68ee;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 24rpx;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.uploading-text {
+  font-size: 28rpx;
+  color: #323233;
+}

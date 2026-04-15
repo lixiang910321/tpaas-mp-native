@@ -1,0 +1,59 @@
+<view class="page">
+  <!-- 顶部标题栏 -->
+  <view class="header">
+    <view class="header-left" bindtap="onCancel">
+      <text class="cancel-text">取消</text>
+    </view>
+    <text class="header-title">选择作业项点</text>
+    <view class="header-right" bindtap="onConfirm">
+      <text class="confirm-text">确定</text>
+    </view>
+  </view>
+
+  <!-- 搜索框 -->
+  <view class="search-bar">
+    <view class="search-input-wrapper">
+      <text class="search-icon">🔍</text>
+      <input 
+        class="search-input" 
+        value="{{keyword}}" 
+        bindinput="onSearchInput" 
+        bindconfirm="onSearch"
+        placeholder="搜索项点名称" 
+        confirm-type="search"
+      />
+      <text wx:if="{{keyword}}" class="clear-icon" bindtap="onClear">✕</text>
+    </view>
+    <view class="search-btn" bindtap="onSearch">
+      <text>搜索</text>
+    </view>
+  </view>
+
+  <!-- 列表 -->
+  <scroll-view scroll-y class="list" bindscrolltolower="loadMore" lower-threshold="100">
+    <view wx:if="{{loading && list.length === 0}}" class="loading">
+      <text>加载中...</text>
+    </view>
+    
+    <view wx:elif="{{!loading && list.length === 0}}" class="empty">
+      <text>暂无数据</text>
+    </view>
+
+    <view wx:for="{{list}}" wx:key="id" class="item {{item.id === selectedId ? 'active' : ''}}" bindtap="onSelect" data-item="{{item}}">
+      <view class="item-content">
+        <text class="item-name">{{item.name}}</text>
+      </view>
+      <view class="item-check">
+        <view wx:if="{{item.id === selectedId}}" class="check-icon">✓</view>
+        <view wx:else class="check-circle"></view>
+      </view>
+    </view>
+
+    <view wx:if="{{loading && list.length > 0}}" class="loading-more">
+      <text>加载中...</text>
+    </view>
+    <view wx:if="{{!hasMore && list.length > 0}}" class="no-more">
+      <text>没有更多了</text>
+    </view>
+  </scroll-view>
+</view>

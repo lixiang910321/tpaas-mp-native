@@ -1,0 +1,68 @@
+{
+  "pages": [
+    "pages/login/login/login",
+    "pages/login/select-tenant/select-tenant",
+    "pages/login/select-project/select-project",
+    "pages/tab/work-order/index/index",
+    "pages/tab/work-order/detail/detail",
+    "pages/tab/work-order/repair-task-list/repair-task-list",
+    "pages/tab/work-order/repair-task-detail/repair-task-detail",
+    "pages/tab/work-order/repair-task-apply/repair-task-apply",
+    "pages/tab/work-order/repair-task-apply/select-project-point/select-project-point",
+    "pages/tab/work-order/repair-task-report/repair-task-report",
+    "pages/tab/work-order/maintenance-task-detail/maintenance-task-detail",
+    "pages/tab/work-order/maintenance-task-apply/maintenance-task-apply",
+    "pages/tab/work-order/maintenance-task-report/maintenance-task-report",
+    "pages/tab/work-order/labor-picker/labor-picker",
+    "pages/tab/work-order/machine-picker/machine-picker",
+    "pages/tab/work-order/iot-device-picker/iot-device-picker",
+    "pages/tab/work-order/material-picker/material-picker",
+    "pages/tab/work-order/employee-picker/employee-picker",
+    "pages/tab/work-order/project-point-picker/project-point-picker",
+    "pages/tab/defect/index/index",
+    "pages/tab/defect/detail/detail",
+    "pages/tab/defect/confirm/confirm",
+    "pages/tab/acceptance/index/index",
+    "pages/tab/mine/index/index"
+  ],
+  "window": {
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "蜻蜓维保",
+    "navigationBarBackgroundColor": "#F8F8F8",
+    "backgroundColor": "#F8F8F8"
+  },
+  "tabBar": {
+    "color": "#666666",
+    "selectedColor": "#7467EF",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "white",
+    "list": [
+      {
+        "pagePath": "pages/tab/work-order/index/index",
+        "text": "工单",
+        "iconPath": "static/tabbar/work-order.png",
+        "selectedIconPath": "static/tabbar/work-order-sel.png"
+      },
+      {
+        "pagePath": "pages/tab/defect/index/index",
+        "text": "病害",
+        "iconPath": "static/tabbar/defect.png",
+        "selectedIconPath": "static/tabbar/defect-sel.png"
+      },
+      {
+        "pagePath": "pages/tab/acceptance/index/index",
+        "text": "验收工单",
+        "iconPath": "static/tabbar/accept.png",
+        "selectedIconPath": "static/tabbar/accept-sel.png"
+      },
+      {
+        "pagePath": "pages/tab/mine/index/index",
+        "text": "个人中心",
+        "iconPath": "static/tabbar/mine.png",
+        "selectedIconPath": "static/tabbar/mine-sel.png"
+      }
+    ]
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}

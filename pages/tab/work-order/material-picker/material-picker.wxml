@@ -1,0 +1,34 @@
+<view class="page">
+  <view class="search-bar">
+    <input class="search-input" value="{{keyword}}" bindinput="onKeywordInput" placeholder="搜索物料名称" placeholder-class="search-ph" />
+  </view>
+
+  <view wx:if="{{loading}}" class="state-card">
+    <text class="state-text">加载中…</text>
+  </view>
+
+  <view wx:elif="{{list.length === 0}}" class="state-card">
+    <text class="state-text">暂无物料</text>
+  </view>
+
+  <scroll-view wx:else scroll-y class="scroll">
+    <view class="list">
+      <view wx:for="{{list}}" wx:key="id" class="item {{item.selected ? 'item-selected' : ''}}" bindtap="onSelect" data-index="{{index}}">
+        <view class="item-icon">
+          <text class="icon-text">📦</text>
+        </view>
+        <view class="item-info">
+          <text class="item-name">{{item.name || '-'}}</text>
+          <text class="item-desc">{{item.specification || '未设置规格'}}</text>
+        </view>
+        <view class="item-check">
+          <text wx:if="{{item.selected}}" class="check-icon">✓</text>
+        </view>
+      </view>
+    </view>
+  </scroll-view>
+
+  <view class="footer" wx:if="{{selectedIds.length > 0}}">
+    <button class="btn-confirm" bindtap="onConfirm">确认选择({{selectedIds.length}})</button>
+  </view>
+</view>

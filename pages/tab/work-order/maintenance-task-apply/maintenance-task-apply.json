@@ -1,0 +1,8 @@
+{
+  "navigationBarTitleText": "维保申请",
+  "navigationBarBackgroundColor": "#ffffff",
+  "navigationBarTextStyle": "black",
+  "usingComponents": {
+    "upload-images": "../../../../components/upload-images/upload-images"
+  }
+}

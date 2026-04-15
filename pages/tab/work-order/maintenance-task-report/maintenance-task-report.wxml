@@ -1,0 +1,85 @@
+<view class="page">
+  <view wx:if="{{loading}}" class="state-card">
+    <text class="state-text">加载中…</text>
+  </view>
+  <scroll-view wx:else scroll-y class="scroll">
+    <view class="form-card">
+      <view class="section">
+        <text class="section-title">任务信息</text>
+        <view class="info-row">
+          <text class="info-label">区域</text>
+          <text class="info-value">{{task.areaName || '-'}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">作业项点</text>
+          <text class="info-value">{{task.projectPointName || '-'}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">维保类型</text>
+          <text class="info-value">{{task.maintenanceTypeName || '-'}}</text>
+        </view>
+      </view>
+
+      <view class="section">
+        <text class="section-title">维保结果</text>
+        <view class="form-item">
+          <text class="form-label">完成量</text>
+          <view class="quantity-row">
+            <input class="quantity-input" type="number" value="{{form.completedQuantity}}" bindinput="onCompletedQuantityInput" placeholder="请填写数量" placeholder-class="input-placeholder" />
+            <text class="quantity-unit">站</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 物料 -->
+      <view class="section">
+        <text class="section-title">物料</text>
+        <view wx:if="{{form.materialLines.length === 0}}" class="empty-hint">
+          <text class="empty-text">请选择物料</text>
+        </view>
+        <view wx:else class="material-list">
+          <view wx:for="{{form.materialLines}}" wx:key="id" class="material-item">
+            <view class="material-info">
+              <text class="material-name">{{item.categoryName || item.name}}</text>
+              <text wx:if="{{item.modelSpec}}" class="material-spec">{{item.modelSpec}}</text>
+            </view>
+            <view class="material-row">
+              <text class="material-label">数量</text>
+              <input class="material-input" type="number" value="{{item.quantity}}" bindinput="onMaterialQuantityInput" data-index="{{index}}" placeholder="填写数量" placeholder-class="input-placeholder" />
+              <text class="material-unit">{{item.unit || '把'}}</text>
+              <view class="material-delete" bindtap="onDeleteMaterial" data-index="{{index}}">
+                <text class="delete-icon">×</text>
+              </view>
+            </view>
+          </view>
+        </view>
+        <view class="select-btn" bindtap="onSelectMaterial">
+          <text class="select-icon">+</text>
+          <text class="select-text">选择物料</text>
+        </view>
+      </view>
+
+      <!-- 完成图片 -->
+      <view class="section">
+        <text class="section-title">完成图片</text>
+        <upload-images 
+          fileList="{{form.completedImages}}"
+          max-count="9"
+          placeholder="上传完成图片"
+          bind:change="onCompletedImagesChange"
+        />
+      </view>
+
+      <!-- 备注 -->
+      <view class="section">
+        <text class="section-title">备注</text>
+        <textarea class="form-textarea" value="{{form.remark}}" bindinput="onRemarkInput" placeholder="请填写备注信息" maxlength="500" />
+      </view>
+    </view>
+
+    <view class="actions">
+      <button class="btn-primary" bindtap="onSubmit" loading="{{submitting}}" disabled="{{submitting}}">提交提报</button>
+      <button class="btn-default" bindtap="onCancel">取消</button>
+    </view>
+  </scroll-view>
+</view>

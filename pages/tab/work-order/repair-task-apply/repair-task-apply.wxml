@@ -1,0 +1,49 @@
+<view class="page">
+  <view wx:if="{{loading}}" class="state-card">
+    <text class="state-text">加载中…</text>
+  </view>
+  <scroll-view wx:else scroll-y class="scroll">
+    <view class="form-card">
+      <view class="section">
+        <text class="section-title">任务信息</text>
+        <view class="info-row">
+          <text class="info-label">令号</text>
+          <text class="info-value">{{task.cmdNum || '-'}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">维修区域</text>
+          <text class="info-value">{{task.areaName || '-'}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">设施</text>
+          <text class="info-value">{{task.facilityName || '-'}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">故障类型</text>
+          <text class="info-value">{{task.faultTypeName || '-'}}</text>
+        </view>
+      </view>
+
+      <view class="section">
+        <text class="section-title">申请信息</text>
+        <view class="form-item required">
+          <text class="form-label">作业项点</text>
+          <view class="picker-value" bindtap="onSelectProjectPoint">
+            <text wx:if="{{form.projectPointName}}" class="value-text">{{form.projectPointName}}</text>
+            <text wx:else class="placeholder-text">请选择作业项点</text>
+            <text class="arrow">›</text>
+          </view>
+        </view>
+        <view class="form-item">
+          <text class="form-label">申请备注</text>
+          <textarea class="form-textarea" value="{{form.applyRemark}}" bindinput="onRemarkInput" placeholder="请输入申请备注（选填）" maxlength="500" />
+        </view>
+      </view>
+    </view>
+
+    <view class="actions">
+      <button class="btn-primary" bindtap="onSubmit" loading="{{submitting}}" disabled="{{submitting}}">提交申请</button>
+      <button class="btn-default" bindtap="onCancel">取消</button>
+    </view>
+  </scroll-view>
+</view>

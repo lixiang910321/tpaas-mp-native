@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "维修任务",
+  "navigationBarBackgroundColor": "#ffffff",
+  "navigationBarTextStyle": "black",
+  "enablePullDownRefresh": true,
+  "onReachBottomDistance": 50
+}

@@ -1,0 +1,6 @@
+<view class="page">
+  <view class="panel">
+    <text class="title">验收</text>
+    <text class="hint">项目验收（敬请期待）</text>
+  </view>
+</view>

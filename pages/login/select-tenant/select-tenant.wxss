@@ -1,0 +1,188 @@
+.page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(180deg, #f5f6fa 0%, #ffffff 40%);
+}
+
+/* 顶部导航栏 */
+.header {
+  padding: 48rpx 40rpx 32rpx;
+  background: transparent;
+}
+
+.header-title {
+  font-size: 44rpx;
+  font-weight: 600;
+  color: #1a1a1a;
+  line-height: 60rpx;
+  margin-bottom: 12rpx;
+}
+
+.header-subtitle {
+  font-size: 28rpx;
+  color: #666;
+  line-height: 40rpx;
+}
+
+/* 搜索框 */
+.search-bar {
+  padding: 0 40rpx 24rpx;
+}
+
+.search-input-wrap {
+  display: flex;
+  align-items: center;
+  background: #ffffff;
+  border-radius: 12rpx;
+  padding: 0 24rpx;
+  height: 72rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.04);
+  border: 2rpx solid #e8e8e8;
+}
+
+.search-input {
+  flex: 1;
+  margin-left: 16rpx;
+  font-size: 28rpx;
+  color: #333;
+  height: 100%;
+}
+
+.search-input::placeholder {
+  color: #bbb;
+}
+
+/* 列表滚动区域 */
+.scroll {
+  flex: 1;
+  padding: 0 40rpx 24rpx;
+  box-sizing: border-box;
+}
+
+/* 空状态 */
+.empty-state {
+  padding: 120rpx 0;
+  text-align: center;
+}
+
+.empty-text {
+  font-size: 28rpx;
+  color: #999;
+}
+
+/* 租户列表项 */
+.tenant-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #ffffff;
+  border-radius: 16rpx;
+  padding: 32rpx 28rpx;
+  margin-bottom: 20rpx;
+  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.04);
+  border: 2rpx solid transparent;
+  transition: all 0.2s ease;
+}
+
+.tenant-item--hover {
+  background: #f8f9fc;
+  transform: scale(0.98);
+}
+
+.tenant-item--active {
+  border-color: #7467ef;
+  background: linear-gradient(135deg, #f8f7ff 0%, #ffffff 100%);
+  box-shadow: 0 4rpx 16rpx rgba(116, 103, 239, 0.15);
+}
+
+.tenant-content {
+  flex: 1;
+  min-width: 0;
+  margin-right: 24rpx;
+}
+
+.tenant-name {
+  font-size: 32rpx;
+  font-weight: 500;
+  color: #1a1a1a;
+  line-height: 44rpx;
+  margin-bottom: 8rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tenant-item--active .tenant-name {
+  color: #7467ef;
+}
+
+.tenant-id {
+  font-size: 24rpx;
+  color: #999;
+  line-height: 32rpx;
+}
+
+/* 单选框 */
+.radio {
+  width: 44rpx;
+  height: 44rpx;
+  border-radius: 50%;
+  border: 2rpx solid #d0d0d0;
+  box-sizing: border-box;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.radio--checked {
+  border-color: #7467ef;
+  background: #7467ef;
+}
+
+.radio-dot {
+  width: 18rpx;
+  height: 18rpx;
+  border-radius: 50%;
+  background: #ffffff;
+}
+
+/* 底部按钮 */
+.footer {
+  padding: 24rpx 40rpx;
+  background: #ffffff;
+  box-shadow: 0 -4rpx 16rpx rgba(0, 0, 0, 0.04);
+}
+
+.safe-bottom {
+  padding-bottom: calc(24rpx + env(safe-area-inset-bottom));
+}
+
+.confirm-btn {
+  height: 96rpx;
+  line-height: 96rpx;
+  border-radius: 12rpx;
+  background: #e8e8e8;
+  color: #999;
+  font-size: 32rpx;
+  font-weight: 500;
+  border: none;
+  transition: all 0.2s ease;
+}
+
+.confirm-btn::after {
+  border: none;
+}
+
+.confirm-btn--active {
+  background: linear-gradient(135deg, #8b7cff 0%, #7467ef 100%);
+  color: #ffffff;
+  box-shadow: 0 8rpx 24rpx rgba(116, 103, 239, 0.3);
+}
+
+.confirm-btn--active:active {
+  transform: scale(0.98);
+  box-shadow: 0 4rpx 12rpx rgba(116, 103, 239, 0.2);
+}

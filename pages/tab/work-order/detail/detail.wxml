@@ -1,0 +1,50 @@
+<view class="page">
+  <view wx:if="{{loading}}" class="state-card">
+    <text class="state-text">加载中…</text>
+  </view>
+  <view wx:elif="{{error}}" class="state-card err">
+    <text class="state-text">{{error}}</text>
+  </view>
+  <scroll-view wx:else scroll-y class="scroll" :show-scrollbar="{{false}}">
+    <view wx:if="{{tasks.length === 0}}" class="state-card slim">
+      <text class="state-text">暂无任务</text>
+    </view>
+    <view wx:else class="task-list">
+      <view wx:for="{{tasks}}" wx:key="taskId" class="task-card">
+        <view class="task-body">
+          <view class="kv-row">
+            <text class="kv-label">任务状态</text>
+            <text class="kv-val {{taskStatusClass(item.status)}}">{{formatTaskStatus(item.status)}}</text>
+          </view>
+          <view class="kv-row">
+            <text class="kv-label">区域</text>
+            <text class="kv-val">{{item.areaName || '—'}}</text>
+          </view>
+          <view class="kv-row">
+            <text class="kv-label">作业项点</text>
+            <text class="kv-val">{{item.projectPointName || '—'}}</text>
+          </view>
+          <view class="kv-row">
+            <text class="kv-label">故障类型</text>
+            <text class="kv-val">{{item.faultTypeName || '—'}}</text>
+          </view>
+          <view class="kv-row" wx:if="{{item.applyEmployeeName}}">
+            <text class="kv-label">申请人</text>
+            <text class="kv-val">{{item.applyEmployeeName}}</text>
+          </view>
+          <view class="kv-row" wx:if="{{item.applyTime}}">
+            <text class="kv-label">申请时间</text>
+            <text class="kv-val">{{item.applyTime}}</text>
+          </view>
+          <view wx:if="{{isTaskPendingApply(item)}}" class="apply-flow-hint">
+            <text class="apply-flow-hint-txt">待申请执行：请点击「去申请执行」填写申请信息</text>
+          </view>
+        </view>
+        <view class="task-footer" bindtap="onTaskDetail" data-item="{{item}}">
+          <text class="task-detail-text">{{isTaskPendingApply(item) ? '去申请执行' : '查看详情'}}</text>
+          <text class="task-chevron">›</text>
+        </view>
+      </view>
+    </view>
+  </scroll-view>
+</view>

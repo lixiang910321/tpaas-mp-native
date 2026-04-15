@@ -1,0 +1,6 @@
+<view class="page">
+  <view class="panel">
+    <text class="title">个人中心</text>
+    <text class="hint">账户与设置（敬请期待）</text>
+  </view>
+</view>
