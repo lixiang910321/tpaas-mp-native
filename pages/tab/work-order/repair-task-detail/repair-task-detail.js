@@ -46,6 +46,11 @@ Page({
     wx.navigateTo({ url: `/pages/tab/work-order/repair-task-report/repair-task-report?id=${id}` })
   },
 
+  onAccept() {
+    const id = encodeURIComponent(String(this.data.taskId))
+    wx.navigateTo({ url: `/pages/tab/work-order/repair-task-acceptance/repair-task-acceptance?id=${id}` })
+  },
+
   async loadDetail() {
     const taskId = this.data.taskId
     if (!taskId) {

@@ -1,5 +1,6 @@
 {
   "navigationBarTitleText": "验收",
   "navigationBarBackgroundColor": "#ffffff",
-  "navigationBarTextStyle": "black"
+  "navigationBarTextStyle": "black",
+  "enablePullDownRefresh": true
 }

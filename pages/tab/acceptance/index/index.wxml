@@ -1,6 +1,67 @@
 <view class="page">
-  <view class="panel">
-    <text class="title">验收</text>
-    <text class="hint">项目验收（敬请期待）</text>
+  <!-- Tab 切换 -->
+  <view class="tabs">
+    <view
+      class="tab-item {{activeTab === 0 ? 'tab-active' : ''}}"
+      data-idx="0"
+      bindtap="onTabChange"
+    >
+      <text class="tab-text">待验收</text>
+      <view class="tab-line" wx:if="{{activeTab === 0}}"></view>
+    </view>
+    <view
+      class="tab-item {{activeTab === 1 ? 'tab-active' : ''}}"
+      data-idx="1"
+      bindtap="onTabChange"
+    >
+      <text class="tab-text">已验收</text>
+      <view class="tab-line" wx:if="{{activeTab === 1}}"></view>
+    </view>
+  </view>
+
+  <!-- 加载中 -->
+  <view wx:if="{{loading}}" class="state-card">
+    <text class="state-text">加载中…</text>
+  </view>
+
+  <!-- 空状态 -->
+  <view wx:elif="{{list.length === 0}}" class="state-card">
+    <text class="state-text">暂无{{activeTab === 0 ? '待验收' : '已验收'}}任务</text>
+  </view>
+
+  <!-- 列表 -->
+  <view wx:else class="card-list">
+    <view wx:for="{{list}}" wx:key="id" class="task-card">
+      <view class="task-rows">
+        <view class="task-row">
+          <text class="task-label">区域</text>
+          <text class="task-val">{{item.areaName || '-'}}</text>
+        </view>
+        <view class="task-row">
+          <text class="task-label">作业项点</text>
+          <text class="task-val">{{item.projectPointName || '-'}}</text>
+        </view>
+        <view class="task-row">
+          <text class="task-label">故障类型</text>
+          <text class="task-val">{{item.faultTypeName || '-'}}</text>
+        </view>
+        <view class="task-row">
+          <text class="task-label">任务状态</text>
+          <text class="task-val {{statusClass(item.status)}}">{{formatStatus(item.status)}}</text>
+        </view>
+        <view class="task-row">
+          <text class="task-label">提报人</text>
+          <text class="task-val">{{item.submitEmployeeName || '-'}}</text>
+        </view>
+        <view class="task-row">
+          <text class="task-label">提报时间</text>
+          <text class="task-val">{{formatTime(item.submitTime)}}</text>
+        </view>
+      </view>
+      <view class="task-footer" bindtap="onDetail" data-id="{{item.id}}">
+        <text class="task-detail">查看详情</text>
+        <text class="task-chevron">›</text>
+      </view>
+    </view>
   </view>
 </view>

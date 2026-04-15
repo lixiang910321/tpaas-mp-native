@@ -105,8 +105,12 @@
     <view wx:if="{{task.status === 30}}" class="action-card">
       <button class="btn-primary" bindtap="onApply">去申请执行</button>
     </view>
-    <view wx:elif="{{task.status === 40 || task.status === 50}}" class="action-card">
-      <button class="btn-primary" bindtap="onReport">{{task.status === 50 ? '重新提报' : '去提报'}}</button>
+    <view wx:elif="{{task.status === 40}}" class="action-card">
+      <button class="btn-primary" bindtap="onReport">去提报</button>
+    </view>
+    <view wx:elif="{{task.status === 50}}" class="action-card">
+      <button class="btn-success" bindtap="onAccept">验收通过</button>
+      <button class="btn-secondary" bindtap="onReport">重新提报</button>
     </view>
   </scroll-view>
 </view>

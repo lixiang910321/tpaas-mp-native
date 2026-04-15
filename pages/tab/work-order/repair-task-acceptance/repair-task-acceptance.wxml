@@ -1,0 +1,73 @@
+<view class="page">
+  <view wx:if="{{loading}}" class="state-card">
+    <text class="state-text">加载中…</text>
+  </view>
+  <scroll-view wx:else scroll-y class="scroll">
+    <!-- 验收人信息（只读展示） -->
+    <view class="form-card">
+      <view class="section">
+        <view class="info-row">
+          <text class="info-label">驻站值班员</text>
+          <text class="info-value">{{employeeName || '-'}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">验收时间</text>
+          <text class="info-value">{{acceptanceTime}}</text>
+        </view>
+      </view>
+
+      <!-- 维修方式 -->
+      <view class="section">
+        <view class="form-item">
+          <text class="form-label">维修方式</text>
+          <picker mode="selector" range="{{repairMethodOptions}}" range-key="name" bindchange="onRepairMethodChange" value="{{form.repairMethodIndex}}">
+            <view class="picker-value">
+              <text wx:if="{{form.repairMethodName}}" class="value-text">{{form.repairMethodName}}</text>
+              <text wx:else class="placeholder-text">请选择维修方式</text>
+              <text class="arrow">›</text>
+            </view>
+          </picker>
+        </view>
+
+        <!-- 验收结果 -->
+        <view class="form-item">
+          <text class="form-label">验收结果</text>
+          <picker mode="selector" range="{{acceptanceResultOptions}}" range-key="name" bindchange="onAcceptanceResultChange" value="{{form.acceptanceResultIndex}}">
+            <view class="picker-value">
+              <text wx:if="{{form.acceptanceResultName}}" class="value-text">{{form.acceptanceResultName}}</text>
+              <text wx:else class="placeholder-text">请选择验收结果</text>
+              <text class="arrow">›</text>
+            </view>
+          </picker>
+        </view>
+      </view>
+
+      <!-- 上传照片 -->
+      <view class="section">
+        <text class="form-label">上传照片</text>
+        <upload-images
+          fileList="{{form.acceptancePhotos}}"
+          max-count="9"
+          placeholder="上传验收照片"
+          bind:change="onPhotosChange"
+        />
+      </view>
+
+      <!-- 备注 -->
+      <view class="section">
+        <text class="form-label">备注</text>
+        <textarea
+          class="form-textarea"
+          value="{{form.acceptanceRemark}}"
+          bindinput="onRemarkInput"
+          placeholder="请输入备注"
+          maxlength="500"
+        />
+      </view>
+    </view>
+
+    <view class="actions">
+      <button class="btn-primary" bindtap="onSubmit" loading="{{submitting}}" disabled="{{submitting}}">提交</button>
+    </view>
+  </scroll-view>
+</view>

@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "验收",
+  "enablePullDownRefresh": false,
+  "usingComponents": {
+    "upload-images": "../../../../components/upload-images/upload-images"
+  }
+}
