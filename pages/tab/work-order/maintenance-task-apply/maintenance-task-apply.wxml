@@ -92,27 +92,6 @@
       </view>
     </view>
 
-    <!-- 完成量 -->
-    <view class="card">
-      <view class="form-row">
-        <text class="form-label">完成量</text>
-        <input class="form-input" type="number" value="{{form.completedQuantity}}" bindinput="onCompletedQuantityInput" placeholder="请填写数量" placeholder-class="input-placeholder" />
-        <text class="form-unit">站</text>
-      </view>
-    </view>
-
-    <!-- 完成图片 -->
-    <view class="card">
-      <view class="card-header">
-        <text class="card-title">完成图片</text>
-      </view>
-      <upload-images 
-        images="{{form.completedImages}}" 
-        max-count="9"
-        bind:change="onCompletedImagesChange"
-      />
-    </view>
-
     <!-- 备注 -->
     <view class="card">
       <view class="card-header">
@@ -126,36 +105,6 @@
         placeholder-class="textarea-placeholder"
         maxlength="500"
       />
-    </view>
-
-    <!-- 物料 -->
-    <view class="card">
-      <view class="card-header">
-        <text class="card-title">物料</text>
-      </view>
-      <view wx:if="{{form.materialLines.length === 0}}" class="empty-row">
-        <text class="empty-text">请选择物料</text>
-      </view>
-      <view wx:else class="material-list">
-        <view wx:for="{{form.materialLines}}" wx:key="index" class="material-item">
-          <view class="material-header">
-            <view class="material-category" bindtap="onSelectMaterial" data-index="{{index}}">
-              <text class="category-text">{{item.categoryName || '选择类别'}}</text>
-              <text class="arrow">›</text>
-            </view>
-            <text class="delete-btn" bindtap="onDeleteMaterial" data-index="{{index}}">删除</text>
-          </view>
-          <view class="material-row">
-            <text class="material-label">填写数量</text>
-            <input class="material-input" type="number" value="{{item.quantity}}" bindinput="onMaterialQuantityInput" data-index="{{index}}" placeholder="填写实际使用数量" placeholder-class="input-placeholder" />
-            <text class="material-unit">{{item.unit || '把'}}</text>
-          </view>
-        </view>
-      </view>
-      <view class="add-line-btn" bindtap="onAddMaterial">
-        <text class="add-line-icon">+</text>
-        <text class="add-line-text">新增物料</text>
-      </view>
     </view>
 
     <!-- 交底 -->

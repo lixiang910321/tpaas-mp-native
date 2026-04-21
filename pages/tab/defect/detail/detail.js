@@ -65,7 +65,7 @@ Page({
 
     try {
       const app = getApp()
-      const res = await app.mpGetAuth(`/mp/diseaseReport/detail?id=${encodeURIComponent(defectId)}`)
+      const res = await app.mpGetAuth(`/mp/diseaseReport/detail/${defectId}`)
 
       if (res && Number(res.isSuccess) === 1 && res.result) {
         const detail = res.result

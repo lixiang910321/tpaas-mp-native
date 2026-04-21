@@ -4,90 +4,40 @@ Page({
   data: {
     loading: false,
     list: [],
-    filterDate: '',
-    packageNoKeyword: '',
-    datePickerValue: ''
+    total: 0,
+    pageIndex: 1,
+    pageSize: 10
   },
 
   onLoad() {
-    this.loadPackages()
+    // 预加载字典
+    getApp().getDict('workOrderStatusEnum').then(() => {
+      // 字典加载完成后再加载列表
+      this.loadPackages()
+    })
   },
 
   // 启用下拉刷新
   onPullDownRefresh() {
+    this.setData({ pageIndex: 1 })
     this.loadPackages().then(() => {
       wx.stopPullDownRefresh()
     })
   },
 
-  // 日期选择
-  onDateChange(e) {
-    this.setData({
-      filterDate: e.detail.value || '',
-      datePickerValue: e.detail.value || ''
-    })
-    // 更新过滤列表
-    this.updateFilteredList()
-  },
-
-  // 关键词输入
-  onKeywordInput(e) {
-    this.setData({
-      packageNoKeyword: e.detail.value
-    })
-  },
-
-  // 搜索确认
-  onSearchConfirm() {
-    // 触发过滤
-    this.updateFilteredList()
-  },
-
-  // 工单状态枚举
-  PACKAGE_STATUS: {
-    10: '待执行',
-    20: '执行中',
-    30: '已完成'
-  },
-
-  // 获取状态ID
-  statusId(s) {
-    if (s == null || s === '') return null
-    if (typeof s === 'object' && s != null && 'id' in s) {
-      const n = Number(s.id)
-      return Number.isFinite(n) ? n : null
+  // 加载更多
+  onReachBottom() {
+    if (this.data.list.length < this.data.total) {
+      this.setData({ pageIndex: this.data.pageIndex + 1 })
+      this.loadPackages()
     }
-    const n = Number(s)
-    return Number.isFinite(n) ? n : null
   },
 
   // 格式化状态
-  formatPackageStatus(s) {
-    const n = this.statusId(s)
-    if (n == null) return '-'
-    return this.PACKAGE_STATUS[n] || String(s)
-  },
-
-  // 格式化时间
-  formatTime(v) {
-    if (!v) return '-'
-    return String(v).slice(0, 19).replace('T', ' ')
-  },
-
-  // 状态样式类
-  statusClass(status) {
-    const n = this.statusId(status)
-    if (n === 30) return 'st-green'  // 已完成
-    if (n === 20) return 'st-purple' // 执行中
-    return 'st-normal'
-  },
-
-  // 区域文本
-  regionText(item) {
-    if (!item) return '—'
-    if (item.region) return item.region
-    if (item.laborTeamName) return item.laborTeamName
-    return '—'
+  formatStatus(s) {
+    if (s == null || s === '') return '-'
+    const label = getApp().getDictLabel('workOrderStatusEnum', s)
+    return label || '-'
   },
 
   // 查看详情
@@ -102,56 +52,27 @@ Page({
   async loadPackages() {
     this.setData({ loading: true })
     
-    try {
-      const app = getApp()
-      const res = await app.mpGetAuth('/mp/workOrder/page', {
-        pageIndex: 1,
-        pageSize: 100
-      })
+    const res = await getApp().mpGetAuth('/mp/workOrder/page', {
+      pageIndex: this.data.pageIndex,
+      pageSize: this.data.pageSize
+    })
+    
+    if (res && Number(res.isSuccess) === 1 && res.result) {
+      const records = res.result.records || []
+      const total = res.result.total || 0
       
-      if (res && Number(res.isSuccess) === 1 && res.result && Array.isArray(res.result.records)) {
-        const list = res.result.records
-        // 加载完成后立即计算过滤列表
-        const filteredList = this.filterList(list)
-        this.setData({ list, filteredList })
-      } else {
-        this.setData({ list: [], filteredList: [] })
-      }
-    } catch (e) {
-      this.setData({ list: [], filteredList: [] })
-    } finally {
-      this.setData({ loading: false })
+      // 格式化状态文本
+      const list = records.map(item => ({
+        ...item,
+        statusText: this.formatStatus(item.status)
+      }))
+      
+      // 下拉加载更多时追加数据
+      const finalList = this.data.pageIndex === 1 ? list : [...this.data.list, ...list]
+      
+      this.setData({ list: finalList, total })
     }
+    
+    this.setData({ loading: false })
   },
-
-  // 过滤列表
-  filterList(list) {
-    let rows = list || this.data.list
-    
-    // 按日期过滤
-    const d = this.data.filterDate
-    if (d) {
-      rows = rows.filter(item => {
-        const t = this.formatTime(item.createTime)
-        return t.startsWith(d)
-      })
-    }
-    
-    // 按工单编号过滤
-    const kw = this.data.packageNoKeyword.trim().toLowerCase()
-    if (kw) {
-      rows = rows.filter(item => {
-        const no = (item.orderNo || item.packageNo || '').toLowerCase()
-        return no.includes(kw)
-      })
-    }
-    
-    return rows
-  },
-
-  // 更新过滤列表（供筛选条件变化时调用）
-  updateFilteredList() {
-    const filteredList = this.filterList(this.data.list)
-    this.setData({ filteredList })
-  }
 })
