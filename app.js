@@ -9,7 +9,8 @@ App({
     currentTenant: null,
     employeeId: null,
     laborersId: null,
-    projectId: null
+    projectId: null,
+    dictCache: {} // 字典缓存 { dictCode: [items] }
   },
 
   onLaunch() {
@@ -90,5 +91,46 @@ App({
     wx.removeStorageSync('tpaas_mp_user_info')
     wx.removeStorageSync('tpaas_mp_project')
     wx.removeStorageSync('tpaas_mp_tenant')
+  },
+
+  // 全局方法 - 获取字典（带缓存）
+  async getDict(dictCode) {
+    // 先从缓存取
+    if (this.globalData.dictCache[dictCode]) {
+      return this.globalData.dictCache[dictCode]
+    }
+
+    // 缓存没有，请求所有字典
+    try {
+      const res = await this.mpGetAuth('/mp/sys/Dict/all')
+      if (res && res.isSuccess && res.result) {
+        // 缓存所有字典
+        const allDicts = res.result
+        for (const key in allDicts) {
+          this.globalData.dictCache[key] = allDicts[key]
+        }
+        // 返回需要的字典
+        return this.globalData.dictCache[dictCode] || []
+      }
+      return []
+    } catch (e) {
+      console.error(`获取字典${dictCode}失败`, e)
+      return []
+    }
+  },
+
+  // 全局方法 - 预加载字典
+  async preloadDicts(dictCodes) {
+    const promises = dictCodes.map(code => this.getDict(code))
+    return Promise.all(promises)
+  },
+
+  // 全局方法 - 根据字典和ID获取值
+  getDictLabel(dictCode, id) {
+    const dict = this.globalData.dictCache[dictCode]
+    if (!dict || !Array.isArray(dict)) return ''
+    
+    const item = dict.find(item => item.id == id)
+    return item ? (item.value || item.desc || '') : ''
   }
 })

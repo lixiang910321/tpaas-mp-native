@@ -5,7 +5,9 @@ const DRAFT_KEY = 'tpaas_mp_login_draft'
 
 Page({
   data: {
-    userName: '1232312321',
+    // userName: '18221508122',
+    userName: '13521326548',
+    
     password: 'Aa123456',
     loading: false
   },
