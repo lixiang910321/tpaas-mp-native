@@ -13,35 +13,44 @@
       <view wx:for="{{tasks}}" wx:key="taskId" class="task-card">
         <view class="task-body">
           <view class="kv-row">
+            <text class="kv-label">任务编号</text>
+            <text class="kv-val kv-val-strong">{{item.taskNo || '-'}}</text>
+          </view>
+          <view class="kv-row">
+            <text class="kv-label">创建时间</text>
+            <text class="kv-val kv-val-strong">{{item.createTime || '-'}}</text>
+          </view>
+          <view class="kv-row">
+            <text class="kv-label">任务类型</text>
+            <text class="kv-val kv-val-strong">{{item.taskTypeName || '-'}}</text>
+          </view>
+          <view class="kv-row">
             <text class="kv-label">任务状态</text>
-            <text class="kv-val {{taskStatusClass(item.status)}}">{{formatTaskStatus(item.status)}}</text>
+            <text class="kv-val kv-val-strong">{{item.statusName || '-'}}</text>
           </view>
-          <view class="kv-row">
+          <view class="kv-row" wx:if="{{item.areaName}}">
             <text class="kv-label">区域</text>
-            <text class="kv-val">{{item.areaName || '—'}}</text>
+            <text class="kv-val">{{item.areaName}}</text>
           </view>
           <view class="kv-row">
-            <text class="kv-label">作业项点</text>
-            <text class="kv-val">{{item.projectPointName || '—'}}</text>
+            <text class="kv-label">项点</text>
+            <text class="kv-val">{{item.projectPointName || '-'}}</text>
           </view>
-          <view class="kv-row">
+          <view class="kv-row" wx:if="{{item.faultTypeName}}">
             <text class="kv-label">故障类型</text>
-            <text class="kv-val">{{item.faultTypeName || '—'}}</text>
+            <text class="kv-val">{{item.faultTypeName}}</text>
           </view>
-          <view class="kv-row" wx:if="{{item.applyEmployeeName}}">
-            <text class="kv-label">申请人</text>
-            <text class="kv-val">{{item.applyEmployeeName}}</text>
+          <view class="kv-row" wx:if="{{item.faultLevelName}}">
+            <text class="kv-label">故障等级</text>
+            <text class="kv-val">{{item.faultLevelName}}</text>
           </view>
-          <view class="kv-row" wx:if="{{item.applyTime}}">
-            <text class="kv-label">申请时间</text>
-            <text class="kv-val">{{item.applyTime}}</text>
-          </view>
-          <view wx:if="{{isTaskPendingApply(item)}}" class="apply-flow-hint">
-            <text class="apply-flow-hint-txt">待申请执行：请点击「去申请执行」填写申请信息</text>
+          <view class="kv-row" wx:if="{{item.severityDegreeName}}">
+            <text class="kv-label">严重程度</text>
+            <text class="kv-val">{{item.severityDegreeName}}</text>
           </view>
         </view>
         <view class="task-footer" bindtap="onTaskDetail" data-item="{{item}}">
-          <text class="task-detail-text">{{isTaskPendingApply(item) ? '去申请执行' : '查看详情'}}</text>
+          <text class="task-detail-text">查看详情</text>
           <text class="task-chevron">›</text>
         </view>
       </view>

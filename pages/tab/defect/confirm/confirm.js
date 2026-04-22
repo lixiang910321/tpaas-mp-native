@@ -129,7 +129,7 @@ Page({
     if (!id) return
     try {
       const app = getApp()
-      const res = await app.mpGetAuth(`/mp/diseaseReport/detail?id=${encodeURIComponent(id)}`)
+      const res = await app.mpGetAuth(`/mp/diseaseReport/detail/${id}`)
       if (res && Number(res.isSuccess) === 1 && res.result) {
         this.setData({ diseaseDetail: res.result })
       }

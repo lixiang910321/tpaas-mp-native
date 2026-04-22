@@ -64,10 +64,11 @@ Page({
       events: {
         selectLaborer: (data) => {
           const personnelLines = this.data.form.personnelLines
-          personnelLines[lineIndex].persons.push({
-            id: data.id,
-            name: data.name
-          })
+          // 替换该工种的所有人员
+          personnelLines[lineIndex].persons = data.laborers.map(laborer => ({
+            id: laborer.id,
+            name: laborer.name
+          }))
           this.setData({ 'form.personnelLines': personnelLines })
         }
       }
@@ -213,15 +214,21 @@ Page({
     // 构建提交数据
     const submitData = {
       taskId: this.data.taskId,
-      personnelLines: this.data.form.personnelLines.map(line => ({
-        laborerIds: line.persons.map(p => p.id)
-      })),
+      personnelLines: this.data.form.personnelLines.map(line => {
+        const laborerIds = line.persons.map(p => String(p.id))
+        console.log('工种:', line.workTypeName, '人员:', line.persons, 'laborerIds:', laborerIds)
+        return {
+          laborerIds: laborerIds
+        }
+      }),
       machineIds: this.data.form.machines.map(m => m.id),
       iotDeviceId: this.data.form.iotDeviceId,
       iotDeviceName: this.data.form.iotDeviceName,
       briefingFileUrls: this.data.form.briefingFiles,
       measureFileUrls: this.data.form.measureFiles
     }
+    
+    console.log('提交数据:', JSON.stringify(submitData))
 
     const res = await app.mpPostAuth('/mp/maintenanceTask/apply', submitData)
     if (res && Number(res.isSuccess) === 1) {
