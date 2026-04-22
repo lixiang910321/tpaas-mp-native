@@ -28,21 +28,32 @@ Page({
   },
 
   onSelect(e) {
-    const item = e.currentTarget.dataset.item
+    const index = e.currentTarget.dataset.index
+    if (index === undefined || index === null) return
+
+    const list = [...this.data.list]
+    const item = list[index]
     if (!item) return
 
-    const selectedIds = [...this.data.selectedIds]
-    const index = selectedIds.indexOf(item.id)
+    // 切换选中状态
+    item.selected = !item.selected
 
-    if (index > -1) {
+    // 更新 selectedIds
+    const selectedIds = [...this.data.selectedIds]
+    const idIndex = selectedIds.indexOf(item.id)
+
+    if (idIndex > -1) {
       // 已选中，取消选择
-      selectedIds.splice(index, 1)
+      selectedIds.splice(idIndex, 1)
     } else {
       // 未选中，添加选择
       selectedIds.push(item.id)
     }
 
-    this.setData({ selectedIds: selectedIds })
+    this.setData({ 
+      list: list,
+      selectedIds: selectedIds 
+    })
   },
 
   // 确认选择
@@ -82,7 +93,11 @@ Page({
     const res = await app.mpGetAuth('/mp/refactor/machine/list', params)
 
     if (res && Number(res.isSuccess) === 1 && res.result) {
-      this.setData({ list: res.result || [], loading: false })
+      const list = (res.result || []).map(item => ({
+        ...item,
+        selected: this.data.selectedIds.includes(item.id)
+      }))
+      this.setData({ list: list, loading: false })
     } else {
       this.setData({ list: [], loading: false })
     }

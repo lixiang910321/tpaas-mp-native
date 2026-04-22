@@ -315,8 +315,12 @@
 }
 
 .btn-submit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   height: 88rpx;
-  line-height: 88rpx;
+  line-height: 1;
+  text-align: center;
   border-radius: 8rpx;
   background: #7b68ee;
   color: #fff;

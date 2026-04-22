@@ -25,6 +25,7 @@
     "pages/tab/defect/confirm/confirm",
     "pages/tab/acceptance/index/index",
     "pages/tab/mine/index/index",
+    "pages/tab/mine/my-tasks/my-tasks",
     "pages/login/switch-project/switch-project"
   ],
   "window": {

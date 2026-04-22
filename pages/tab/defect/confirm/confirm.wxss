@@ -188,8 +188,12 @@
 
 .cancel-btn, .submit-btn {
   flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   height: 96rpx;
-  line-height: 96rpx;
+  line-height: 1;
+  text-align: center;
   border-radius: 16rpx;
   font-size: 32rpx;
   font-weight: 500;

@@ -23,6 +23,11 @@ Page({
     wx.navigateTo({ url: '/pages/login/switch-project/switch-project' })
   },
 
+  // 我的任务
+  onMyTasks() {
+    wx.navigateTo({ url: '/pages/tab/mine/my-tasks/my-tasks' })
+  },
+
   // 退出登录
   onLogout() {
     wx.showModal({

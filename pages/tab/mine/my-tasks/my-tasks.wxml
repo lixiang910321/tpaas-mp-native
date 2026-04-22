@@ -1,0 +1,65 @@
+<view class="page">
+  <!-- Tab 切换 -->
+  <view class="tab-bar">
+    <view class="tab-item {{activeTab === 'repair' ? 'active' : ''}}" bindtap="onSwitchTab" data-tab="repair">
+      <text class="tab-text">维修任务</text>
+      <view class="tab-line" wx:if="{{activeTab === 'repair'}}"></view>
+    </view>
+    <view class="tab-item {{activeTab === 'maintenance' ? 'active' : ''}}" bindtap="onSwitchTab" data-tab="maintenance">
+      <text class="tab-text">维保任务</text>
+      <view class="tab-line" wx:if="{{activeTab === 'maintenance'}}"></view>
+    </view>
+  </view>
+
+  <!-- 维修任务列表 -->
+  <view class="task-list" wx:if="{{activeTab === 'repair'}}">
+    <view class="empty-tip" wx:if="{{repairList.length === 0}}">
+      <text class="empty-text">暂无维修任务</text>
+    </view>
+    <view class="task-card" wx:for="{{repairList}}" wx:key="id" bindtap="onTaskTap" data-item="{{item}}">
+      <view class="task-header">
+        <text class="task-title">{{item.planProjectPointName || '维修任务'}}</text>
+        <view class="status-tag status-{{item.status}}">{{item.statusText}}</view>
+      </view>
+      <view class="task-info">
+        <view class="info-row">
+          <text class="info-label">故障类型</text>
+          <text class="info-value">{{item.faultTypeName || '-'}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">申请时间</text>
+          <text class="info-value">{{item.applyTime || '-'}}</text>
+        </view>
+      </view>
+      <view class="task-footer">
+        <text class="task-arrow">查看详情 ›</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 维保任务列表 -->
+  <view class="task-list" wx:if="{{activeTab === 'maintenance'}}">
+    <view class="empty-tip" wx:if="{{maintenanceList.length === 0}}">
+      <text class="empty-text">暂无维保任务</text>
+    </view>
+    <view class="task-card" wx:for="{{maintenanceList}}" wx:key="id" bindtap="onTaskTap" data-item="{{item}}">
+      <view class="task-header">
+        <text class="task-title">{{item.projectPointName || item.workOrderName || '维保任务'}}</text>
+        <view class="status-tag status-{{item.status}}">{{item.statusText}}</view>
+      </view>
+      <view class="task-info">
+        <view class="info-row">
+          <text class="info-label">申请时间</text>
+          <text class="info-value">{{item.applySubmitTime || '-'}}</text>
+        </view>
+        <view class="info-row" wx:if="{{item.completionQty}}">
+          <text class="info-label">完成量</text>
+          <text class="info-value">{{item.completionQty}} {{item.completionUnit || ''}}</text>
+        </view>
+      </view>
+      <view class="task-footer">
+        <text class="task-arrow">查看详情 ›</text>
+      </view>
+    </view>
+  </view>
+</view>

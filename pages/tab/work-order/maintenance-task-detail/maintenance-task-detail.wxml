@@ -14,24 +14,24 @@
       
       <view class="card-body">
         <view class="info-row">
-          <text class="info-label">区域</text>
-          <text class="info-value">{{task.areaName || '-'}}</text>
-        </view>
-        <view class="info-row">
-          <text class="info-label">作业项点</text>
-          <text class="info-value">{{task.projectPointName || '-'}}</text>
-        </view>
-        <view class="info-row">
-          <text class="info-label">设施</text>
-          <text class="info-value">{{task.facilityName || '-'}}</text>
-        </view>
-        <view class="info-row">
           <text class="info-label">维保类型</text>
           <text class="info-value">{{task.maintenanceTypeName || '-'}}</text>
         </view>
         <view class="info-row">
           <text class="info-label">施工类别</text>
           <text class="info-value">{{task.constructionCategoryName || '-'}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">线路</text>
+          <text class="info-value">{{task.lineName || '-'}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">车站</text>
+          <text class="info-value">{{task.stationName || '-'}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">区域</text>
+          <text class="info-value">{{task.areaName || '-'}}</text>
         </view>
         <view class="info-row">
           <text class="info-label">计划开始时间</text>
@@ -42,8 +42,45 @@
           <text class="info-value">{{task.planEndTime || '-'}}</text>
         </view>
         <view class="info-row">
-          <text class="info-label">创建时间</text>
-          <text class="info-value">{{formatTime(task.createTime)}}</text>
+          <text class="info-label">窗口时间</text>
+          <text class="info-value">{{task.windowTime || '-'}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 项点信息 -->
+    <view class="detail-card">
+      <view class="card-header">
+        <text class="header-title">项点信息</text>
+      </view>
+      <view class="card-body">
+        <view class="info-row">
+          <text class="info-label">项点名称</text>
+          <text class="info-value">{{task.projectPointName || '-'}}</text>
+        </view>
+        <view class="info-row" wx:if="{{task.projectPointDetail}}">
+          <text class="info-label">故障类型</text>
+          <text class="info-value">{{task.projectPointDetail.faultTypeName || '-'}}</text>
+        </view>
+        <view class="info-row" wx:if="{{task.projectPointDetail}}">
+          <text class="info-label">故障等级</text>
+          <text class="info-value">{{task.projectPointDetail.faultLevelName || '-'}}</text>
+        </view>
+        <view class="info-row" wx:if="{{task.projectPointDetail}}">
+          <text class="info-label">严重程度</text>
+          <text class="info-value">{{task.projectPointDetail.severityDegreeName || '-'}}</text>
+        </view>
+        <view class="info-row" wx:if="{{task.projectPointDetail}}">
+          <text class="info-label">预计耗时</text>
+          <text class="info-value">{{task.projectPointDetail.timeConsumed ? task.projectPointDetail.timeConsumed + '小时' : '-'}}</text>
+        </view>
+        <view class="info-row" wx:if="{{task.projectPointDetail}}">
+          <text class="info-label">窗口时间</text>
+          <text class="info-value">{{task.windowTime || '-'}}</text>
+        </view>
+        <view class="info-row" wx:if="{{task.projectPointDetail}}">
+          <text class="info-label">安全交底</text>
+          <text class="info-value">{{task.projectPointDetail.safetyDisclosureName || '-'}}</text>
         </view>
       </view>
     </view>
@@ -56,31 +93,39 @@
       <view class="card-body">
         <view class="info-row">
           <text class="info-label">申请人</text>
-          <text class="info-value">{{task.applyApplicantEmployeeName || '-'}}</text>
-        </view>
-        <view class="info-row">
-          <text class="info-label">提交人</text>
           <text class="info-value">{{task.applySubmitEmployeeName || '-'}}</text>
         </view>
         <view class="info-row">
-          <text class="info-label">提交时间</text>
-          <text class="info-value">{{formatTime(task.applySubmitTime)}}</text>
+          <text class="info-label">申请时间</text>
+          <text class="info-value">{{task.applySubmitTime}}</text>
         </view>
         <view wx:if="{{task.applyIotDeviceName}}" class="info-row">
           <text class="info-label">物联设备</text>
           <text class="info-value">{{task.applyIotDeviceName}}</text>
         </view>
+        <view wx:if="{{task.applyPersonnelList && task.applyPersonnelList.length > 0}}" class="info-row-vertical">
+          <text class="info-label">作业人员</text>
+          <view class="personnel-tags">
+            <view wx:for="{{task.applyPersonnelList}}" wx:key="index" class="personnel-tag">
+              <text class="personnel-name">{{item.laborerName}}</text>
+            </view>
+          </view>
+        </view>
         <view wx:if="{{task.applyBriefingFileUrls}}" class="info-row-vertical">
           <text class="info-label">交底附图</text>
-          <view class="image-list">
-            <image wx:for="{{task.applyBriefingFileUrls}}" wx:key="index" class="image-item" src="{{item}}" mode="aspectFill" bindtap="previewImage" data-url="{{item}}" />
-          </view>
+          <scroll-view scroll-x class="image-scroll">
+            <view class="image-list-horizontal">
+              <image wx:for="{{task.applyBriefingFileUrls}}" wx:key="index" class="image-item-small" src="{{item}}" mode="aspectFill" bindtap="previewImage" data-url="{{item}}" />
+            </view>
+          </scroll-view>
         </view>
         <view wx:if="{{task.applyMeasureFileUrls}}" class="info-row-vertical">
           <text class="info-label">措施附图</text>
-          <view class="image-list">
-            <image wx:for="{{task.applyMeasureFileUrls}}" wx:key="index" class="image-item" src="{{item}}" mode="aspectFill" bindtap="previewImage" data-url="{{item}}" />
-          </view>
+          <scroll-view scroll-x class="image-scroll">
+            <view class="image-list-horizontal">
+              <image wx:for="{{task.applyMeasureFileUrls}}" wx:key="index" class="image-item-small" src="{{item}}" mode="aspectFill" bindtap="previewImage" data-url="{{item}}" />
+            </view>
+          </scroll-view>
         </view>
         <view wx:if="{{task.applyCancelReason}}" class="info-row-vertical">
           <text class="info-label">取消原因</text>
@@ -89,6 +134,10 @@
         <view wx:if="{{task.applyCancelRemark}}" class="info-row-vertical">
           <text class="info-label">取消备注</text>
           <text class="info-value cancel-text">{{task.applyCancelRemark}}</text>
+        </view>
+        <view wx:if="{{task.applyRemark}}" class="info-row">
+          <text class="info-label">申请备注</text>
+          <text class="info-value">{{task.applyRemark}}</text>
         </view>
       </view>
     </view>
@@ -105,20 +154,41 @@
         </view>
         <view wx:if="{{task.reportCompletionFileUrls}}" class="info-row-vertical">
           <text class="info-label">完成图片</text>
-          <view class="image-list">
-            <image wx:for="{{task.reportCompletionFileUrls}}" wx:key="index" class="image-item" src="{{item}}" mode="aspectFill" bindtap="previewImage" data-url="{{item}}" />
-          </view>
+          <scroll-view scroll-x class="image-scroll">
+            <view class="image-list-horizontal">
+              <image wx:for="{{task.reportCompletionFileUrls}}" wx:key="index" class="image-item-small" src="{{item}}" mode="aspectFill" bindtap="previewImage" data-url="{{item}}" />
+            </view>
+          </scroll-view>
         </view>
-        <view wx:if="{{task.reportCompletionRemark}}" class="info-row-vertical">
+        <view wx:if="{{task.reportCompletionRemark}}" class="info-row">
           <text class="info-label">提报备注</text>
           <text class="info-value">{{task.reportCompletionRemark}}</text>
         </view>
-        <view wx:if="{{task.reportMaterialJson}}" class="info-row-vertical">
-          <text class="info-label">使用物料</text>
-          <view class="material-list">
-            <view wx:for="{{task.reportMaterialJson}}" wx:key="index" class="material-item">
-              <text class="material-name">{{item.materialName}}</text>
-              <text class="material-qty">{{item.quantity}} {{item.unit}}</text>
+        <view wx:if="{{task.applyPersonnelList && task.applyPersonnelList.length > 0}}" class="info-row-vertical">
+          <text class="info-label">作业人员</text>
+          <view class="personnel-tags">
+            <view wx:for="{{task.applyPersonnelList}}" wx:key="index" class="personnel-tag">
+              <text class="personnel-name">{{item.laborerName}}</text>
+            </view>
+          </view>
+        </view>
+        <view wx:if="{{task.applyMachineList && task.applyMachineList.length > 0}}" class="info-row-vertical">
+          <text class="info-label">作业机械</text>
+          <view class="machine-tags">
+            <view wx:for="{{task.applyMachineList}}" wx:key="index" class="machine-tag">
+              <text class="machine-icon">🚜</text>
+              <text class="machine-name">{{item.machineName}}</text>
+            </view>
+          </view>
+        </view>
+        <view wx:if="{{task.reportMaterialList && task.reportMaterialList.length > 0}}" class="info-row-vertical">
+          <text class="info-label">作业物料</text>
+          <view class="material-grid">
+            <view wx:for="{{task.reportMaterialList}}" wx:key="index" class="material-card">
+              <view class="material-info">
+                <text class="material-name">{{item.materialName}}</text>
+                <text class="material-qty">{{item.quantity}} {{item.unit}}</text>
+              </view>
             </view>
           </view>
         </view>

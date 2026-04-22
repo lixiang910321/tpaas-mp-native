@@ -134,6 +134,9 @@
   font-size: 30rpx;
   font-weight: 500;
   border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .btn-confirm::after {

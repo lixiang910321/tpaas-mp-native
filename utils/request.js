@@ -2,8 +2,8 @@
  * 拼接完整 URL
  */
 function joinUrl(path) {
-  // const baseURL = 'http://127.0.0.1:28201'
-  const baseURL = 'https://tpaas-app-api-qa.fantuo.co/'
+  const baseURL = 'http://127.0.0.1:28201'
+  // const baseURL = 'https://tpaas-app-api-qa.fantuo.co/'
   if (!path.startsWith('/')) {
     return `${baseURL}/${path}`
   }

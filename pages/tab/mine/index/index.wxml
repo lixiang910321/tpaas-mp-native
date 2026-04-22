@@ -19,9 +19,9 @@
       <view class="project-info">
         <view class="project-icon">🏗️</view>
         <view class="project-detail">
-          <text class="project-name">{{currentProject.name || currentProject.code || ('项目 ' + currentProject.id)}}</text>
-          <text class="project-code" wx:if="{{currentProject.code}}">{{currentProject.code}}</text>
-          <text class="project-empty" wx:if="{{!currentProject}}">未选择项目</text>
+          <text class="project-name" wx:if="{{currentProject}}">{{currentProject.name || currentProject.code || ('项目 ' + currentProject.id)}}</text>
+          <text class="project-name" wx:if="{{!currentProject}}">未选择项目</text>
+          <text class="project-code" wx:if="{{currentProject && currentProject.code}}">{{currentProject.code}}</text>
         </view>
       </view>
       <view class="switch-btn">
@@ -33,15 +33,19 @@
 
   <!-- 租户信息 -->
   <view class="section" wx:if="{{currentTenant}}">
-    <view class="section-title">所属单位</view>
+    <view class="section-title">租户</view>
     <view class="info-row">
-      <text class="info-label">单位名称</text>
+      <text class="info-label">租户名称</text>
       <text class="info-value">{{currentTenant.name || '—'}}</text>
     </view>
   </view>
 
   <!-- 操作区 -->
   <view class="section">
+    <view class="menu-item" bindtap="onMyTasks">
+      <text class="menu-label">我的任务</text>
+      <text class="menu-arrow">›</text>
+    </view>
     <view class="menu-item" bindtap="onSwitchProject">
       <text class="menu-label">切换项目</text>
       <text class="menu-arrow">›</text>

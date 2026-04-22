@@ -124,8 +124,12 @@
 }
 
 .confirm-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   height: 96rpx;
-  line-height: 96rpx;
+  line-height: 1;
+  text-align: center;
   border-radius: 16rpx;
   background: linear-gradient(180deg, #8b7cff 0%, #7467ef 100%);
   color: #ffffff;

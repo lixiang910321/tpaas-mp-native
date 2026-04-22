@@ -36,6 +36,15 @@ Page({
     return String(v).slice(0, 19).replace('T', ' ')
   },
 
+  // 预览图片
+  previewImage(e) {
+    const url = e.currentTarget.dataset.url
+    wx.previewImage({
+      current: url,
+      urls: [url]
+    })
+  },
+
   onApply() {
     const id = encodeURIComponent(String(this.data.taskId))
     wx.navigateTo({ url: `/pages/tab/work-order/repair-task-apply/repair-task-apply?id=${id}` })
@@ -65,7 +74,18 @@ Page({
       const res = await app.mpGetAuth(`/mp/repairTask/detail?id=${encodeURIComponent(taskId)}`)
 
       if (res && Number(res.isSuccess) === 1 && res.result) {
-        this.setData({ task: res.result })
+        const task = res.result
+        
+        // 解析JSON字段
+        if (task.completionPhotoUrls) {
+          try {
+            task.completionPhotoUrls = JSON.parse(task.completionPhotoUrls)
+          } catch (e) {
+            task.completionPhotoUrls = []
+          }
+        }
+        
+        this.setData({ task: task })
       } else {
         this.setData({ error: (res && res.errorMsg) || '加载失败' })
       }

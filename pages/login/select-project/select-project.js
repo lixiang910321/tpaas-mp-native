@@ -176,8 +176,29 @@ Page({
     wx.removeStorageSync(DRAFT_KEY)
     wx.setStorageSync(STORAGE_TOKEN, token)
     
+    // 提取租户信息
+    const tenantVO = step2.result?.tenantVO
+    const tenantInfo = tenantVO ? {
+      id: tenantVO.tenantId,
+      name: tenantVO.tenantName,
+      tenantKind: tenantVO.tenantKind
+    } : null
+    
+    // 提取当前项目信息（从 userData.projects 中找到当前选中的项目）
+    const userData = step2.result?.userData
+    const projects = userData?.projects || []
+    const currentProject = projects.find(p => String(p.id) === String(this.data.selectedId)) || null
+    
     // 更新全局登录信息
-    app.setLoginInfo({ token, userInfo: step2.result })
+    app.setLoginInfo({ token, userInfo: userData })
+    
+    // 保存租户和项目信息
+    if (tenantInfo) {
+      app.setTenantInfo(tenantInfo)
+    }
+    if (currentProject) {
+      app.setProjectInfo(currentProject)
+    }
     
     this.showToast('登录成功')
     

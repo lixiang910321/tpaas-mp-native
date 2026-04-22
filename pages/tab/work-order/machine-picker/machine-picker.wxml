@@ -13,7 +13,7 @@
 
   <scroll-view wx:else scroll-y class="scroll">
     <view class="list">
-      <view wx:for="{{list}}" wx:key="id" class="item {{selectedIds.indexOf(item.id) > -1 ? 'item-selected' : ''}}" bindtap="onSelect" data-item="{{item}}">
+      <view wx:for="{{list}}" wx:key="id" class="item {{item.selected ? 'item-selected' : ''}}" bindtap="onSelect" data-index="{{index}}">
         <view class="item-icon">
           <text class="icon-text">🚜</text>
         </view>
@@ -21,10 +21,8 @@
           <text class="item-name">{{item.name || '-'}}</text>
           <text class="item-desc">{{item.model || '未设置型号'}}</text>
         </view>
-        <view class="item-radio">
-          <view class="radio {{selectedIds.indexOf(item.id) > -1 ? 'radio-checked' : ''}}">
-            <view wx:if="{{selectedIds.indexOf(item.id) > -1}}" class="radio-dot"></view>
-          </view>
+        <view class="item-check">
+          <text wx:if="{{item.selected}}" class="check-icon">✓</text>
         </view>
       </view>
     </view>

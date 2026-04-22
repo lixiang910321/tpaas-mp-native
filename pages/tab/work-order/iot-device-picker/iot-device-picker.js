@@ -23,10 +23,19 @@ Page({
   },
 
   onSelect(e) {
-    const item = e.currentTarget.dataset.item
-    if (!item) return
+    const index = e.currentTarget.dataset.index
+    if (index === undefined || index === null) return
 
-    this.setData({ selectedId: item.id })
+    const list = this.data.list.map((item, idx) => ({
+      ...item,
+      selected: idx === index
+    }))
+
+    const selectedItem = list[index]
+    this.setData({ 
+      list: list,
+      selectedId: selectedItem ? selectedItem.id : null
+    })
   },
 
   // 确认选择
@@ -67,7 +76,11 @@ Page({
     const res = await app.mpGetAuth('/mp/refactor/iotDevice/list', params)
 
     if (res && Number(res.isSuccess) === 1 && res.result) {
-      this.setData({ list: res.result || [], loading: false })
+      const list = (res.result || []).map(item => ({
+        ...item,
+        selected: String(item.id) === String(this.data.selectedId)
+      }))
+      this.setData({ list: list, loading: false })
     } else {
       this.setData({ list: [], loading: false })
     }

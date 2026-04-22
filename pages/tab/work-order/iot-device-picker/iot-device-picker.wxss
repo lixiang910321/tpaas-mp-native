@@ -52,6 +52,13 @@
   padding: 24rpx;
   margin-bottom: 16rpx;
   border-radius: 12rpx;
+  border: 2rpx solid transparent;
+  transition: all 0.2s;
+}
+
+.item-selected {
+  background: #f5f3ff;
+  border-color: #7b68ee;
 }
 
 .item-icon {
@@ -86,7 +93,7 @@
   color: #969799;
 }
 
-.item-radio {
+.item-check {
   width: 48rpx;
   height: 48rpx;
   display: flex;
@@ -94,25 +101,10 @@
   justify-content: center;
 }
 
-.radio {
-  width: 40rpx;
-  height: 40rpx;
-  border: 2rpx solid #c8c9cc;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.radio-checked {
-  border-color: #7b68ee;
-}
-
-.radio-dot {
-  width: 20rpx;
-  height: 20rpx;
-  background: #7b68ee;
-  border-radius: 50%;
+.check-icon {
+  font-size: 32rpx;
+  color: #7b68ee;
+  font-weight: bold;
 }
 
 .footer {
@@ -126,8 +118,12 @@
 }
 
 .btn-confirm {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   height: 88rpx;
-  line-height: 88rpx;
+  line-height: 1;
+  text-align: center;
   border-radius: 8rpx;
   background: #7b68ee;
   color: #fff;
