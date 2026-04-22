@@ -9,7 +9,9 @@ Page({
       confirmResult: null,
       beforePhotoUrls: [],
       confirmRemark: '',
-      areaId: null
+      areaId: null,
+      planProjectPointId: null,
+      planProjectPointName: ''
     },
     selectedAreaId: null,
     selectedAreaName: '',
@@ -26,6 +28,13 @@ Page({
     this.loadDiseaseDetail()
     this.loadAreaTree()
     this.loadCategoryList()
+  },
+
+  onShow() {
+    // 页面显示时打印当前表单数据，用于调试
+    console.log('病害确认 - onShow')
+    console.log('病害确认 - form.planProjectPointId:', this.data.form.planProjectPointId)
+    console.log('病害确认 - form.planProjectPointName:', this.data.form.planProjectPointName)
   },
 
   getResultText(result) {
@@ -124,6 +133,25 @@ Page({
     wx.navigateBack()
   },
 
+  onSelectProjectPoint() {
+    console.log('病害确认 - 选择项点')
+    console.log('病害确认 - 当前 planProjectPointId:', this.data.form.planProjectPointId)
+    console.log('病害确认 - 当前 planProjectPointName:', this.data.form.planProjectPointName)
+    
+    const params = []
+    // 传递任务类型：1-维修项点
+    params.push('taskType=1')
+    if (this.data.form.planProjectPointId) {
+      params.push(`selectedId=${this.data.form.planProjectPointId}`)
+      params.push(`selectedName=${encodeURIComponent(this.data.form.planProjectPointName)}`)
+    }
+    const query = params.length > 0 ? `?${params.join('&')}` : ''
+    console.log('病害确认 - 跳转URL:', `/pages/tab/work-order/repair-task-apply/select-project-point/select-project-point${query}`)
+    wx.navigateTo({
+      url: `/pages/tab/work-order/repair-task-apply/select-project-point/select-project-point${query}`
+    })
+  },
+
   async loadDiseaseDetail() {
     const id = this.data.diseaseReportId
     if (!id) return
@@ -172,6 +200,10 @@ Page({
       wx.showToast({ title: '请选择区域', icon: 'none' })
       return
     }
+    if (!this.data.form.planProjectPointId) {
+      wx.showToast({ title: '请选择计划项点', icon: 'none' })
+      return
+    }
     if (!this.data.form.constructionCategoryId) {
       wx.showToast({ title: '请选择施工类别', icon: 'none' })
       return
@@ -187,6 +219,8 @@ Page({
       const res = await app.mpPostAuth('/mp/diseaseReportConfirm/confirm', {
         diseaseReportId: this.data.diseaseReportId,
         areaId: this.data.form.areaId,
+        planProjectPointId: this.data.form.planProjectPointId,
+        planProjectPointName: this.data.form.planProjectPointName,
         constructionCategoryId: this.data.form.constructionCategoryId,
         constructionCategoryName: this.data.form.constructionCategoryName,
         confirmResult: this.data.form.confirmResult,

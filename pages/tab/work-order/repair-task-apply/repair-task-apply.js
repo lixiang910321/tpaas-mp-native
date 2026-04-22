@@ -6,8 +6,8 @@ Page({
     taskId: '',
     form: {
       applyRemark: '',
-      projectPointId: null,
-      projectPointName: ''
+      actualProjectPointId: null,
+      actualProjectPointName: ''
     }
   },
 
@@ -23,9 +23,11 @@ Page({
 
   onSelectProjectPoint() {
     const params = []
-    if (this.data.form.projectPointId) {
-      params.push(`selectedId=${this.data.form.projectPointId}`)
-      params.push(`selectedName=${encodeURIComponent(this.data.form.projectPointName)}`)
+    // 传递任务类型：1-维修项点
+    params.push('taskType=1')
+    if (this.data.form.actualProjectPointId) {
+      params.push(`selectedId=${this.data.form.actualProjectPointId}`)
+      params.push(`selectedName=${encodeURIComponent(this.data.form.actualProjectPointName)}`)
     }
     const query = params.length > 0 ? `?${params.join('&')}` : ''
     wx.navigateTo({
@@ -54,8 +56,8 @@ Page({
       this.setData({ 
         task,
         loading: false,
-        'form.projectPointId': task.projectPointId,
-        'form.projectPointName': task.projectPointName
+        'form.actualProjectPointId': task.planProjectPointId,
+        'form.actualProjectPointName': task.planProjectPointName
       })
     } else {
       this.setData({ loading: false })
@@ -65,7 +67,7 @@ Page({
   },
 
   async onSubmit() {
-    if (!this.data.form.projectPointId) {
+    if (!this.data.form.actualProjectPointId) {
       wx.showToast({ title: '请选择作业项点', icon: 'none' })
       return
     }
@@ -75,8 +77,8 @@ Page({
     const app = getApp()
     const res = await app.mpPostAuth('/mp/repairTask/apply', {
       repairTaskId: this.data.taskId,
-      projectPointId: this.data.form.projectPointId,
-      projectPointName: this.data.form.projectPointName,
+      actualProjectPointId: this.data.form.actualProjectPointId,
+      actualProjectPointName: this.data.form.actualProjectPointName,
       applyRemark: this.data.form.applyRemark
     })
 

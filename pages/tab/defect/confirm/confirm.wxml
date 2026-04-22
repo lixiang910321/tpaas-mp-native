@@ -47,6 +47,18 @@
       </view>
     </view>
 
+    <!-- 计划项点选择 -->
+    <view class="section" bindtap="onSelectProjectPoint">
+      <view class="section-header">
+        <text class="label">计划项点</text>
+        <view class="picker-value">
+          <text wx:if="{{form.planProjectPointName}}" class="value-text">{{form.planProjectPointName}}</text>
+          <text wx:else class="placeholder-text">选择计划项点</text>
+          <text class="arrow">›</text>
+        </view>
+      </view>
+    </view>
+
     <!-- 施工类别 -->
     <view class="section" bindtap="onShowCategoryPicker">
       <view class="section-header">
@@ -64,7 +76,8 @@
       <view class="section-header">
         <text class="label">确认结果</text>
         <view class="picker-value">
-          <text wx:if="{{form.confirmResult}}" class="value-text">{{getResultText(form.confirmResult)}}</text>
+          <text wx:if="{{form.confirmResult === 10}}" class="value-text">转班组</text>
+          <text wx:elif="{{form.confirmResult === 20}}" class="value-text">现场处理</text>
           <text wx:else class="placeholder-text">选择处理方式</text>
           <text class="arrow">›</text>
         </view>

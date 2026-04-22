@@ -227,10 +227,10 @@ Page({
       formData.constructionCategoryName = task.constructionCategoryName
     }
 
-    // 回显实际项点
-    if (task.projectPointId) {
-      formData.actualProjectPointId = task.projectPointId
-      formData.actualProjectPointName = task.projectPointName
+    // 回显实际项点（从计划项点获取）
+    if (task.planProjectPointId) {
+      formData.actualProjectPointId = task.planProjectPointId
+      formData.actualProjectPointName = task.planProjectPointName
     }
 
     // 回显完工图片 (后端字段名: completionPhotoUrls)
@@ -328,8 +328,8 @@ Page({
       unfixReason: this.data.form.unfixReason,
       constructionCategoryId: this.data.form.constructionCategoryId,
       constructionCategoryName: this.data.form.constructionCategoryName,
-      projectPointId: this.data.form.actualProjectPointId,
-      projectPointName: this.data.form.actualProjectPointName,
+      actualProjectPointId: this.data.form.actualProjectPointId,
+      actualProjectPointName: this.data.form.actualProjectPointName,
       repairLaborers: repairLaborers,
       materials: materials,
       completionPhotos: this.data.form.completionPhotos,
