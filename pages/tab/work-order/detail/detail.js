@@ -12,6 +12,13 @@ Page({
     this.loadDetail()
   },
 
+  onShow() {
+    // 从任务详情页返回时刷新
+    if (this.data.workOrderId) {
+      this.loadDetail()
+    }
+  },
+
   // 查看任务详情
   onTaskDetail(e) {
     const t = e.currentTarget.dataset.item

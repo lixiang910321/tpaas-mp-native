@@ -20,6 +20,13 @@ Page({
     this.loadDetail()
   },
 
+  onShow() {
+    // 从申请/提报页返回时刷新详情
+    if (this.data.taskId) {
+      this.loadDetail()
+    }
+  },
+
   getStatusText(status) {
     return this.TASK_STATUS[status] || '-'
   },
@@ -97,6 +104,18 @@ Page({
           task.reportMaterialJson = JSON.parse(task.reportMaterialJson)
         } catch (e) {
           task.reportMaterialJson = []
+        }
+      }
+      
+      // 区域：JSON数组转为 "-" 连接
+      if (task.areaNames && typeof task.areaNames === 'string') {
+        try {
+          const arr = JSON.parse(task.areaNames)
+          if (Array.isArray(arr) && arr.length > 0) {
+            task.areaNames = arr.join('-')
+          }
+        } catch (e) {
+          // 保持原样
         }
       }
       

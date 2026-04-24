@@ -62,22 +62,21 @@ Page({
     }
 
     this.setData({ loading: true })
-    const step1 = await app.mpPost('/mp/login/loginStep1', { userName: name, password: pwd })
-    
-    if (!step1 || step1.isSuccess !== 1) {
-      this.showToast(step1?.errorMsg || '登录失败')
-      this.setData({ loading: false })
-      return
-    }
-    
-    const tenants = step1.result?.tenantList || []
-    if (tenants.length === 0) {
-      this.showToast('无可用租户')
-      this.setData({ loading: false })
-      return
-    }
+    try {
+      const step1 = await app.mpPost('/mp/login/loginStep1', { userName: name, password: pwd })
+      
+      const tenants = step1?.result?.tenantList || []
+      if (tenants.length === 0) {
+        this.showToast('无可用租户')
+        return
+      }
 
-    this.goPostStep1Flow(name, pwd, tenants)
-    this.setData({ loading: false })
+      this.goPostStep1Flow(name, pwd, tenants)
+    } catch (e) {
+      // showGlobalError 已在 request.js 中处理，此处无需重复弹窗
+      console.error('登录step1失败', e)
+    } finally {
+      this.setData({ loading: false })
+    }
   }
 })

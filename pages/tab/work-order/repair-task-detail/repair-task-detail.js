@@ -20,6 +20,13 @@ Page({
     this.loadDetail()
   },
 
+  onShow() {
+    // 从申请/验收页返回时刷新详情
+    if (this.data.taskId) {
+      this.loadDetail()
+    }
+  },
+
   getStatusText(status) {
     return this.TASK_STATUS[status] || '-'
   },

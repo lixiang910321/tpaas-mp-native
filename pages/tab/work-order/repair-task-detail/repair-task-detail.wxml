@@ -33,10 +33,6 @@
           <text class="info-label">预计耗时</text>
           <text class="info-value">{{task.estimatedHours ? task.estimatedHours + '小时' : '-'}}</text>
         </view>
-        <view class="info-row">
-          <text class="info-label">窗口时间</text>
-          <text class="info-value">{{task.windowTime || '-'}}</text>
-        </view>
         <view class="info-row" wx:if="{{task.facilityName}}">
           <text class="info-label">设施</text>
           <text class="info-value">{{task.facilityName}}</text>
@@ -70,9 +66,9 @@
           <text class="info-label">预计耗时</text>
           <text class="info-value">{{task.diseaseProjectPointDetail.timeConsumed ? task.diseaseProjectPointDetail.timeConsumed + '小时' : (task.estimatedHours ? task.estimatedHours + '小时' : '-')}}</text>
         </view>
-        <view class="info-row">
+        <view class="info-row" wx:if="{{task.diseaseProjectPointDetail && task.diseaseProjectPointDetail.windowTimeName}}">
           <text class="info-label">窗口时间</text>
-          <text class="info-value">{{task.windowTime || '-'}}</text>
+          <text class="info-value">{{task.diseaseProjectPointDetail.windowTimeName}}</text>
         </view>
         <view class="info-row">
           <text class="info-label">安全交底</text>
@@ -161,7 +157,7 @@
     </view>
 
     <!-- 提报信息 -->
-    <view class="detail-card" wx:if="{{task.submitEmployeeName || task.submitTime || task.repairResult}}">
+    <view class="detail-card" wx:if="{{task.reportEmployeeName || task.reportTime || task.repairResult}}">
       <view class="card-header">
         <text class="header-title">提报信息</text>
       </view>
@@ -182,13 +178,13 @@
           <text class="info-label">未修复原因</text>
           <text class="info-value">{{task.unrepairReason}}</text>
         </view>
-        <view class="info-row" wx:if="{{task.submitEmployeeName}}">
+        <view class="info-row" wx:if="{{task.reportEmployeeName}}">
           <text class="info-label">提报人</text>
-          <text class="info-value">{{task.submitEmployeeName}}</text>
+          <text class="info-value">{{task.reportEmployeeName}}</text>
         </view>
-        <view class="info-row" wx:if="{{task.submitTime}}">
+        <view class="info-row" wx:if="{{task.reportTime}}">
           <text class="info-label">提报时间</text>
-          <text class="info-value">{{task.submitTime}}</text>
+          <text class="info-value">{{formatTime(task.reportTime)}}</text>
         </view>
         <view class="info-row-vertical" wx:if="{{task.completionPhotoUrls}}">
           <text class="info-label">完工照片</text>

@@ -165,7 +165,6 @@ Page({
     const res = await app.mpPostAuth('/mp/maintenanceTask/submit', {
       taskId: this.data.taskId,
       completionQty: this.data.form.completedQuantity,
-      completionUnit: '站',
       completionFileUrls: this.data.form.completedImages,
       completionRemark: this.data.form.remark,
       materials: materials

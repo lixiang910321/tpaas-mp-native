@@ -204,7 +204,7 @@
 /* 人员标签 */
 .personnel-tags {
   display: flex;
-  flex-direction: column;
+  flex-wrap: wrap;
   gap: 12rpx;
   margin-top: 12rpx;
 }
@@ -216,10 +216,12 @@
 .personnel-tag {
   display: inline-flex;
   align-items: center;
-  padding: 8rpx 20rpx;
+  align-self: flex-start;
+  padding: 4rpx 12rpx;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-radius: 20rpx;
+  border-radius: 16rpx;
   box-shadow: 0 2rpx 8rpx rgba(102, 126, 234, 0.3);
+  flex-shrink: 0;
 }
 .personnel-name {
   font-size: 24rpx;

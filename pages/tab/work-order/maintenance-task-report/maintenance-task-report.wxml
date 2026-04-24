@@ -26,7 +26,6 @@
           <text class="form-label">完成量</text>
           <view class="quantity-row">
             <input class="quantity-input" type="number" value="{{form.completedQuantity}}" bindinput="onCompletedQuantityInput" placeholder="请填写数量" placeholder-class="input-placeholder" />
-            <text class="quantity-unit">站</text>
           </view>
         </view>
       </view>

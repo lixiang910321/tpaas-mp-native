@@ -51,11 +51,11 @@
         </view>
         <view class="task-row">
           <text class="task-label">提报人</text>
-          <text class="task-val">{{item.submitEmployeeName || '-'}}</text>
+          <text class="task-val">{{item.reportEmployeeName || '-'}}</text>
         </view>
         <view class="task-row">
           <text class="task-label">提报时间</text>
-          <text class="task-val">{{formatTime(item.submitTime)}}</text>
+          <text class="task-val">{{formatTime(item.reportTime)}}</text>
         </view>
       </view>
       <view class="task-footer" bindtap="onDetail" data-id="{{item.id}}">

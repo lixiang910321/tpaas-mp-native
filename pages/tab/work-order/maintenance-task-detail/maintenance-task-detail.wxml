@@ -14,12 +14,8 @@
       
       <view class="card-body">
         <view class="info-row">
-          <text class="info-label">维保类型</text>
-          <text class="info-value">{{task.maintenanceTypeName || '-'}}</text>
-        </view>
-        <view class="info-row">
-          <text class="info-label">施工类别</text>
-          <text class="info-value">{{task.constructionCategoryName || '-'}}</text>
+          <text class="info-label">作业类型</text>
+          <text class="info-value">{{task.homeworkType || '-'}}</text>
         </view>
         <view class="info-row">
           <text class="info-label">区域</text>
@@ -27,15 +23,11 @@
         </view>
         <view class="info-row">
           <text class="info-label">计划开始时间</text>
-          <text class="info-value">{{task.planStartTime || '-'}}</text>
+          <text class="info-value">{{task.plannedStartDate || '-'}}</text>
         </view>
         <view class="info-row">
           <text class="info-label">计划结束时间</text>
-          <text class="info-value">{{task.planEndTime || '-'}}</text>
-        </view>
-        <view class="info-row">
-          <text class="info-label">窗口时间</text>
-          <text class="info-value">{{task.windowTime || '-'}}</text>
+          <text class="info-value">{{task.plannedEndDate || '-'}}</text>
         </view>
       </view>
     </view>
@@ -66,9 +58,9 @@
           <text class="info-label">预计耗时</text>
           <text class="info-value">{{task.projectPointDetail.timeConsumed ? task.projectPointDetail.timeConsumed + '小时' : '-'}}</text>
         </view>
-        <view class="info-row" wx:if="{{task.projectPointDetail}}">
+        <view class="info-row" wx:if="{{task.projectPointDetail && task.projectPointDetail.windowTimeName}}">
           <text class="info-label">窗口时间</text>
-          <text class="info-value">{{task.windowTime || '-'}}</text>
+          <text class="info-value">{{task.projectPointDetail.windowTimeName}}</text>
         </view>
         <view class="info-row" wx:if="{{task.projectPointDetail}}">
           <text class="info-label">安全交底</text>
@@ -142,7 +134,7 @@
       <view class="card-body">
         <view wx:if="{{task.reportCompletionQty}}" class="info-row">
           <text class="info-label">完成量</text>
-          <text class="info-value">{{task.reportCompletionQty}} {{task.reportCompletionUnit || '站'}}</text>
+          <text class="info-value">{{task.reportCompletionQty}}</text>
         </view>
         <view wx:if="{{task.reportCompletionFileUrls}}" class="info-row-vertical">
           <text class="info-label">完成图片</text>
@@ -156,20 +148,19 @@
           <text class="info-label">提报备注</text>
           <text class="info-value">{{task.reportCompletionRemark}}</text>
         </view>
+        <view wx:if="{{task.reportEmployeeName}}" class="info-row">
+          <text class="info-label">提报人</text>
+          <text class="info-value">{{task.reportEmployeeName}}</text>
+        </view>
+        <view wx:if="{{task.reportTime}}" class="info-row">
+          <text class="info-label">提报时间</text>
+          <text class="info-value">{{formatTime(task.reportTime)}}</text>
+        </view>
         <view wx:if="{{task.applyPersonnelList && task.applyPersonnelList.length > 0}}" class="info-row-vertical">
           <text class="info-label">作业人员</text>
           <view class="personnel-tags">
             <view wx:for="{{task.applyPersonnelList}}" wx:key="index" class="personnel-tag">
               <text class="personnel-name">{{item.laborerName}}</text>
-            </view>
-          </view>
-        </view>
-        <view wx:if="{{task.applyMachineList && task.applyMachineList.length > 0}}" class="info-row-vertical">
-          <text class="info-label">作业机械</text>
-          <view class="machine-tags">
-            <view wx:for="{{task.applyMachineList}}" wx:key="index" class="machine-tag">
-              <text class="machine-icon">🚜</text>
-              <text class="machine-name">{{item.machineName}}</text>
             </view>
           </view>
         </view>
