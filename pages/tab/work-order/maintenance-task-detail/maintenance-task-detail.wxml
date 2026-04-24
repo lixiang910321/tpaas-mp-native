@@ -22,16 +22,8 @@
           <text class="info-value">{{task.constructionCategoryName || '-'}}</text>
         </view>
         <view class="info-row">
-          <text class="info-label">线路</text>
-          <text class="info-value">{{task.lineName || '-'}}</text>
-        </view>
-        <view class="info-row">
-          <text class="info-label">车站</text>
-          <text class="info-value">{{task.stationName || '-'}}</text>
-        </view>
-        <view class="info-row">
           <text class="info-label">区域</text>
-          <text class="info-value">{{task.areaName || '-'}}</text>
+          <text class="info-value">{{task.areaNames || task.areaName || '-'}}</text>
         </view>
         <view class="info-row">
           <text class="info-label">计划开始时间</text>
@@ -86,18 +78,18 @@
     </view>
 
     <!-- 申请信息 -->
-    <view wx:if="{{task.applySubmitTime}}" class="detail-card">
+    <view wx:if="{{task.applyTime}}" class="detail-card">
       <view class="card-header">
         <text class="header-title">申请信息</text>
       </view>
       <view class="card-body">
         <view class="info-row">
           <text class="info-label">申请人</text>
-          <text class="info-value">{{task.applySubmitEmployeeName || '-'}}</text>
+          <text class="info-value">{{task.applyEmployeeName || '-'}}</text>
         </view>
         <view class="info-row">
           <text class="info-label">申请时间</text>
-          <text class="info-value">{{task.applySubmitTime}}</text>
+          <text class="info-value">{{task.applyTime}}</text>
         </view>
         <view wx:if="{{task.applyIotDeviceName}}" class="info-row">
           <text class="info-label">物联设备</text>

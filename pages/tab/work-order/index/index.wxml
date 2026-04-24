@@ -13,16 +13,36 @@
           <text class="wo-val wo-val-strong">{{item.orderNo || '-'}}</text>
         </view>
         <view class="wo-row">
+          <text class="wo-label">班组</text>
+          <text class="wo-val wo-val-strong">{{item.laborTeamName || '-'}}</text>
+        </view>
+        <view class="wo-row">
           <text class="wo-label">工单状态</text>
           <text class="wo-val wo-val-strong">{{item.statusText}}</text>
+        </view>
+        <view class="wo-row">
+          <text class="wo-label">任务数量</text>
+          <text class="wo-val wo-val-strong">{{item.completedTaskCount != null ? item.completedTaskCount : 0}}/{{item.totalTaskCount != null ? item.totalTaskCount : 0}}</text>
+        </view>
+        <view class="wo-row">
+          <text class="wo-label">SOP预计时长</text>
+          <text class="wo-val wo-val-strong">{{item.sopEstimatedHours != null ? item.sopEstimatedHours + 'h' : '-'}}</text>
+        </view>
+        <view class="wo-row">
+          <text class="wo-label">实际时长</text>
+          <text class="wo-val wo-val-strong">{{item.actualHours != null ? item.actualHours + 'h' : '-'}}</text>
         </view>
         <view class="wo-row">
           <text class="wo-label">创建时间</text>
           <text class="wo-val wo-val-strong">{{item.createTime || '-'}}</text>
         </view>
         <view class="wo-row">
-          <text class="wo-label">任务数量</text>
-          <text class="wo-val wo-val-strong">{{item.taskCount != null ? item.taskCount : '-'}}</text>
+          <text class="wo-label">开始时间</text>
+          <text class="wo-val wo-val-strong">{{item.startTime || '-'}}</text>
+        </view>
+        <view class="wo-row">
+          <text class="wo-label">结束时间</text>
+          <text class="wo-val wo-val-strong">{{item.endTime || '-'}}</text>
         </view>
       </view>
       <view class="wo-footer" bindtap="onDetail" data-item="{{item}}">

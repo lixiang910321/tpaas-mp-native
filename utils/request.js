@@ -10,6 +10,21 @@ function joinUrl(path) {
   return `${baseURL}${path}`
 }
 
+/**
+ * 全局错误处理 - 显示错误弹窗
+ */
+function showGlobalError(message) {
+  if (!message || message === '服务异常') {
+    message = '网络请求失败，请稍后重试'
+  }
+  wx.showModal({
+    title: '提示',
+    content: message,
+    showCancel: false,
+    confirmText: '我知道了'
+  })
+}
+
 const TOKEN_KEY = 'tpaas_mp_access_token'
 
 /**
@@ -38,19 +53,31 @@ export function mpGetAuth(path, params = {}) {
       },
       success: (res) => {
         if (res.statusCode >= 200 && res.statusCode < 300) {
-          resolve(res.data)
+          // 检查业务错误
+          if (res.data && Number(res.data.isSuccess) !== 1) {
+            const errorMsg = res.data.errorMsg || '操作失败'
+            showGlobalError(errorMsg)
+            reject(new Error(errorMsg))
+          } else {
+            resolve(res.data)
+          }
         } else if (res.statusCode === 401) {
           // 未授权，清除登录信息并跳转登录页
           wx.removeStorageSync(TOKEN_KEY)
           wx.reLaunch({
-            url: '/pages/login/login/login'
+            url: '/pages/login/login'
           })
           reject(new Error('未登录或登录已过期'))
         } else {
-          reject(new Error(res.data.errorMsg || `HTTP ${res.statusCode}`))
+          const errorMsg = res.data.errorMsg || `HTTP ${res.statusCode}`
+          showGlobalError(errorMsg)
+          reject(new Error(errorMsg))
         }
       },
-      fail: (err) => reject(err)
+      fail: (err) => {
+        showGlobalError('网络请求失败')
+        reject(err)
+      }
     })
   })
 }
@@ -77,12 +104,24 @@ export function mpGet(path, params = {}) {
       },
       success: (res) => {
         if (res.statusCode >= 200 && res.statusCode < 300) {
-          resolve(res.data)
+          // 检查业务错误
+          if (res.data && Number(res.data.isSuccess) !== 1) {
+            const errorMsg = res.data.errorMsg || '操作失败'
+            showGlobalError(errorMsg)
+            reject(new Error(errorMsg))
+          } else {
+            resolve(res.data)
+          }
         } else {
-          reject(new Error(res.data.errorMsg || `HTTP ${res.statusCode}`))
+          const errorMsg = res.data.errorMsg || `HTTP ${res.statusCode}`
+          showGlobalError(errorMsg)
+          reject(new Error(errorMsg))
         }
       },
-      fail: (err) => reject(err)
+      fail: (err) => {
+        showGlobalError('网络请求失败')
+        reject(err)
+      }
     })
   })
 }
@@ -104,7 +143,14 @@ export function mpPostAuth(path, data = {}) {
       data: data,
       success: (res) => {
         if (res.statusCode >= 200 && res.statusCode < 300) {
-          resolve(res.data)
+          // 检查业务错误
+          if (res.data && Number(res.data.isSuccess) !== 1) {
+            const errorMsg = res.data.errorMsg || '操作失败'
+            showGlobalError(errorMsg)
+            reject(new Error(errorMsg))
+          } else {
+            resolve(res.data)
+          }
         } else if (res.statusCode === 401) {
           wx.removeStorageSync(TOKEN_KEY)
           wx.reLaunch({
@@ -112,10 +158,15 @@ export function mpPostAuth(path, data = {}) {
           })
           reject(new Error('未登录或登录已过期'))
         } else {
-          reject(new Error(res.data.errorMsg || `HTTP ${res.statusCode}`))
+          const errorMsg = res.data.errorMsg || `HTTP ${res.statusCode}`
+          showGlobalError(errorMsg)
+          reject(new Error(errorMsg))
         }
       },
-      fail: (err) => reject(err)
+      fail: (err) => {
+        showGlobalError('网络请求失败')
+        reject(err)
+      }
     })
   })
 }
@@ -134,12 +185,24 @@ export function mpPost(path, data = {}) {
       data: data,
       success: (res) => {
         if (res.statusCode >= 200 && res.statusCode < 300) {
-          resolve(res.data)
+          // 检查业务错误
+          if (res.data && Number(res.data.isSuccess) !== 1) {
+            const errorMsg = res.data.errorMsg || '操作失败'
+            showGlobalError(errorMsg)
+            reject(new Error(errorMsg))
+          } else {
+            resolve(res.data)
+          }
         } else {
-          reject(new Error(res.data.errorMsg || `HTTP ${res.statusCode}`))
+          const errorMsg = res.data.errorMsg || `HTTP ${res.statusCode}`
+          showGlobalError(errorMsg)
+          reject(new Error(errorMsg))
         }
       },
-      fail: (err) => reject(err)
+      fail: (err) => {
+        showGlobalError('网络请求失败')
+        reject(err)
+      }
     })
   })
 }
@@ -161,7 +224,14 @@ export function mpPutAuth(path, data = {}) {
       data: data,
       success: (res) => {
         if (res.statusCode >= 200 && res.statusCode < 300) {
-          resolve(res.data)
+          // 检查业务错误
+          if (res.data && Number(res.data.isSuccess) !== 1) {
+            const errorMsg = res.data.errorMsg || '操作失败'
+            showGlobalError(errorMsg)
+            reject(new Error(errorMsg))
+          } else {
+            resolve(res.data)
+          }
         } else if (res.statusCode === 401) {
           wx.removeStorageSync(TOKEN_KEY)
           wx.reLaunch({
@@ -169,10 +239,15 @@ export function mpPutAuth(path, data = {}) {
           })
           reject(new Error('未登录或登录已过期'))
         } else {
-          reject(new Error(res.data.errorMsg || `HTTP ${res.statusCode}`))
+          const errorMsg = res.data.errorMsg || `HTTP ${res.statusCode}`
+          showGlobalError(errorMsg)
+          reject(new Error(errorMsg))
         }
       },
-      fail: (err) => reject(err)
+      fail: (err) => {
+        showGlobalError('网络请求失败')
+        reject(err)
+      }
     })
   })
 }

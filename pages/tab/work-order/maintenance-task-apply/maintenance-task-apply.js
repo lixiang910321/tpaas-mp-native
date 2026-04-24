@@ -234,8 +234,6 @@ Page({
     if (res && Number(res.isSuccess) === 1) {
       wx.showToast({ title: '申请成功', icon: 'success' })
       setTimeout(() => wx.navigateBack(), 1500)
-    } else {
-      wx.showToast({ title: res?.errorMsg || '申请失败', icon: 'none' })
     }
     this.setData({ submitting: false })
   }
