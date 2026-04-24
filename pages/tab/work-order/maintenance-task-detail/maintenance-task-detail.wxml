@@ -14,6 +14,10 @@
       
       <view class="card-body">
         <view class="info-row">
+          <text class="info-label">任务编号</text>
+          <text class="info-value">{{task.taskNo || '-'}}</text>
+        </view>
+        <view class="info-row">
           <text class="info-label">作业类型</text>
           <text class="info-value">{{task.homeworkType || '-'}}</text>
         </view>
@@ -154,7 +158,7 @@
         </view>
         <view wx:if="{{task.reportTime}}" class="info-row">
           <text class="info-label">提报时间</text>
-          <text class="info-value">{{formatTime(task.reportTime)}}</text>
+          <text class="info-value">{{task.reportTime}}</text>
         </view>
         <view wx:if="{{task.applyPersonnelList && task.applyPersonnelList.length > 0}}" class="info-row-vertical">
           <text class="info-label">作业人员</text>
