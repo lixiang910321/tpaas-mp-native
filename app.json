@@ -24,6 +24,7 @@
     "pages/tab/defect/index/index",
     "pages/tab/defect/detail/detail",
     "pages/tab/defect/confirm/confirm",
+    "pages/tab/defect/add/add",
     "pages/tab/acceptance/index/index",
     "pages/tab/mine/index/index",
     "pages/tab/mine/my-tasks/my-tasks",

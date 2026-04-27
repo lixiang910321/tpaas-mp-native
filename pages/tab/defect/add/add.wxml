@@ -1,0 +1,107 @@
+<view class="page">
+  <scroll-view scroll-y class="content">
+    <!-- 令号 -->
+    <view class="section">
+      <view class="section-title">令号 <text class="required">*</text></view>
+      <input class="input" type="text" value="{{form.cmdNum}}" bindinput="onCmdNumInput" placeholder="请输入令号" />
+    </view>
+
+    <!-- 区域选择 -->
+    <view class="section" bindtap="onSelectArea">
+      <view class="section-header">
+        <text class="label">区域 <text class="required">*</text></text>
+        <view class="picker-value">
+          <text wx:if="{{selectedAreaName}}" class="value-text">{{selectedAreaName}}</text>
+          <text wx:else class="placeholder-text">选择区域</text>
+          <text class="arrow">›</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 接报日期 -->
+    <view class="section">
+      <view class="section-header">
+        <text class="label">接报日期 <text class="required">*</text></text>
+        <picker mode="date" value="{{form.reportDate}}" bindchange="onDateChange">
+          <view class="picker-value">
+            <text wx:if="{{form.reportDate}}" class="value-text">{{form.reportDate}}</text>
+            <text wx:else class="placeholder-text">选择日期</text>
+            <text class="arrow">›</text>
+          </view>
+        </picker>
+      </view>
+    </view>
+
+    <!-- 接报时间 -->
+    <view class="section">
+      <view class="section-header">
+        <text class="label">接报时间 <text class="required">*</text></text>
+        <picker mode="time" value="{{form.reportTimeOnly}}" bindchange="onTimeChange">
+          <view class="picker-value">
+            <text wx:if="{{form.reportTimeOnly}}" class="value-text">{{form.reportTimeOnly}}</text>
+            <text wx:else class="placeholder-text">选择时间</text>
+            <text class="arrow">›</text>
+          </view>
+        </picker>
+      </view>
+    </view>
+
+    <!-- 来源 -->
+    <view class="section">
+      <view class="section-header">
+        <text class="label">来源 <text class="required">*</text></text>
+        <picker mode="selector" range="{{sourceOptions}}" value="{{sourceIndex}}" bindchange="onSourceChange">
+          <view class="picker-value">
+            <text wx:if="{{sourceIndex >= 0}}" class="value-text">{{sourceOptions[sourceIndex]}}</text>
+            <text wx:else class="placeholder-text">选择来源</text>
+            <text class="arrow">›</text>
+          </view>
+        </picker>
+      </view>
+    </view>
+
+    <!-- 描述 -->
+    <view class="section">
+      <view class="section-title">描述 <text class="required">*</text></view>
+      <textarea class="remark-input" value="{{form.description}}" bindinput="onDescInput" placeholder="请输入病害描述" maxlength="500" />
+    </view>
+
+    <!-- 驻站班组（选择） -->
+    <view class="section" wx:if="{{stationDutyList.length > 0}}">
+      <view class="section-header">
+        <text class="label">驻站班组 <text class="required">*</text></text>
+        <picker mode="selector" range="{{stationDutyList}}" range-key="stationDutyName" value="{{stationDutyIndex}}" bindchange="onStationDutyChange">
+          <view class="picker-value">
+            <text wx:if="{{stationDutyIndex >= 0}}" class="value-text">{{stationDutyList[stationDutyIndex].stationDutyName}}</text>
+            <text wx:else class="placeholder-text">选择班组</text>
+            <text class="arrow">›</text>
+          </view>
+        </picker>
+      </view>
+    </view>
+
+    <!-- 上传照片 -->
+    <view class="section">
+      <view class="section-title">上传照片</view>
+      <view class="photo-list">
+        <view wx:for="{{form.photoList}}" wx:key="index" class="photo-item">
+          <image class="photo" src="{{item}}" mode="aspectFill" bindtap="previewPhoto" data-index="{{index}}" />
+          <view class="photo-delete" bindtap="deletePhoto" data-index="{{index}}">
+            <text class="delete-icon">×</text>
+          </view>
+        </view>
+        <view wx:if="{{form.photoList.length < 9}}" class="photo-add" bindtap="choosePhoto">
+          <text class="add-icon">+</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="bottom-placeholder"></view>
+  </scroll-view>
+
+  <!-- 底部按钮 -->
+  <view class="footer">
+    <button class="cancel-btn" bindtap="goBack">取消</button>
+    <button class="submit-btn" bindtap="submit" loading="{{submitting}}" disabled="{{submitting}}">提交</button>
+  </view>
+</view>
