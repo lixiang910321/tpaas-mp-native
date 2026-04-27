@@ -7,43 +7,81 @@
       <view class="section">
         <text class="section-title">任务信息</text>
         <view class="info-row">
-          <text class="info-label">令号</text>
-          <text class="info-value">{{task.cmdNum || '-'}}</text>
+          <text class="info-label">任务类型</text>
+          <text class="info-value">维修</text>
         </view>
         <view class="info-row">
-          <text class="info-label">维修区域</text>
+          <text class="info-label">任务编号</text>
+          <text class="info-value">{{task.taskNo || '-'}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">区域</text>
           <text class="info-value">{{task.areaName || '-'}}</text>
         </view>
-        <view class="info-row">
-          <text class="info-label">设施</text>
-          <text class="info-value">{{task.facilityName || '-'}}</text>
+        <view class="info-row" wx:if="{{task.confirmEmployeeName}}">
+          <text class="info-label">驻站值班员</text>
+          <text class="info-value">{{task.confirmEmployeeName}}</text>
         </view>
-        <view class="info-row">
-          <text class="info-label">故障类型</text>
-          <text class="info-value">{{task.faultTypeName || '-'}}</text>
+        <view class="info-row" wx:if="{{task.confirmTime}}">
+          <text class="info-label">确认时间</text>
+          <text class="info-value">{{task.confirmTime}}</text>
         </view>
-      </view>
+    </view>
+  </view>
 
-      <view class="section">
-        <text class="section-title">申请信息</text>
-        <view class="form-item required">
-          <text class="form-label">作业项点</text>
-          <view class="picker-value" bindtap="onSelectProjectPoint">
-            <text wx:if="{{form.actualProjectPointName}}" class="value-text">{{form.actualProjectPointName}}</text>
-            <text wx:else class="placeholder-text">请选择作业项点</text>
-            <text class="arrow">›</text>
+  <!-- 计划项点信息 -->
+  <view class="detail-card">
+    <view class="card-header">
+      <text class="header-title">计划项点</text>
+    </view>
+    <view class="card-body">
+      <view class="info-row">
+        <text class="info-label">项点名称</text>
+        <text class="info-value">{{task.planProjectPointName || '-'}}</text>
+      </view>
+      <view class="info-row">
+        <text class="info-label">区域</text>
+        <text class="info-value">{{task.areaName || '-'}}</text>
+      </view>
+      <view class="info-row" wx:if="{{task.diseaseProjectPointDetail}}">
+        <text class="info-label">严重程度</text>
+        <text class="info-value">{{task.diseaseProjectPointDetail.severityDegreeName || '-'}}</text>
+      </view>
+      <view class="info-row" wx:if="{{task.diseaseProjectPointDetail && task.diseaseProjectPointDetail.windowTimeName}}">
+        <text class="info-label">作业窗口时间</text>
+        <text class="info-value">{{task.diseaseProjectPointDetail.windowTimeName}}</text>
+      </view>
+      <view wx:if="{{task.pointPersonnelList && task.pointPersonnelList.length > 0}}" class="info-row-vertical">
+        <text class="info-label">人员</text>
+        <view class="personnel-tags">
+          <view wx:for="{{task.pointPersonnelList}}" wx:key="index" class="personnel-tag">
+            <text class="personnel-name">{{item.workTypeName}}×{{item.quantity}}</text>
           </view>
         </view>
-        <view class="form-item">
-          <text class="form-label">申请备注</text>
-          <textarea class="form-textarea" value="{{form.applyRemark}}" bindinput="onRemarkInput" placeholder="请输入申请备注（选填）" maxlength="500" />
+      </view>
+      <view wx:if="{{task.pointMaterialList && task.pointMaterialList.length > 0}}" class="info-row-vertical">
+        <text class="info-label">物料</text>
+        <view class="material-grid">
+          <view wx:for="{{task.pointMaterialList}}" wx:key="index" class="material-card">
+            <view class="material-info">
+              <text class="material-name">{{item.materialName}}</text>
+              <text class="material-qty">{{item.quantity}}</text>
+            </view>
+          </view>
         </view>
       </view>
     </view>
+  </view>
 
-    <view class="actions">
-      <button class="btn-primary" bindtap="onSubmit" loading="{{submitting}}" disabled="{{submitting}}">提交申请</button>
-      <button class="btn-default" bindtap="onCancel">取消</button>
+  <view class="section">
+    <text class="section-title">申请备注</text>
+    <view class="form-item">
+      <textarea class="form-textarea" value="{{applyRemark}}" bindinput="onRemarkInput" placeholder="请输入申请备注（选填）" maxlength="500" />
     </view>
-  </scroll-view>
+  </view>
+
+  <view class="actions">
+    <button class="btn-primary" bindtap="onSubmit" loading="{{submitting}}" disabled="{{submitting}}">提交申请</button>
+  </view>
+</scroll-view>
 </view>

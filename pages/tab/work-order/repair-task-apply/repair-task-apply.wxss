@@ -5,7 +5,8 @@
 
 .scroll {
   height: 100vh;
-  padding-bottom: calc(160rpx + env(safe-area-inset-bottom));
+  padding: 24rpx;
+  box-sizing: border-box;
 }
 
 .state-card {
@@ -24,17 +25,16 @@
 .form-card {
   background: #ffffff;
   border-radius: 16rpx;
-  margin: 24rpx;
+  margin-bottom: 24rpx;
   overflow: hidden;
 }
 
 .section {
-  padding: 32rpx;
-  border-bottom: 1rpx solid #f0f0f0;
-}
-
-.section:last-child {
-  border-bottom: none;
+  background: #ffffff;
+  border-radius: 16rpx;
+  padding: 28rpx;
+  margin-bottom: 24rpx;
+  overflow: hidden;
 }
 
 .section-title {
@@ -119,7 +119,10 @@
 }
 
 .actions {
-  padding: 32rpx 24rpx;
+  padding: 32rpx 0;
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
 }
 
 .btn-primary {
@@ -158,4 +161,112 @@
 
 .btn-default::after {
   border: none;
+}
+
+/* 计划项点卡片（参照维保任务详情） */
+.detail-card {
+  background: #ffffff;
+  border-radius: 16rpx;
+  overflow: hidden;
+  box-shadow: 0 4rpx 24rpx rgba(0, 0, 0, 0.06);
+  margin-bottom: 24rpx;
+}
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 32rpx 28rpx;
+  background: linear-gradient(90deg, #e8f5e9 0%, #f1f8e9 100%);
+  border-bottom: 1rpx solid #f0f0f0;
+}
+.header-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #333333;
+}
+.card-body {
+  padding: 28rpx;
+}
+.card-body .info-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 24rpx;
+}
+.card-body .info-label {
+  font-size: 28rpx;
+  color: #666666;
+  flex-shrink: 0;
+  margin-right: 24rpx;
+}
+.card-body .info-value {
+  font-size: 28rpx;
+  color: #333333;
+  font-weight: 400;
+  text-align: right;
+  flex: 1;
+}
+
+/* 垂直布局信息行 */
+.info-row-vertical {
+  margin-bottom: 24rpx;
+}
+.info-row-vertical:last-child {
+  margin-bottom: 0;
+}
+.info-row-vertical .info-label {
+  font-size: 26rpx;
+  color: #666;
+  margin-bottom: 12rpx;
+  display: block;
+}
+
+/* 人员标签 */
+.personnel-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+  margin-top: 12rpx;
+}
+.personnel-tag {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  padding: 4rpx 12rpx;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 16rpx;
+  box-shadow: 0 2rpx 8rpx rgba(102, 126, 234, 0.3);
+  flex-shrink: 0;
+}
+.personnel-name {
+  font-size: 24rpx;
+  color: #ffffff;
+  font-weight: 500;
+}
+
+/* 物料网格 */
+.material-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16rpx;
+  margin-top: 12rpx;
+}
+.material-card {
+  background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+  border-radius: 16rpx;
+  padding: 20rpx;
+  box-shadow: 0 2rpx 8rpx rgba(252, 182, 159, 0.3);
+}
+.material-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+}
+.material-card .material-name {
+  font-size: 26rpx;
+  color: #333333;
+  font-weight: 500;
+}
+.material-card .material-qty {
+  font-size: 24rpx;
+  color: #666666;
 }

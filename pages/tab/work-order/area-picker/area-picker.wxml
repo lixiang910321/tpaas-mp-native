@@ -1,0 +1,52 @@
+<view class="page">
+  <!-- 面包屑导航 -->
+  <scroll-view scroll-x class="breadcrumb">
+    <text class="breadcrumb-item {{areaLevelStack.length === 0 ? 'active' : ''}}" bindtap="onBreadcrumbTap" data-index="{{-1}}">全部区域</text>
+    <block wx:for="{{areaLevelStack}}" wx:key="id">
+      <text class="breadcrumb-sep">›</text>
+      <text class="breadcrumb-item {{index === areaLevelStack.length - 1 ? 'active' : ''}}" bindtap="onBreadcrumbTap" data-index="{{index}}">{{item.name}}</text>
+    </block>
+  </scroll-view>
+
+  <!-- 加载中 -->
+  <view wx:if="{{loading}}" class="state-card">
+    <text class="state-text">加载中…</text>
+  </view>
+
+  <!-- 空 -->
+  <view wx:elif="{{currentAreas.length === 0}}" class="state-card">
+    <text class="state-text">此级暂无区域</text>
+  </view>
+
+  <!-- 区域列表 -->
+  <scroll-view wx:else scroll-y class="scroll">
+    <view class="list">
+      <view
+        wx:for="{{currentAreas}}"
+        wx:key="id"
+        class="item"
+        bindtap="onAreaTap"
+        data-item="{{item}}"
+      >
+        <view class="item-icon">
+          <text class="icon-text">📍</text>
+        </view>
+        <view class="item-info">
+          <text class="item-name">{{item.name}}</text>
+          <text wx:if="{{item.code}}" class="item-desc">{{item.code}}</text>
+        </view>
+        <!-- 选中对勾 -->
+        <view class="item-check" catchtap="onSelectDirect" data-item="{{item}}">
+          <text wx:if="{{selectedArea.id === item.id}}" class="check-icon">✓</text>
+        </view>
+      </view>
+    </view>
+  </scroll-view>
+
+  <!-- 底部确认 -->
+  <view class="footer">
+    <button class="btn-confirm" disabled="{{!selectedArea.id}}" bindtap="onConfirm">
+      {{selectedArea.id ? '确认选择：' + selectedArea.name : '请选择区域'}}
+    </button>
+  </view>
+</view>

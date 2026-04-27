@@ -10,15 +10,16 @@ Page({
       beforePhotoUrls: [],
       confirmRemark: '',
       areaId: null,
+      areaName: '',
+      areaIds: '',          // JSON: [根id, 父id, 选中id]
+      areaNames: '',        // JSON: [根名, 父名, 选中名]
       planProjectPointId: null,
       planProjectPointName: ''
     },
     selectedAreaId: null,
     selectedAreaName: '',
-    showAreaPicker: false,
     showCategoryPicker: false,
     showResultPicker: false,
-    areaTree: [],
     categoryList: []
   },
 
@@ -26,7 +27,6 @@ Page({
     const diseaseReportId = options.id ? decodeURIComponent(String(options.id)) : ''
     this.setData({ diseaseReportId })
     this.loadDiseaseDetail()
-    this.loadAreaTree()
     this.loadCategoryList()
   },
 
@@ -46,22 +46,38 @@ Page({
     this.setData({ 'form.confirmRemark': e.detail.value })
   },
 
-  onShowAreaPicker() { this.setData({ showAreaPicker: true }) },
-  onHideAreaPicker() { this.setData({ showAreaPicker: false }) },
+  // === 区域选择（跳转独立页面） ===
+
+  onSelectArea() {
+    // 传递当前已选区域用于回显
+    const params = []
+    if (this.data.selectedAreaId) {
+      params.push(`selectedId=${this.data.selectedAreaId}`)
+      params.push(`selectedName=${encodeURIComponent(this.data.selectedAreaName)}`)
+    }
+    const query = params.length > 0 ? `?${params.join('&')}` : ''
+
+    wx.navigateTo({
+      url: `/pages/tab/work-order/area-picker/area-picker${query}`,
+      events: {
+        selectArea: (data) => {
+          this.setData({
+            selectedAreaId: data.id,
+            selectedAreaName: data.name,
+            'form.areaId': data.id,
+            'form.areaName': data.name,
+            'form.areaIds': JSON.stringify(data.pathIds || []),
+            'form.areaNames': JSON.stringify(data.pathNames || [])
+          })
+        }
+      }
+    })
+  },
+
   onShowCategoryPicker() { this.setData({ showCategoryPicker: true }) },
   onHideCategoryPicker() { this.setData({ showCategoryPicker: false }) },
   onShowResultPicker() { this.setData({ showResultPicker: true }) },
   onHideResultPicker() { this.setData({ showResultPicker: false }) },
-
-  selectArea(e) {
-    const area = e.currentTarget.dataset.item
-    this.setData({
-      selectedAreaId: area.id,
-      selectedAreaName: area.name,
-      'form.areaId': area.id,
-      showAreaPicker: false
-    })
-  },
 
   selectCategory(e) {
     const cat = e.currentTarget.dataset.item
@@ -159,22 +175,18 @@ Page({
       const app = getApp()
       const res = await app.mpGetAuth(`/mp/diseaseReport/detail/${id}`)
       if (res && Number(res.isSuccess) === 1 && res.result) {
-        this.setData({ diseaseDetail: res.result })
+        const detail = res.result
+        // 解析 reportTime（格式：yyyy-MM-dd HH:mm:ss）为日期和时间
+        const reportTime = detail.reportTime || ''
+        const parts = reportTime.split(' ')
+        this.setData({
+          diseaseDetail: detail,
+          reportDate: parts[0] || '',
+          reportTimeOnly: parts[1] || ''
+        })
       }
     } catch (e) {
       wx.showToast({ title: '加载失败', icon: 'none' })
-    }
-  },
-
-  async loadAreaTree() {
-    try {
-      const app = getApp()
-      const res = await app.mpGetAuth('/mp/area/list')
-      if (res && Number(res.isSuccess) === 1 && res.result) {
-        this.setData({ areaTree: res.result })
-      }
-    } catch (e) {
-      console.error('加载区域失败', e)
     }
   },
 
@@ -219,6 +231,9 @@ Page({
       const res = await app.mpPostAuth('/mp/diseaseReportConfirm/confirm', {
         diseaseReportId: this.data.diseaseReportId,
         areaId: this.data.form.areaId,
+        areaName: this.data.form.areaName,
+        areaIdPath: this.data.form.areaIds ? JSON.parse(this.data.form.areaIds) : [],
+        areaNamePath: this.data.form.areaNames ? JSON.parse(this.data.form.areaNames) : [],
         planProjectPointId: this.data.form.planProjectPointId,
         planProjectPointName: this.data.form.planProjectPointName,
         constructionCategoryId: this.data.form.constructionCategoryId,

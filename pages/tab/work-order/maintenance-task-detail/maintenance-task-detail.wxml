@@ -39,7 +39,7 @@
     <!-- 项点信息 -->
     <view class="detail-card">
       <view class="card-header">
-        <text class="header-title">项点信息</text>
+        <text class="header-title">计划项点信息</text>
       </view>
       <view class="card-body">
         <view class="info-row">

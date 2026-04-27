@@ -4,11 +4,7 @@ Page({
     submitting: false,
     task: {},
     taskId: '',
-    form: {
-      applyRemark: '',
-      actualProjectPointId: null,
-      actualProjectPointName: ''
-    }
+    applyRemark: ''
   },
 
   onLoad(options) {
@@ -18,21 +14,7 @@ Page({
   },
 
   onRemarkInput(e) {
-    this.setData({ 'form.applyRemark': e.detail.value })
-  },
-
-  onSelectProjectPoint() {
-    const params = []
-    // 传递任务类型：1-维修项点
-    params.push('taskType=1')
-    if (this.data.form.actualProjectPointId) {
-      params.push(`selectedId=${this.data.form.actualProjectPointId}`)
-      params.push(`selectedName=${encodeURIComponent(this.data.form.actualProjectPointName)}`)
-    }
-    const query = params.length > 0 ? `?${params.join('&')}` : ''
-    wx.navigateTo({
-      url: `/pages/tab/work-order/repair-task-apply/select-project-point/select-project-point${query}`
-    })
+    this.setData({ applyRemark: e.detail.value })
   },
 
   onCancel() {
@@ -52,12 +34,9 @@ Page({
     const res = await app.mpGetAuth(`/mp/repairTask/detail?id=${encodeURIComponent(taskId)}`)
 
     if (res && Number(res.isSuccess) === 1 && res.result) {
-      const task = res.result
       this.setData({ 
-        task,
-        loading: false,
-        'form.actualProjectPointId': task.planProjectPointId,
-        'form.actualProjectPointName': task.planProjectPointName
+        task: res.result,
+        loading: false
       })
     } else {
       this.setData({ loading: false })
@@ -67,19 +46,11 @@ Page({
   },
 
   async onSubmit() {
-    if (!this.data.form.actualProjectPointId) {
-      wx.showToast({ title: '请选择作业项点', icon: 'none' })
-      return
-    }
-
     this.setData({ submitting: true })
 
     const app = getApp()
     const res = await app.mpPostAuth('/mp/repairTask/apply', {
-      repairTaskId: this.data.taskId,
-      actualProjectPointId: this.data.form.actualProjectPointId,
-      actualProjectPointName: this.data.form.actualProjectPointName,
-      applyRemark: this.data.form.applyRemark
+      repairTaskId: this.data.taskId
     })
 
     if (res && Number(res.isSuccess) === 1) {

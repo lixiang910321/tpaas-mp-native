@@ -20,6 +20,7 @@
     "pages/tab/work-order/material-picker/material-picker",
     "pages/tab/work-order/employee-picker/employee-picker",
     "pages/tab/work-order/project-point-picker/project-point-picker",
+    "pages/tab/work-order/area-picker/area-picker",
     "pages/tab/defect/index/index",
     "pages/tab/defect/detail/detail",
     "pages/tab/defect/confirm/confirm",

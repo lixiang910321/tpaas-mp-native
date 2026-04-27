@@ -8,16 +8,28 @@
       <view class="section">
         <text class="section-title">任务信息</text>
         <view class="info-row">
+          <text class="info-label">任务类型</text>
+          <text class="info-value">维修</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">任务编号</text>
+          <text class="info-value">{{task.taskNo || '-'}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">令号</text>
+          <text class="info-value">{{task.cmdNum || '-'}}</text>
+        </view>
+        <view class="info-row">
           <text class="info-label">区域</text>
           <text class="info-value">{{task.areaName || '-'}}</text>
         </view>
-        <view class="info-row">
-          <text class="info-label">作业项点</text>
-          <text class="info-value">{{task.projectPointName || '-'}}</text>
+        <view class="info-row" wx:if="{{task.confirmEmployeeName}}">
+          <text class="info-label">驻站值班员</text>
+          <text class="info-value">{{task.confirmEmployeeName}}</text>
         </view>
-        <view class="info-row">
-          <text class="info-label">故障类型</text>
-          <text class="info-value">{{task.faultTypeName || '-'}}</text>
+        <view class="info-row" wx:if="{{task.confirmTime}}">
+          <text class="info-label">确认时间</text>
+          <text class="info-value">{{task.confirmTime}}</text>
         </view>
       </view>
 

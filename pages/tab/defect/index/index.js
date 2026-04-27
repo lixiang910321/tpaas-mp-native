@@ -20,6 +20,12 @@ Page({
     this.loadData()
   },
 
+  onShow() {
+    // 每次回到列表重新刷新
+    this.setData({ pageIndex: 1, hasMore: true, list: [] })
+    this.loadData()
+  },
+
   onPullDownRefresh() {
     this.setData({ pageIndex: 1, hasMore: true, list: [] })
     this.loadData().then(() => {

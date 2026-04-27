@@ -14,28 +14,28 @@
       
       <view class="card-body">
         <view class="info-row">
-          <text class="info-label">故障类型</text>
-          <text class="info-value">{{task.faultTypeName || '-'}}</text>
+          <text class="info-label">任务类型</text>
+          <text class="info-value">维修</text>
         </view>
         <view class="info-row">
-          <text class="info-label">故障等级</text>
-          <text class="info-value">{{task.faultLevel || '-'}}</text>
+          <text class="info-label">任务编号</text>
+          <text class="info-value">{{task.taskNo || '-'}}</text>
         </view>
         <view class="info-row">
-          <text class="info-label">施工类别</text>
-          <text class="info-value">{{task.constructionCategoryName || '-'}}</text>
+          <text class="info-label">令号</text>
+          <text class="info-value">{{task.cmdNum || '-'}}</text>
         </view>
         <view class="info-row">
           <text class="info-label">区域</text>
           <text class="info-value">{{task.areaName || '-'}}</text>
         </view>
-        <view class="info-row">
-          <text class="info-label">预计耗时</text>
-          <text class="info-value">{{task.estimatedHours ? task.estimatedHours + '小时' : '-'}}</text>
+        <view class="info-row" wx:if="{{task.confirmEmployeeName}}">
+          <text class="info-label">驻站值班员</text>
+          <text class="info-value">{{task.confirmEmployeeName}}</text>
         </view>
-        <view class="info-row" wx:if="{{task.facilityName}}">
-          <text class="info-label">设施</text>
-          <text class="info-value">{{task.facilityName}}</text>
+        <view class="info-row" wx:if="{{task.confirmTime}}">
+          <text class="info-label">确认时间</text>
+          <text class="info-value">{{task.confirmTime}}</text>
         </view>
       </view>
     </view>
@@ -43,7 +43,7 @@
     <!-- 病害项点信息 -->
     <view class="detail-card">
       <view class="card-header">
-        <text class="header-title">病害项点信息</text>
+        <text class="header-title">项点信息</text>
       </view>
       <view class="card-body">
         <view class="info-row">
@@ -136,20 +136,20 @@
     </view>
 
     <!-- 申请信息 -->
-    <view class="detail-card" wx:if="{{task.applyEmployeeName || task.applyTime}}">
+    <view class="detail-card" wx:if="{{task.applyEmployeeName || task.applyTime || task.applyRemark}}">
       <view class="card-header">
         <text class="header-title">申请信息</text>
       </view>
       <view class="card-body">
         <view class="info-row">
-          <text class="info-label">报修人</text>
+          <text class="info-label">申请人</text>
           <text class="info-value">{{task.applyEmployeeName || '-'}}</text>
         </view>
         <view class="info-row">
-          <text class="info-label">报修时间</text>
+          <text class="info-label">申请时间</text>
           <text class="info-value">{{task.applyTime || '-'}}</text>
         </view>
-        <view class="info-row" wx:if="{{task.applyRemark}}">
+        <view class="info-row">
           <text class="info-label">申请备注</text>
           <text class="info-value">{{task.applyRemark}}</text>
         </view>
@@ -194,7 +194,7 @@
             </view>
           </scroll-view>
         </view>
-        <view class="info-row" wx:if="{{task.repairRemark}}">
+        <view class="info-row" wx:if="{{task.repairRemark}}">  
           <text class="info-label">提报备注</text>
           <text class="info-value">{{task.repairRemark}}</text>
         </view>
