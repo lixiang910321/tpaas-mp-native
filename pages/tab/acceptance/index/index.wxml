@@ -34,28 +34,40 @@
     <view wx:for="{{list}}" wx:key="id" class="task-card">
       <view class="task-rows">
         <view class="task-row">
+          <text class="task-label">任务编号</text>
+          <text class="task-val">{{item.taskNo || '-'}}</text>
+        </view>
+        <view class="task-row">
           <text class="task-label">区域</text>
           <text class="task-val">{{item.areaName || '-'}}</text>
         </view>
         <view class="task-row">
-          <text class="task-label">作业项点</text>
-          <text class="task-val">{{item.projectPointName || '-'}}</text>
+          <text class="task-label">令号</text>
+          <text class="task-val">{{item.cmdNum || '-'}}</text>
+        </view>
+        <view class="task-row">
+          <text class="task-label">设施</text>
+          <text class="task-val">{{item.actualProjectPointDetail && item.actualProjectPointDetail.facilityName || item.facilityName || '-'}}</text>
+        </view>
+        <view class="task-row">
+          <text class="task-label">故障等级</text>
+          <text class="task-val">{{item.actualProjectPointDetail && item.actualProjectPointDetail.faultLevelName || item.faultLevel || '-'}}</text>
+        </view>
+        <view class="task-row">
+          <text class="task-label">严重程度</text>
+          <text class="task-val">{{item.actualProjectPointDetail && item.actualProjectPointDetail.severityDegreeName || '-'}}</text>
+        </view>
+        <view class="task-row">
+          <text class="task-label">项点</text>
+          <text class="task-val">{{item.actualProjectPointName || '-'}}</text>
         </view>
         <view class="task-row">
           <text class="task-label">故障类型</text>
-          <text class="task-val">{{item.faultTypeName || '-'}}</text>
+          <text class="task-val">{{item.actualProjectPointDetail && item.actualProjectPointDetail.faultTypeName || item.faultTypeName || '-'}}</text>
         </view>
-        <view class="task-row">
-          <text class="task-label">任务状态</text>
-          <text class="task-val {{statusClass(item.status)}}">{{formatStatus(item.status)}}</text>
-        </view>
-        <view class="task-row">
-          <text class="task-label">提报人</text>
-          <text class="task-val">{{item.reportEmployeeName || '-'}}</text>
-        </view>
-        <view class="task-row">
-          <text class="task-label">提报时间</text>
-          <text class="task-val">{{formatTime(item.reportTime)}}</text>
+        <view class="task-row" wx:if="{{activeTab === 1}}">
+          <text class="task-label">验收结果</text>
+          <text class="task-val">{{item.acceptanceResultName || '-'}}</text>
         </view>
       </view>
       <view class="task-footer" bindtap="onDetail" data-id="{{item.id}}">

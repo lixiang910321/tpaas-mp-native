@@ -43,7 +43,7 @@
     <!-- 病害项点信息 -->
     <view class="detail-card">
       <view class="card-header">
-        <text class="header-title">项点信息</text>
+        <text class="header-title">计划项点信息</text>
       </view>
       <view class="card-body">
         <view class="info-row">
@@ -102,6 +102,10 @@
         <view class="info-row" wx:if="{{task.actualProjectPointDetail}}">
           <text class="info-label">预计耗时</text>
           <text class="info-value">{{task.actualProjectPointDetail.timeConsumed ? task.actualProjectPointDetail.timeConsumed + '小时' : '-'}}</text>
+        </view>
+        <view class="info-row" wx:if="{{task.actualProjectPointDetail && task.actualProjectPointDetail.windowTimeName}}">
+          <text class="info-label">窗口时间</text>
+          <text class="info-value">{{task.actualProjectPointDetail.windowTimeName}}</text>
         </view>
         <view class="info-row" wx:if="{{task.actualProjectPointDetail}}">
           <text class="info-label">安全交底</text>
@@ -216,6 +220,43 @@
               </view>
             </view>
           </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 验收信息 -->
+    <view class="detail-card" wx:if="{{task.acceptanceResultName || task.acceptanceEmployeeName || task.acceptanceTime}}">
+      <view class="card-header">
+        <text class="header-title">验收信息</text>
+      </view>
+      <view class="card-body">
+        <view class="info-row" wx:if="{{task.repairMethodName}}">
+          <text class="info-label">维修方式</text>
+          <text class="info-value">{{task.repairMethodName}}</text>
+        </view>
+        <view class="info-row" wx:if="{{task.acceptanceResultName}}">
+          <text class="info-label">验收结果</text>
+          <text class="info-value">{{task.acceptanceResultName}}</text>
+        </view>
+        <view class="info-row" wx:if="{{task.acceptanceRemark}}">
+          <text class="info-label">验收备注</text>
+          <text class="info-value">{{task.acceptanceRemark}}</text>
+        </view>
+        <view class="info-row" wx:if="{{task.acceptanceEmployeeName}}">
+          <text class="info-label">验收人</text>
+          <text class="info-value">{{task.acceptanceEmployeeName}}</text>
+        </view>
+        <view class="info-row" wx:if="{{task.acceptanceTime}}">
+          <text class="info-label">验收时间</text>
+          <text class="info-value">{{task.acceptanceTime}}</text>
+        </view>
+        <view class="info-row-vertical" wx:if="{{task.acceptancePhotoUrls}}">
+          <text class="info-label">验收照片</text>
+          <scroll-view scroll-x class="image-scroll">
+            <view class="image-list-horizontal">
+              <image wx:for="{{task.acceptancePhotoUrls}}" wx:key="index" class="image-item-small" src="{{item}}" mode="aspectFill" bindtap="previewImage" data-url="{{item}}" />
+            </view>
+          </scroll-view>
         </view>
       </view>
     </view>

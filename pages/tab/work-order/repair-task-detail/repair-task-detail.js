@@ -91,6 +91,13 @@ Page({
             task.completionPhotoUrls = []
           }
         }
+        if (task.acceptancePhotoUrls) {
+          try {
+            task.acceptancePhotoUrls = JSON.parse(task.acceptancePhotoUrls)
+          } catch (e) {
+            task.acceptancePhotoUrls = []
+          }
+        }
         
         this.setData({ task: task })
       } else {

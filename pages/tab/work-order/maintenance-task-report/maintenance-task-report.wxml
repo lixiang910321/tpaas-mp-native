@@ -78,7 +78,6 @@
 
     <view class="actions">
       <button class="btn-primary" bindtap="onSubmit" loading="{{submitting}}" disabled="{{submitting}}">提交提报</button>
-      <button class="btn-default" bindtap="onCancel">取消</button>
     </view>
   </scroll-view>
 </view>
