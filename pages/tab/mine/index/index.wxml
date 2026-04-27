@@ -46,10 +46,6 @@
       <text class="menu-label">我的任务</text>
       <text class="menu-arrow">›</text>
     </view>
-    <view class="menu-item" bindtap="onSwitchProject">
-      <text class="menu-label">切换项目</text>
-      <text class="menu-arrow">›</text>
-    </view>
     <view class="menu-item menu-item--danger" bindtap="onLogout">
       <text class="menu-label menu-label--danger">退出登录</text>
       <text class="menu-arrow">›</text>
