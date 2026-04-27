@@ -3,7 +3,8 @@ Page({
     loading: true,
     error: '',
     task: {},
-    taskId: ''
+    taskId: '',
+    isConfirmEmployee: false
   },
 
   TASK_STATUS: {
@@ -100,6 +101,15 @@ Page({
         }
         
         this.setData({ task: task })
+        
+        // 判断当前用户是否为确认人（控制验收按钮显隐）
+        const app = getApp()
+        const currentEmployeeId = app.globalData.employeeId
+        const isConfirmEmployee = currentEmployeeId && task.confirmEmployeeId && 
+          Number(currentEmployeeId) === Number(task.confirmEmployeeId)
+        if (this.data.isConfirmEmployee !== isConfirmEmployee) {
+          this.setData({ isConfirmEmployee })
+        }
       } else {
         this.setData({ error: (res && res.errorMsg) || '加载失败' })
       }
