@@ -64,10 +64,12 @@ Page({
       events: {
         selectLaborer: (data) => {
           const personnelLines = this.data.form.personnelLines
-          // 替换该工种的所有人员
+          // 替换该工种的所有人员，保留工种信息
           personnelLines[lineIndex].persons = data.laborers.map(laborer => ({
             id: laborer.id,
-            name: laborer.name
+            name: laborer.name,
+            workTypeId: laborer.workTypeId,
+            workTypeName: laborer.workTypeName
           }))
           this.setData({ 'form.personnelLines': personnelLines })
         }
@@ -215,17 +217,19 @@ Page({
     const submitData = {
       taskId: this.data.taskId,
       personnelLines: this.data.form.personnelLines.map(line => {
-        const laborerIds = line.persons.map(p => String(p.id))
-        console.log('工种:', line.workTypeName, '人员:', line.persons, 'laborerIds:', laborerIds)
         return {
-          laborerIds: laborerIds
+          laborerIds: line.persons.map(p => String(p.id)),
+          workTypeName: line.workTypeName
         }
       }),
       machineIds: this.data.form.machines.map(m => m.id),
       iotDeviceId: this.data.form.iotDeviceId,
       iotDeviceName: this.data.form.iotDeviceName,
       briefingFileUrls: this.data.form.briefingFiles,
-      measureFileUrls: this.data.form.measureFiles
+      measureFileUrls: this.data.form.measureFiles,
+      displaySnapshot: {
+        machines: this.data.form.machines.map(m => ({ id: m.id, name: m.name }))
+      }
     }
     
     console.log('提交数据:', JSON.stringify(submitData))
