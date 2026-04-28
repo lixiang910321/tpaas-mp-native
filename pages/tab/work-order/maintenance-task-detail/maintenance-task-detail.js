@@ -62,6 +62,38 @@ Page({
     wx.navigateTo({ url: `/pages/tab/work-order/maintenance-task-report/maintenance-task-report?id=${id}` })
   },
 
+  onComplete() {
+    const taskId = this.data.taskId
+    wx.showModal({
+      title: '确认完成',
+      content: '确定该维保任务已完工吗？',
+      confirmText: '确定',
+      cancelText: '取消',
+      success: async (res) => {
+        if (!res.confirm) return
+
+        wx.showLoading({ title: '提交中' })
+        try {
+          const app = getApp()
+          const result = await app.mpPostAuth('/mp/maintenanceTask/complete', {
+            taskId: String(taskId)
+          })
+
+          if (result && Number(result.isSuccess) === 1) {
+            wx.showToast({ title: '已完成', icon: 'success' })
+            this.loadDetail()
+          } else {
+            wx.showToast({ title: (result && result.errorMsg) || '操作失败', icon: 'none' })
+          }
+        } catch (e) {
+          wx.showToast({ title: e?.message || '网络错误', icon: 'none' })
+        } finally {
+          wx.hideLoading()
+        }
+      }
+    })
+  },
+
   async loadDetail() {
     const taskId = this.data.taskId
     if (!taskId) {

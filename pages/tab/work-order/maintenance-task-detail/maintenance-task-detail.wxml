@@ -187,6 +187,7 @@
     </view>
     <view wx:elif="{{task.status === 40 || task.status === 50}}" class="action-card">
       <button class="btn-primary" bindtap="onReport">{{task.status === 50 ? '重新提报' : '去提报'}}</button>
+      <button wx:if="{{task.status === 50}}" class="btn-success" bindtap="onComplete" style="margin-top: 12rpx;">完成</button>
     </view>
   </scroll-view>
 </view>

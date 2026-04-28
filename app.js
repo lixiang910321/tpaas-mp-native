@@ -21,6 +21,9 @@ App({
       this.globalData.userInfo = wx.getStorageSync('tpaas_mp_user_info')
       this.globalData.currentProject = wx.getStorageSync('tpaas_mp_project')
       this.globalData.currentTenant = wx.getStorageSync('tpaas_mp_tenant')
+      // 从 userInfo 中恢复 employeeId
+      const userInfo = this.globalData.userInfo
+      this.globalData.employeeId = userInfo?.employeeId ? String(userInfo.employeeId) : null
     }
   },
 
@@ -61,6 +64,8 @@ App({
   setLoginInfo(data) {
     this.globalData.token = data.token
     this.globalData.userInfo = data.userInfo
+    // 从 userInfo 中提取 employeeId
+    this.globalData.employeeId = data.userInfo?.employeeId ? String(data.userInfo.employeeId) : null
     wx.setStorageSync('tpaas_mp_access_token', data.token)
     wx.setStorageSync('tpaas_mp_user_info', data.userInfo)
   },

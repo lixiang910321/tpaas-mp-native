@@ -2,8 +2,7 @@ const app = getApp()
 
 // 维修任务状态枚举
 const RepairTaskStatus = {
-  SUBMITTED: 50,   // 已提报（待验收）
-  COMPLETED: 60    // 已完成（已验收）
+  COMPLETED: 60    // 已完成状态
 }
 
 Page({
@@ -88,11 +87,11 @@ Page({
 
     try {
       const page = isRefresh ? 1 : this.data.current
-      const status = this.data.activeTab === 1
-        ? RepairTaskStatus.COMPLETED
-        : RepairTaskStatus.SUBMITTED
+      const status = RepairTaskStatus.COMPLETED
+      const accepted = this.data.activeTab === 1  // true=已验收 false=待验收
       const res = await app.mpGetAuth('/mp/repairTask/acceptancePage', {
         status,
+        accepted,
         current: page,
         size: 20
       })

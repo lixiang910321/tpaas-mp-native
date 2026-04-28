@@ -268,9 +268,12 @@
     <view wx:elif="{{task.status === 40}}" class="action-card">
       <button class="btn-primary" bindtap="onReport">去提报</button>
     </view>
-    <view wx:elif="{{task.status === 50 && isConfirmEmployee}}" class="action-card">
-      <button class="btn-success" bindtap="onAccept">验收通过</button>
-      <button class="btn-secondary" bindtap="onReport">重新提报</button>
+    <view wx:elif="{{task.status === 50}}" class="action-card">
+      <button class="btn-primary" bindtap="onReport">重新提报</button>
+      <button class="btn-success" bindtap="onComplete" style="margin-top: 12rpx;">完成</button>
+    </view>
+    <view wx:elif="{{task.status === 60 && isConfirmEmployee && !task.acceptanceResultName}}" class="action-card">
+      <button class="btn-success" bindtap="onAccept">验收</button>
     </view>
   </scroll-view>
 </view>

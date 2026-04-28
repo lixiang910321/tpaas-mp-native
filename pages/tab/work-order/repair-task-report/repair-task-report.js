@@ -251,30 +251,24 @@ Page({
       formData.submitRemark = task.repairRemark
     }
 
-    // 回显维修人员
-    if (task.repairLaborers) {
+    // 回显维修人员（后端字段名：reportPersonnelList）
+    if (task.reportPersonnelList && task.reportPersonnelList.length > 0) {
       try {
-        const laborers = typeof task.repairLaborers === 'string'
-          ? JSON.parse(task.repairLaborers)
-          : task.repairLaborers
-        formData.repairLaborers = laborers.map(l => ({
+        formData.repairLaborers = task.reportPersonnelList.map(l => ({
           id: l.laborerId,
           name: l.laborerName,
-          workTypeId: l.workTypeId,
-          workTypeName: l.workTypeName
+          workTypeId: l.workTypeId || '',
+          workTypeName: l.workTypeName || ''
         }))
       } catch (e) {
         console.error('解析维修人员失败:', e)
       }
     }
 
-    // 回显物料清单
-    if (task.materials) {
+    // 回显物料清单（后端字段名：reportMaterialList）
+    if (task.reportMaterialList && task.reportMaterialList.length > 0) {
       try {
-        const materials = typeof task.materials === 'string'
-          ? JSON.parse(task.materials)
-          : task.materials
-        formData.materialLines = materials.map(m => ({
+        formData.materialLines = task.reportMaterialList.map(m => ({
           id: m.materialId,
           name: m.materialName,
           categoryName: m.materialName,
