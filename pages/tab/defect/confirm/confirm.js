@@ -162,9 +162,17 @@ Page({
       params.push(`selectedName=${encodeURIComponent(this.data.form.planProjectPointName)}`)
     }
     const query = params.length > 0 ? `?${params.join('&')}` : ''
-    console.log('病害确认 - 跳转URL:', `/pages/tab/work-order/repair-task-apply/select-project-point/select-project-point${query}`)
+    
     wx.navigateTo({
-      url: `/pages/tab/work-order/repair-task-apply/select-project-point/select-project-point${query}`
+      url: `/pages/tab/work-order/project-point-picker/project-point-picker${query}`,
+      events: {
+        selectProjectPoint: (data) => {
+          this.setData({
+            'form.planProjectPointId': data.id,
+            'form.planProjectPointName': data.name
+          })
+        }
+      }
     })
   },
 

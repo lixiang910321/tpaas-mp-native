@@ -61,7 +61,7 @@ Page({
   // 实际项点选择
   onSelectActualProjectPoint() {
     wx.navigateTo({
-      url: `/pages/tab/work-order/project-point-picker/project-point-picker?selectedId=${this.data.form.actualProjectPointId || ''}`,
+      url: `/pages/tab/work-order/project-point-picker/project-point-picker?taskType=1&selectedId=${this.data.form.actualProjectPointId || ''}`,
       events: {
         selectProjectPoint: (data) => {
           this.setData({
