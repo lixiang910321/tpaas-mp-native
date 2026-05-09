@@ -17,6 +17,18 @@ function joinUrl(path) {
 const TOKEN_KEY = 'tpaas_mp_access_token'
 
 /**
+ * 401 统一处理：清除所有登录信息并跳转登录页
+ */
+function handle401() {
+  if (app && app.clearLoginInfo) {
+    app.clearLoginInfo()
+  }
+  wx.reLaunch({
+    url: '/pages/login/login/login'
+  })
+}
+
+/**
  * GET 请求（带认证）
  */
 export function mpGetAuth(path, params = {}) {
@@ -44,11 +56,7 @@ export function mpGetAuth(path, params = {}) {
         if (res.statusCode >= 200 && res.statusCode < 300) {
           resolve(res.data)
         } else if (res.statusCode === 401) {
-          // 未授权，清除登录信息并跳转登录页
-          wx.removeStorageSync(TOKEN_KEY)
-          wx.reLaunch({
-            url: '/pages/login/login/login'
-          })
+          handle401()
           reject(new Error('未登录或登录已过期'))
         } else {
           reject(new Error(res.data.errorMsg || `HTTP ${res.statusCode}`))
@@ -110,10 +118,7 @@ export function mpPostAuth(path, data = {}) {
         if (res.statusCode >= 200 && res.statusCode < 300) {
           resolve(res.data)
         } else if (res.statusCode === 401) {
-          wx.removeStorageSync(TOKEN_KEY)
-          wx.reLaunch({
-            url: '/pages/login/login/login'
-          })
+          handle401()
           reject(new Error('未登录或登录已过期'))
         } else {
           reject(new Error(res.data.errorMsg || `HTTP ${res.statusCode}`))
@@ -167,10 +172,7 @@ export function mpPutAuth(path, data = {}) {
         if (res.statusCode >= 200 && res.statusCode < 300) {
           resolve(res.data)
         } else if (res.statusCode === 401) {
-          wx.removeStorageSync(TOKEN_KEY)
-          wx.reLaunch({
-            url: '/pages/login/login/login'
-          })
+          handle401()
           reject(new Error('未登录或登录已过期'))
         } else {
           reject(new Error(res.data.errorMsg || `HTTP ${res.statusCode}`))
@@ -204,10 +206,7 @@ export function mpUploadFile(filePath) {
             reject(new Error('解析响应失败'))
           }
         } else if (res.statusCode === 401) {
-          wx.removeStorageSync(TOKEN_KEY)
-          wx.reLaunch({
-            url: '/pages/login/login/login'
-          })
+          handle401()
           reject(new Error('未登录或登录已过期'))
         } else {
           reject(new Error(`HTTP ${res.statusCode}`))
@@ -234,10 +233,7 @@ export function mpDownloadFile(url) {
         if (res.statusCode >= 200 && res.statusCode < 300) {
           resolve(res.tempFilePath)
         } else if (res.statusCode === 401) {
-          wx.removeStorageSync(TOKEN_KEY)
-          wx.reLaunch({
-            url: '/pages/login/login/login'
-          })
+          handle401()
           reject(new Error('未登录或登录已过期'))
         } else {
           reject(new Error(`HTTP ${res.statusCode}`))
