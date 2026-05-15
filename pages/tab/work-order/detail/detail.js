@@ -2,6 +2,7 @@ Page({
   data: {
     loading: true,
     error: '',
+    workOrder: null,
     tasks: [],
     workOrderId: ''
   },
@@ -13,10 +14,20 @@ Page({
   },
 
   onShow() {
-    // 从任务详情页返回时刷新
+    // 从任务详情页或申请页返回时刷新
     if (this.data.workOrderId) {
       this.loadDetail()
     }
+  },
+
+  // 跳转申请工单页面
+  onApply() {
+    const id = this.data.workOrderId
+    if (!id) return
+    wx.navigateTo({
+      url: `/pages/tab/work-order/work-order-apply/work-order-apply?workOrderId=${encodeURIComponent(id)}`,
+      fail: () => wx.showToast({ title: '页面跳转失败', icon: 'none' })
+    })
   },
 
   // 查看任务详情
@@ -46,6 +57,14 @@ Page({
     }
   },
 
+  // 格式化状态
+  formatStatus(s) {
+    if (s == null || s === '') return '-'
+    const app = getApp()
+    const label = app.getDictLabel('workOrderStatusEnum', s)
+    return label || '-'
+  },
+
   // 加载工单详情
   async loadDetail() {
     const workOrderId = this.data.workOrderId
@@ -59,19 +78,29 @@ Page({
     this.setData({ loading: true, error: '' })
     
     try {
+      // 预加载字典
+      await app.getDict('workOrderStatusEnum')
+      
       const res = await app.mpGetAuth(`/mp/workOrder/detail?id=${encodeURIComponent(workOrderId)}`)
       
       if (res && Number(res.isSuccess) === 1 && res.result) {
-        // 工单详情包含 tasks 数组
-        this.setData({ tasks: res.result.tasks || [] })
+        const result = res.result
+        // 格式化状态文本
+        const statusText = this.formatStatus(result.status)
+        this.setData({
+          workOrder: { ...result, statusText },
+          tasks: result.tasks || []
+        })
       } else {
         this.setData({ 
+          workOrder: null,
           tasks: [],
           error: (res && res.errorMsg) || '加载失败'
         })
       }
     } catch (e) {
       this.setData({ 
+        workOrder: null,
         tasks: [],
         error: e && e.message ? e.message : '网络错误'
       })

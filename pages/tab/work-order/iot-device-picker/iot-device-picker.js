@@ -3,19 +3,32 @@ Page({
     loading: false,
     keyword: '',
     list: [],
-    selectedId: null // 单选
+    selectedIds: [], // 多选支持
+    multiSelect: false
   },
 
   onLoad(options) {
-    if (options.selectedId) {
-      this.setData({ selectedId: decodeURIComponent(String(options.selectedId)) })
+    const multiSelect = options.multiSelect === 'true'
+    this.setData({ multiSelect })
+
+    if (options.selectedIds) {
+      try {
+        const ids = JSON.parse(decodeURIComponent(options.selectedIds))
+        this.setData({ selectedIds: ids })
+      } catch (e) {
+        // fallback: single selectedId
+        if (options.selectedId) {
+          this.setData({ selectedIds: [decodeURIComponent(String(options.selectedId))] })
+        }
+      }
+    } else if (options.selectedId) {
+      this.setData({ selectedIds: [decodeURIComponent(String(options.selectedId))] })
     }
     this.loadList()
   },
 
   onKeywordInput(e) {
     this.setData({ keyword: e.detail.value })
-    // 防抖搜索
     clearTimeout(this.searchTimer)
     this.searchTimer = setTimeout(() => {
       this.loadList()
@@ -26,40 +39,64 @@ Page({
     const index = e.currentTarget.dataset.index
     if (index === undefined || index === null) return
 
-    const list = this.data.list.map((item, idx) => ({
-      ...item,
-      selected: idx === index
-    }))
+    const list = [...this.data.list]
+    const item = list[index]
+    if (!item) return
 
-    const selectedItem = list[index]
-    this.setData({ 
-      list: list,
-      selectedId: selectedItem ? selectedItem.id : null
-    })
+    if (this.data.multiSelect) {
+      // 多选模式
+      item.selected = !item.selected
+      const selectedIds = [...this.data.selectedIds]
+      const idIndex = selectedIds.findIndex(id => String(id) === String(item.id))
+      if (idIndex > -1) {
+        selectedIds.splice(idIndex, 1)
+      } else {
+        selectedIds.push(item.id)
+      }
+      this.setData({ list, selectedIds })
+    } else {
+      // 单选模式
+      const newList = list.map((it, idx) => ({
+        ...it,
+        selected: idx === index
+      }))
+      this.setData({
+        list: newList,
+        selectedIds: [item.id]
+      })
+    }
   },
 
-  // 确认选择
   onConfirm() {
-    if (!this.data.selectedId) {
+    if (this.data.selectedIds.length === 0) {
       wx.showToast({ title: '请选择物联设备', icon: 'none' })
       return
     }
 
-    // 获取选中的设备详情
-    const selectedDevice = this.data.list.find(item => item.id === this.data.selectedId)
-    if (!selectedDevice) {
-      wx.showToast({ title: '设备信息异常', icon: 'none' })
-      return
-    }
+    const selectedDevices = this.data.list.filter(item =>
+      this.data.selectedIds.some(id => String(id) === String(item.id))
+    )
 
-    // 使用事件通道返回数据
     const eventChannel = this.getOpenerEventChannel()
     if (eventChannel) {
-      eventChannel.emit('selectIotDevice', {
-        id: selectedDevice.id,
-        name: selectedDevice.name,
-        deviceType: selectedDevice.deviceType
-      })
+      if (this.data.multiSelect) {
+        eventChannel.emit('selectIotDevices', {
+          devices: selectedDevices.map(d => ({
+            id: d.id,
+            name: d.name,
+            deviceType: d.deviceType
+          }))
+        })
+      } else {
+        const selectedDevice = selectedDevices[0]
+        if (selectedDevice) {
+          eventChannel.emit('selectIotDevice', {
+            id: selectedDevice.id,
+            name: selectedDevice.name,
+            deviceType: selectedDevice.deviceType
+          })
+        }
+      }
     }
 
     wx.navigateBack()
@@ -78,9 +115,9 @@ Page({
     if (res && Number(res.isSuccess) === 1 && res.result) {
       const list = (res.result || []).map(item => ({
         ...item,
-        selected: String(item.id) === String(this.data.selectedId)
+        selected: this.data.selectedIds.some(id => String(id) === String(item.id))
       }))
-      this.setData({ list: list, loading: false })
+      this.setData({ list, loading: false })
     } else {
       this.setData({ list: [], loading: false })
     }

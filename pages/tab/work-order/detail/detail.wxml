@@ -6,6 +6,31 @@
     <text class="state-text">{{error}}</text>
   </view>
   <scroll-view wx:else scroll-y class="scroll" :show-scrollbar="{{false}}">
+    <!-- 工单基本信息 -->
+    <view wx:if="{{workOrder}}" class="info-card">
+      <view class="info-title">工单信息</view>
+      <view class="kv-row">
+        <text class="kv-label">工单编号</text>
+        <text class="kv-val">{{workOrder.orderNo || '-'}}</text>
+      </view>
+      <view class="kv-row">
+        <text class="kv-label">班组</text>
+        <text class="kv-val">{{workOrder.laborTeamName || '-'}}</text>
+      </view>
+      <view class="kv-row">
+        <text class="kv-label">工单状态</text>
+        <text class="kv-val st-bold">{{workOrder.statusText || '-'}}</text>
+      </view>
+      <view class="kv-row">
+        <text class="kv-label">创建时间</text>
+        <text class="kv-val">{{workOrder.createTime || '-'}}</text>
+      </view>
+      <!-- 申请按钮：仅待申请(10)状态显示 -->
+      <view wx:if="{{workOrder.status === 10}}" class="apply-bar">
+        <button class="apply-btn" bindtap="onApply">申请工单</button>
+      </view>
+    </view>
+
     <view wx:if="{{tasks.length === 0}}" class="state-card slim">
       <text class="state-text">暂无任务</text>
     </view>

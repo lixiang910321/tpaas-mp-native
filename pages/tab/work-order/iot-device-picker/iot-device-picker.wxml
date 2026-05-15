@@ -28,7 +28,7 @@
     </view>
   </scroll-view>
 
-  <view class="footer" wx:if="{{selectedId}}">
-    <button class="btn-confirm" bindtap="onConfirm">确认选择</button>
+  <view class="footer" wx:if="{{selectedIds.length > 0}}">
+    <button class="btn-confirm" bindtap="onConfirm">确认选择({{selectedIds.length}})</button>
   </view>
 </view>

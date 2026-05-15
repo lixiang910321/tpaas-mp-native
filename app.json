@@ -5,6 +5,7 @@
     "pages/login/select-project/select-project",
     "pages/tab/work-order/index/index",
     "pages/tab/work-order/detail/detail",
+    "pages/tab/work-order/work-order-apply/work-order-apply",
     "pages/tab/work-order/repair-task-list/repair-task-list",
     "pages/tab/work-order/repair-task-detail/repair-task-detail",
     "pages/tab/work-order/repair-task-apply/repair-task-apply",

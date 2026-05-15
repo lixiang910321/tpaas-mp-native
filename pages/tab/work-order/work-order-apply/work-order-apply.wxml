@@ -1,0 +1,96 @@
+<view class="page">
+  <view wx:if="{{loading}}" class="state-card">
+    <text class="state-text">加载中…</text>
+  </view>
+  <view wx:elif="{{error}}" class="state-card err">
+    <text class="state-text">{{error}}</text>
+  </view>
+  <scroll-view wx:else scroll-y class="scroll" :show-scrollbar="{{false}}">
+    <!-- 人员选择 -->
+    <view class="section">
+      <view class="section-title">选择人员</view>
+      <view wx:if="{{teamMembers.length === 0}}" class="empty-tip">暂无可选人员</view>
+      <view wx:else class="member-grid">
+        <view
+          wx:for="{{teamMembers}}"
+          wx:key="laborerId"
+          class="member-item {{item.occupied ? 'member-disabled' : ''}} {{selectedMembers[item.laborerId] ? 'member-selected' : ''}}"
+          bindtap="{{item.occupied ? '' : 'onToggleMember'}}"
+          data-id="{{item.laborerId}}"
+        >
+          <text class="member-name">{{item.laborerName || '-'}}</text>
+          <text wx:if="{{item.professionTypeName}}" class="member-profession">{{item.professionTypeName}}</text>
+          <text wx:if="{{item.occupied}}" class="member-occupied">已占用</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 机械选择 -->
+    <view class="section">
+      <view class="section-title">选择机械</view>
+      <view class="choose-row" bindtap="onSelectMachine">
+        <text wx:if="{{machines.length === 0}}" class="choose-placeholder">请选择机械</text>
+        <text wx:else class="choose-text">已选 {{machines.length}} 台</text>
+        <text class="choose-arrow">›</text>
+      </view>
+      <view wx:if="{{machines.length > 0}}" class="tag-list">
+        <view wx:for="{{machines}}" wx:key="id" class="tag-item">
+          <text class="tag-text">{{item.name}}</text>
+          <text class="tag-remove" bindtap="onDeleteMachine" data-index="{{index}}">×</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 单兵设备选择 -->
+    <view class="section">
+      <view class="section-title">选择单兵设备</view>
+      <view class="choose-row" bindtap="onSelectIotDevice">
+        <text wx:if="{{iotDevices.length === 0}}" class="choose-placeholder">请选择单兵设备</text>
+        <text wx:else class="choose-text">已选 {{iotDevices.length}} 台</text>
+        <text class="choose-arrow">›</text>
+      </view>
+      <view wx:if="{{iotDevices.length > 0}}" class="tag-list">
+        <view wx:for="{{iotDevices}}" wx:key="id" class="tag-item">
+          <text class="tag-text">{{item.name}}</text>
+          <text class="tag-remove" bindtap="onDeleteIotDevice" data-index="{{index}}">×</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 安全交底照片 -->
+    <view class="section">
+      <view class="section-title">安全交底照片 <text class="required">*</text></view>
+      <upload-images
+        fileList="{{briefingFileUrls}}"
+        maxCount="{{6}}"
+        placeholder="上传安全交底照片"
+        bind:change="onBriefingImagesChange"
+      />
+    </view>
+
+    <!-- 申请备注 -->
+    <view class="section">
+      <view class="section-title">申请备注</view>
+      <textarea
+        class="remark-input"
+        placeholder="请输入申请备注（选填）"
+        value="{{applyRemark}}"
+        bindinput="onRemarkInput"
+        maxlength="500"
+        auto-height
+      />
+    </view>
+
+    <!-- 提交按钮 -->
+    <view class="submit-bar">
+      <button
+        class="submit-btn"
+        loading="{{submitting}}"
+        disabled="{{submitting}}"
+        bindtap="onSubmit"
+      >
+        提交申请
+      </button>
+    </view>
+  </scroll-view>
+</view>

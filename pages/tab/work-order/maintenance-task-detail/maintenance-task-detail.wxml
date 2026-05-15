@@ -182,10 +182,11 @@
       </view>
     </view>
 
-    <view wx:if="{{task.status === 30}}" class="action-card">
+    <!-- 申请已统一走工单级流程，隐藏任务级申请按钮 -->
+    <!-- view wx:if="{{task.status === 30}}" class="action-card">
       <button class="btn-primary" bindtap="onApply">去申请执行</button>
-    </view>
-    <view wx:elif="{{task.status === 40 || task.status === 50}}" class="action-card">
+    </view -->
+    <view wx:if="{{task.status === 40 || task.status === 50}}" class="action-card">
       <button class="btn-primary" bindtap="onReport">{{task.status === 50 ? '重新提报' : '去提报'}}</button>
       <button wx:if="{{task.status === 50}}" class="btn-success" bindtap="onComplete" style="margin-top: 12rpx;">完成</button>
     </view>

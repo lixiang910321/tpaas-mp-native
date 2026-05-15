@@ -122,3 +122,53 @@
   color: #7467ef;
   line-height: 1.45;
 }
+
+/* 工单信息卡片 */
+.info-card {
+  background: #ffffff;
+  border-radius: 16rpx;
+  padding: 28rpx;
+  margin-bottom: 28rpx;
+  box-shadow: 0 4rpx 24rpx rgba(0, 0, 0, 0.06);
+  border: 1rpx solid rgba(116, 103, 239, 0.08);
+}
+
+.info-title {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: #000000;
+  margin-bottom: 20rpx;
+  padding-bottom: 16rpx;
+  border-bottom: 1rpx solid #eeeeee;
+}
+
+.st-bold {
+  font-weight: 700;
+  color: #7467ef;
+}
+
+/* 申请按钮区域 */
+.apply-bar {
+  margin-top: 24rpx;
+  padding-top: 20rpx;
+  border-top: 1rpx solid #eeeeee;
+}
+
+.apply-btn {
+  width: 100%;
+  height: 80rpx;
+  line-height: 80rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(90deg, #7467ef, #5a4fdf);
+  color: #ffffff;
+  font-size: 32rpx;
+  font-weight: 600;
+  border-radius: 12rpx;
+  border: none;
+}
+
+.apply-btn::after {
+  border: none;
+}

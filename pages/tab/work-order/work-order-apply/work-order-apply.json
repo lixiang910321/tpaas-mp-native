@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "申请工单",
+  "usingComponents": {
+    "upload-images": "/components/upload-images/upload-images"
+  }
+}
