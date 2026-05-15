@@ -16,6 +16,11 @@ Page({
       planProjectPointId: null,
       planProjectPointName: ''
     },
+    // 计划项点冗余信息
+    areaInfo: { id: null, name: '' },
+    facilityInfo: { id: null, name: '' },
+    diseaseLibraryInfo: { id: null, name: '' },
+    faultTypeInfo: { id: null, name: '' },
     selectedAreaId: null,
     selectedAreaName: '',
     showCategoryPicker: false,
@@ -151,12 +156,8 @@ Page({
 
   onSelectProjectPoint() {
     console.log('病害确认 - 选择项点')
-    console.log('病害确认 - 当前 planProjectPointId:', this.data.form.planProjectPointId)
-    console.log('病害确认 - 当前 planProjectPointName:', this.data.form.planProjectPointName)
     
     const params = []
-    // 传递任务类型：1-维修项点
-    params.push('taskType=1')
     if (this.data.form.planProjectPointId) {
       params.push(`selectedId=${this.data.form.planProjectPointId}`)
       params.push(`selectedName=${encodeURIComponent(this.data.form.planProjectPointName)}`)
@@ -164,12 +165,16 @@ Page({
     const query = params.length > 0 ? `?${params.join('&')}` : ''
     
     wx.navigateTo({
-      url: `/pages/tab/work-order/project-point-picker/project-point-picker${query}`,
+      url: `/pages/tab/work-order/point-select/point-select${query}`,
       events: {
         selectProjectPoint: (data) => {
           this.setData({
             'form.planProjectPointId': data.id,
-            'form.planProjectPointName': data.name
+            'form.planProjectPointName': data.name,
+            areaInfo: data.areaInfo || { id: null, name: '' },
+            facilityInfo: data.facilityInfo || { id: null, name: '' },
+            diseaseLibraryInfo: data.diseaseLibraryInfo || { id: null, name: '' },
+            faultTypeInfo: data.faultTypeInfo || { id: null, name: '' }
           })
         }
       }

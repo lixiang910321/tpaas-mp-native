@@ -49,6 +49,13 @@
           <text class="arrow">›</text>
         </view>
       </view>
+      <!-- 冗余信息展示 -->
+      <view wx:if="{{areaInfo.name || facilityInfo.name || diseaseLibraryInfo.name || faultTypeInfo.name}}" class="info-extras">
+        <text wx:if="{{areaInfo.name}}" class="extra-text">区域：{{areaInfo.name}}</text>
+        <text wx:if="{{facilityInfo.name}}" class="extra-text"> | 设施：{{facilityInfo.name}}</text>
+        <text wx:if="{{diseaseLibraryInfo.name}}" class="extra-text"> | 病害库：{{diseaseLibraryInfo.name}}</text>
+        <text wx:if="{{faultTypeInfo.name}}" class="extra-text"> | 故障类型：{{faultTypeInfo.name}}</text>
+      </view>
     </view>
 
     <!-- 施工类别 -->

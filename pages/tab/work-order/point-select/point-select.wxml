@@ -1,0 +1,63 @@
+<view class="page">
+  <view class="header">
+    <text class="title">选择计划项点</text>
+  </view>
+
+  <!-- 步骤列表 -->
+  <view class="step-list">
+    <!-- ① 区域 -->
+    <view class="step-item" bindtap="onStep1">
+      <view class="step-num">①</view>
+      <view class="step-body">
+        <text class="step-label">区域</text>
+        <text class="step-value {{selectedArea.id ? '' : 'placeholder'}}">
+          {{selectedArea.id ? selectedArea.name : '请选择区域'}}
+        </text>
+      </view>
+      <text class="step-arrow">›</text>
+    </view>
+
+    <!-- ② 设施 -->
+    <view class="step-item {{stepStatus[0] ? '' : 'disabled'}}" bindtap="onStep2">
+      <view class="step-num">②</view>
+      <view class="step-body">
+        <text class="step-label">设施</text>
+        <text class="step-value {{selectedFacility.id ? '' : 'placeholder'}}">
+          {{selectedFacility.id ? selectedFacility.name : stepStatus[0] ? '请选择设施' : '需先选区域'}}
+        </text>
+      </view>
+      <text class="step-arrow">›</text>
+    </view>
+
+    <!-- ③ 故障类型 -->
+    <view class="step-item {{stepStatus[1] ? '' : 'disabled'}}" bindtap="onStep3">
+      <view class="step-num">③</view>
+      <view class="step-body">
+        <text class="step-label">故障类型</text>
+        <text class="step-value {{selectedFaultType.faultTypeId ? '' : 'placeholder'}}">
+          {{selectedFaultType.faultTypeId ? selectedFaultType.faultTypeName : stepStatus[1] ? '请选择故障类型' : '需先选设施'}}
+        </text>
+      </view>
+      <text class="step-arrow">›</text>
+    </view>
+
+    <!-- ④ 项点 -->
+    <view class="step-item {{stepStatus[2] ? '' : 'disabled'}}" bindtap="onStep4">
+      <view class="step-num">④</view>
+      <view class="step-body">
+        <text class="step-label">项点</text>
+        <text class="step-value {{selectedPoint.id ? '' : 'placeholder'}}">
+          {{selectedPoint.id ? selectedPoint.name : stepStatus[2] ? '请选择项点' : '需先选故障类型'}}
+        </text>
+      </view>
+      <text class="step-arrow">›</text>
+    </view>
+  </view>
+
+  <!-- 底部确认 -->
+  <view class="footer">
+    <button class="btn-confirm" disabled="{{!selectedPoint.id}}" bindtap="onConfirm">
+      {{selectedPoint.id ? '确认' : '请完成所有步骤'}}
+    </button>
+  </view>
+</view>

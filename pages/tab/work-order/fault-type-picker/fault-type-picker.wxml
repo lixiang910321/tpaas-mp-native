@@ -1,0 +1,37 @@
+<view class="page">
+  <!-- 病害库信息 -->
+  <view wx:if="{{diseaseLibraryName}}" class="lib-info">
+    <text class="lib-label">病害库：</text>
+    <text class="lib-name">{{diseaseLibraryName}}</text>
+  </view>
+
+  <scroll-view wx:if="{{!loading || list.length > 0}}" scroll-y class="scroll">
+    <view wx:if="{{loading}}" class="state-card">
+      <text class="state-text">加载中…</text>
+    </view>
+
+    <view wx:elif="{{list.length === 0}}" class="state-card">
+      <text class="state-text">该病害库暂无故障类型</text>
+    </view>
+
+    <view class="list">
+      <view wx:for="{{list}}" wx:key="faultTypeId" class="item" bindtap="onSelect" data-item="{{item}}">
+        <view class="item-icon">
+          <text class="icon-text">⚠️</text>
+        </view>
+        <view class="item-info">
+          <text class="item-name">{{item.faultTypeName || '-'}}</text>
+        </view>
+        <view class="item-radio">
+          <view class="radio {{selectedFaultTypeId === item.faultTypeId ? 'radio-checked' : ''}}">
+            <view wx:if="{{selectedFaultTypeId === item.faultTypeId}}" class="radio-dot"></view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </scroll-view>
+
+  <view class="footer" wx:if="{{selectedFaultTypeId}}">
+    <button class="btn-confirm" bindtap="onConfirm">确认选择</button>
+  </view>
+</view>

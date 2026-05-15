@@ -6,6 +6,8 @@ Page({
     selectedId: null,
     selectedName: '',
     taskType: null, // 1-维修项点 2-维保项点，由调用方显式传入
+    facilityId: null, // 设施id筛选
+    faultTypeId: null, // 故障类型id筛选
     // 分页
     pageIndex: 1,
     pageSize: 10,
@@ -23,6 +25,12 @@ Page({
         selectedId: String(options.selectedId),
         selectedName: options.selectedName || ''
       })
+    }
+    if (options.facilityId) {
+      this.setData({ facilityId: options.facilityId })
+    }
+    if (options.faultTypeId) {
+      this.setData({ faultTypeId: options.faultTypeId })
     }
 
     this.setData({ taskType })
@@ -69,7 +77,9 @@ Page({
       eventChannel.emit('selectProjectPoint', {
         id: selectedPoint.id,
         name: selectedPoint.name,
-        projectPointType: selectedPoint.projectPointType
+        projectPointType: selectedPoint.projectPointType,
+        diseaseLibraryId: selectedPoint.diseaseLibraryId,
+        diseaseLibraryName: selectedPoint.diseaseLibraryName
       })
     }
 
@@ -94,6 +104,12 @@ Page({
     }
     if (this.data.taskType) {
       params.type = this.data.taskType
+    }
+    if (this.data.facilityId) {
+      params.facilityId = this.data.facilityId
+    }
+    if (this.data.faultTypeId) {
+      params.faultTypeId = this.data.faultTypeId
     }
 
     const res = await app.mpGetAuth('/mp/refactor/projectPoint/page', params)
