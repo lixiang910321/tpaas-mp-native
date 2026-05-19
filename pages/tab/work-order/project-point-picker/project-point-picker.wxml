@@ -6,6 +6,33 @@
     </view>
   </view>
 
+  <!-- 故障类型筛选 -->
+  <view class="filter-bar">
+    <view class="filter-item" bindtap="onShowFaultTypePicker">
+      <text class="filter-label">故障类型</text>
+      <text class="filter-value {{selectedFaultTypeName ? '' : 'filter-placeholder'}}">{{selectedFaultTypeName || '全部'}}</text>
+      <text class="filter-arrow">▼</text>
+    </view>
+    <view wx:if="{{selectedFaultTypeId}}" class="filter-clear" bindtap="onClearFaultType">
+      <text>✕</text>
+    </view>
+  </view>
+
+  <!-- 故障类型下拉遮罩 -->
+  <view wx:if="{{showFaultTypePicker}}" class="picker-overlay" bindtap="onHideFaultTypePicker">
+    <view class="picker-content" catchtap="">
+      <view class="picker-header">
+        <text class="picker-title">选择故障类型</text>
+        <text class="picker-close" bindtap="onHideFaultTypePicker">✕</text>
+      </view>
+      <scroll-view scroll-y class="picker-list">
+        <view wx:for="{{faultTypes}}" wx:key="faultTypeId" class="picker-item {{selectedFaultTypeId === item.faultTypeId ? 'picker-item-active' : ''}}" bindtap="onSelectFaultType" data-item="{{item}}">
+          <text>{{item.faultTypeName}}</text>
+        </view>
+      </scroll-view>
+    </view>
+  </view>
+
   <scroll-view wx:if="{{!loading || list.length > 0}}" scroll-y class="scroll" bindscrolltolower="loadMore" lower-threshold="100">
     <view wx:if="{{loading && list.length === 0}}" class="state-card">
       <text class="state-text">加载中…</text>

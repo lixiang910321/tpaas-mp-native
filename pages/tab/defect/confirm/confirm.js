@@ -14,7 +14,23 @@ Page({
       areaIds: '',          // JSON: [根id, 父id, 选中id]
       areaNames: '',        // JSON: [根名, 父名, 选中名]
       planProjectPointId: null,
-      planProjectPointName: ''
+      planProjectPointName: '',
+      // 计划侧：模板归属（大类）
+      planTemplateOwnerId: '',
+      planTemplateOwnerValue: '',
+      planTemplateOwnerName: '',
+      // 计划侧：模板（中类）
+      planTemplateId: '',
+      planTemplateCode: '',
+      planTemplateName: '',
+      // 计划侧：设施分类（多级分类）
+      planCategoryId: '',
+      planCategoryName: '',
+      planCategoryIds: [],
+      planCategoryNames: [],
+      // 计划设施
+      planFacilityId: '',
+      planFacilityName: ''
     },
     // 计划项点冗余信息
     areaInfo: { id: null, name: '' },
@@ -154,18 +170,84 @@ Page({
     wx.navigateBack()
   },
 
+  // === 设施分类选择（跳转 facility-category-picker） ===
+  onSelectFacilityCategory() {
+    wx.navigateTo({
+      url: '/pages/tab/work-order/facility-category-picker/facility-category-picker',
+      events: {
+        selectFacilityCategory: (data) => {
+          console.log('病害确认 - 选择设施分类结果:', data)
+          this.setData({
+            // 大类（模板归属）
+            'form.planTemplateOwnerId': data.templateOwnerId || '',
+            'form.planTemplateOwnerValue': data.templateOwnerValue || '',
+            'form.planTemplateOwnerName': data.templateOwnerName || '',
+            // 中类（模板）
+            'form.planTemplateId': data.templateId || '',
+            'form.planTemplateCode': data.templateCode || '',
+            'form.planTemplateName': data.templateName || '',
+            // 多级分类
+            'form.planCategoryId': data.categoryId || '',
+            'form.planCategoryName': data.categoryName || '',
+            'form.planCategoryIds': data.categoryIds || [],
+            'form.planCategoryNames': data.categoryNames || [],
+            // 设施分类变更 → 清空计划设施 + 计划项点
+            'form.planFacilityId': '',
+            'form.planFacilityName': '',
+            'form.planProjectPointId': null,
+            'form.planProjectPointName': '',
+            areaInfo: { id: null, name: '' },
+            facilityInfo: { id: null, name: '' },
+            diseaseLibraryInfo: { id: null, name: '' },
+            faultTypeInfo: { id: null, name: '' }
+          })
+        }
+      }
+    })
+  },
+
+  // === 计划设施选择（跳转 facility-picker，传入 categoryId） ===
+  onSelectPlanFacility() {
+    const categoryId = this.data.form.planCategoryId
+    if (!categoryId) {
+      wx.showToast({ title: '请先选择设施分类', icon: 'none' })
+      return
+    }
+    const params = [`categoryId=${categoryId}`]
+    if (this.data.form.planFacilityId) {
+      params.push(`selectedId=${this.data.form.planFacilityId}`)
+      params.push(`selectedName=${encodeURIComponent(this.data.form.planFacilityName)}`)
+    }
+    wx.navigateTo({
+      url: `/pages/tab/work-order/facility-picker/facility-picker?${params.join('&')}`,
+      events: {
+        selectFacility: (data) => {
+          this.setData({
+            'form.planFacilityId': data.id,
+            'form.planFacilityName': data.name
+          })
+        }
+      }
+    })
+  },
+
   onSelectProjectPoint() {
     console.log('病害确认 - 选择项点')
+    const categoryId = this.data.form.planCategoryId
+    if (!categoryId) {
+      wx.showToast({ title: '请先选择设施分类', icon: 'none' })
+      return
+    }
     
-    const params = []
+    const params = [`categoryId=${categoryId}`, 'taskType=1']
     if (this.data.form.planProjectPointId) {
       params.push(`selectedId=${this.data.form.planProjectPointId}`)
       params.push(`selectedName=${encodeURIComponent(this.data.form.planProjectPointName)}`)
     }
-    const query = params.length > 0 ? `?${params.join('&')}` : ''
+    const query = `?${params.join('&')}`
     
     wx.navigateTo({
-      url: `/pages/tab/work-order/point-select/point-select${query}`,
+      url: `/pages/tab/work-order/project-point-picker/project-point-picker${query}`,
       events: {
         selectProjectPoint: (data) => {
           this.setData({
@@ -225,6 +307,10 @@ Page({
       wx.showToast({ title: '请选择区域', icon: 'none' })
       return
     }
+    if (!this.data.form.planCategoryId) {
+      wx.showToast({ title: '请选择设施分类', icon: 'none' })
+      return
+    }
     if (!this.data.form.planProjectPointId) {
       wx.showToast({ title: '请选择计划项点', icon: 'none' })
       return
@@ -253,7 +339,23 @@ Page({
         constructionCategoryName: this.data.form.constructionCategoryName,
         confirmResult: this.data.form.confirmResult,
         beforePhotoUrls: this.data.form.beforePhotoUrls,
-        confirmRemark: this.data.form.confirmRemark
+        confirmRemark: this.data.form.confirmRemark,
+        // 计划侧：模板归属（大类）
+        planTemplateOwnerId: this.data.form.planTemplateOwnerId || null,
+        planTemplateOwnerValue: this.data.form.planTemplateOwnerValue || null,
+        planTemplateOwnerName: this.data.form.planTemplateOwnerName || null,
+        // 计划侧：模板（中类）
+        planTemplateId: this.data.form.planTemplateId || null,
+        planTemplateCode: this.data.form.planTemplateCode || null,
+        planTemplateName: this.data.form.planTemplateName || null,
+        // 计划侧：设施分类（多级分类）
+        planCategoryId: this.data.form.planCategoryId || null,
+        planCategoryName: this.data.form.planCategoryName || null,
+        planCategoryIds: this.data.form.planCategoryIds.length > 0 ? JSON.stringify(this.data.form.planCategoryIds) : null,
+        planCategoryNames: this.data.form.planCategoryNames.length > 0 ? JSON.stringify(this.data.form.planCategoryNames) : null,
+        // 计划设施
+        planFacilityId: this.data.form.planFacilityId || null,
+        planFacilityName: this.data.form.planFacilityName || null
       })
 
       if (res && Number(res.isSuccess) === 1) {

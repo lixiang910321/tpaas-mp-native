@@ -1,0 +1,130 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: #f5f5f5;
+}
+
+/* 面包屑 */
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  background: #fff;
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.breadcrumb-item {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.back-arrow {
+  font-size: 16px;
+  color: #1989fa;
+  margin-right: 4px;
+}
+
+.back-text {
+  font-size: 14px;
+  color: #1989fa;
+}
+
+.breadcrumb-path {
+  display: flex;
+  align-items: center;
+  margin-left: 8px;
+  overflow: hidden;
+}
+
+.path-sep {
+  color: #999;
+  margin: 0 4px;
+  font-size: 12px;
+}
+
+.path-item {
+  font-size: 13px;
+  color: #666;
+  white-space: nowrap;
+}
+
+/* 层级标题 */
+.level-title {
+  padding: 12px 16px;
+  font-size: 15px;
+  color: #333;
+  font-weight: 500;
+  background: #fafafa;
+}
+
+/* 列表 */
+.list {
+  flex: 1;
+  background: #fff;
+}
+
+.loading, .empty {
+  padding: 40px;
+  text-align: center;
+  color: #999;
+  font-size: 14px;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  padding: 14px 16px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.item:active {
+  background: #f5f5f5;
+}
+
+.item-selected {
+  background: #e8f4ff;
+}
+
+.item-name {
+  flex: 1;
+  font-size: 15px;
+  color: #333;
+}
+
+.item-code {
+  font-size: 12px;
+  color: #999;
+  margin-left: 8px;
+}
+
+.item-arrow {
+  font-size: 14px;
+  color: #ccc;
+  margin-left: 8px;
+}
+
+/* 底部 */
+.footer {
+  padding: 12px 16px;
+  background: #fff;
+  border-top: 1px solid #e5e5e5;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.selected-info {
+  font-size: 14px;
+  color: #333;
+}
+
+.confirm-btn {
+  background: #1989fa;
+  color: #fff;
+  font-size: 15px;
+  padding: 8px 24px;
+  border-radius: 4px;
+  border: none;
+}

@@ -1,3 +1,13 @@
+function parseJsonArray(val) {
+  if (!val) return []
+  try {
+    const parsed = typeof val === 'string' ? JSON.parse(val) : val
+    return Array.isArray(parsed) ? parsed : []
+  } catch (e) {
+    return []
+  }
+}
+
 Page({
   data: {
     loading: true,
@@ -16,7 +26,23 @@ Page({
       repairLaborers: [],
       materialLines: [],
       completionPhotos: [],
-      submitRemark: ''
+      submitRemark: '',
+      // 实际侧：模板归属（大类）
+      actualTemplateOwnerId: '',
+      actualTemplateOwnerValue: '',
+      actualTemplateOwnerName: '',
+      // 实际侧：模板（中类）
+      actualTemplateId: '',
+      actualTemplateCode: '',
+      actualTemplateName: '',
+      // 实际侧：设施分类（多级分类）
+      actualCategoryId: '',
+      actualCategoryName: '',
+      actualCategoryIds: [],
+      actualCategoryNames: [],
+      // 实际设施
+      actualFacilityId: '',
+      actualFacilityName: ''
     },
     repairResultOptions: [],
     constructionCategoryOptions: [
@@ -60,13 +86,71 @@ Page({
 
   // 实际项点选择
   onSelectActualProjectPoint() {
+    const categoryId = this.data.form.actualCategoryId
     wx.navigateTo({
-      url: `/pages/tab/work-order/project-point-picker/project-point-picker?taskType=1&selectedId=${this.data.form.actualProjectPointId || ''}`,
+      url: `/pages/tab/work-order/project-point-picker/project-point-picker?taskType=1&categoryId=${categoryId || ''}&selectedId=${this.data.form.actualProjectPointId || ''}`,
       events: {
         selectProjectPoint: (data) => {
           this.setData({
             'form.actualProjectPointId': data.id,
             'form.actualProjectPointName': data.name
+          })
+        }
+      }
+    })
+  },
+
+  // 实际设施分类选择
+  onSelectActualFacilityCategory() {
+    wx.navigateTo({
+      url: '/pages/tab/work-order/facility-category-picker/facility-category-picker',
+      events: {
+        selectFacilityCategory: (data) => {
+          console.log('维修提报 - 选择实际设施分类结果:', data)
+          this.setData({
+            // 大类（模板归属）
+            'form.actualTemplateOwnerId': data.templateOwnerId || '',
+            'form.actualTemplateOwnerValue': data.templateOwnerValue || '',
+            'form.actualTemplateOwnerName': data.templateOwnerName || '',
+            // 中类（模板）
+            'form.actualTemplateId': data.templateId || '',
+            'form.actualTemplateCode': data.templateCode || '',
+            'form.actualTemplateName': data.templateName || '',
+            // 多级分类
+            'form.actualCategoryId': data.categoryId || '',
+            'form.actualCategoryName': data.categoryName || '',
+            'form.actualCategoryIds': data.categoryIds || [],
+            'form.actualCategoryNames': data.categoryNames || [],
+            // 设施分类变更 → 清空实际设施 + 实际项点
+            'form.actualFacilityId': '',
+            'form.actualFacilityName': '',
+            'form.actualProjectPointId': null,
+            'form.actualProjectPointName': ''
+          })
+        }
+      }
+    })
+  },
+
+  // 实际设施选择
+  onSelectActualFacility() {
+    const categoryId = this.data.form.actualCategoryId
+    if (!categoryId) {
+      wx.showToast({ title: '请先选择实际设施分类', icon: 'none' })
+      return
+    }
+    const params = [`categoryId=${categoryId}`]
+    if (this.data.form.actualFacilityId) {
+      params.push(`selectedId=${this.data.form.actualFacilityId}`)
+      params.push(`selectedName=${encodeURIComponent(this.data.form.actualFacilityName)}`)
+    }
+    wx.navigateTo({
+      url: `/pages/tab/work-order/facility-picker/facility-picker?${params.join('&')}`,
+      events: {
+        selectFacility: (data) => {
+          this.setData({
+            'form.actualFacilityId': data.id,
+            'form.actualFacilityName': data.name
           })
         }
       }
@@ -206,7 +290,20 @@ Page({
       repairLaborers: [],
       materialLines: [],
       completionPhotos: [],
-      submitRemark: ''
+      submitRemark: '',
+      // 实际侧：默认带入计划值
+      actualTemplateOwnerId: '',
+      actualTemplateOwnerValue: '',
+      actualTemplateOwnerName: '',
+      actualTemplateId: '',
+      actualTemplateCode: '',
+      actualTemplateName: '',
+      actualCategoryId: '',
+      actualCategoryName: '',
+      actualCategoryIds: [],
+      actualCategoryNames: [],
+      actualFacilityId: '',
+      actualFacilityName: ''
     }
 
     // 回显维修结果 (10=已修复, 20=未修复)
@@ -227,10 +324,55 @@ Page({
       formData.constructionCategoryName = task.constructionCategoryName
     }
 
-    // 回显实际项点（从计划项点获取）
-    if (task.planProjectPointId) {
+    // 回显实际项点（默认从计划项点获取，优先使用已保存的实际项点）
+    if (task.actualProjectPointId) {
+      formData.actualProjectPointId = task.actualProjectPointId
+      formData.actualProjectPointName = task.actualProjectPointName || ''
+    } else if (task.planProjectPointId) {
       formData.actualProjectPointId = task.planProjectPointId
       formData.actualProjectPointName = task.planProjectPointName
+    }
+
+    // 回显实际设施分类（默认从计划值获取，优先使用已保存的实际值）
+    // 大类（模板归属）
+    if (task.actualTemplateOwnerId) {
+      formData.actualTemplateOwnerId = task.actualTemplateOwnerId
+      formData.actualTemplateOwnerValue = task.actualTemplateOwnerValue || ''
+      formData.actualTemplateOwnerName = task.actualTemplateOwnerName || ''
+    } else if (task.planTemplateOwnerId) {
+      formData.actualTemplateOwnerId = task.planTemplateOwnerId
+      formData.actualTemplateOwnerValue = task.planTemplateOwnerValue || ''
+      formData.actualTemplateOwnerName = task.planTemplateOwnerName || ''
+    }
+    // 中类（模板）
+    if (task.actualTemplateId) {
+      formData.actualTemplateId = task.actualTemplateId
+      formData.actualTemplateCode = task.actualTemplateCode || ''
+      formData.actualTemplateName = task.actualTemplateName || ''
+    } else if (task.planTemplateId) {
+      formData.actualTemplateId = task.planTemplateId
+      formData.actualTemplateCode = task.planTemplateCode || ''
+      formData.actualTemplateName = task.planTemplateName || ''
+    }
+    // 多级分类
+    if (task.actualCategoryId) {
+      formData.actualCategoryId = task.actualCategoryId
+      formData.actualCategoryName = task.actualCategoryName || ''
+      formData.actualCategoryIds = parseJsonArray(task.actualCategoryIds)
+      formData.actualCategoryNames = parseJsonArray(task.actualCategoryNames)
+    } else if (task.planCategoryId) {
+      formData.actualCategoryId = task.planCategoryId
+      formData.actualCategoryName = task.planCategoryName || ''
+      formData.actualCategoryIds = parseJsonArray(task.planCategoryIds)
+      formData.actualCategoryNames = parseJsonArray(task.planCategoryNames)
+    }
+    // 实际设施
+    if (task.actualFacilityId) {
+      formData.actualFacilityId = task.actualFacilityId
+      formData.actualFacilityName = task.actualFacilityName || ''
+    } else if (task.planFacilityId) {
+      formData.actualFacilityId = task.planFacilityId
+      formData.actualFacilityName = task.planFacilityName || ''
     }
 
     // 回显完工图片 (后端字段名: completionPhotoUrls)
@@ -327,7 +469,23 @@ Page({
       repairLaborers: repairLaborers,
       materials: materials,
       completionPhotos: this.data.form.completionPhotos,
-      submitRemark: this.data.form.submitRemark
+      submitRemark: this.data.form.submitRemark,
+      // 实际侧：模板归属（大类）
+      actualTemplateOwnerId: this.data.form.actualTemplateOwnerId || null,
+      actualTemplateOwnerValue: this.data.form.actualTemplateOwnerValue || null,
+      actualTemplateOwnerName: this.data.form.actualTemplateOwnerName || null,
+      // 实际侧：模板（中类）
+      actualTemplateId: this.data.form.actualTemplateId || null,
+      actualTemplateCode: this.data.form.actualTemplateCode || null,
+      actualTemplateName: this.data.form.actualTemplateName || null,
+      // 实际侧：设施分类（多级分类）
+      actualCategoryId: this.data.form.actualCategoryId || null,
+      actualCategoryName: this.data.form.actualCategoryName || null,
+      actualCategoryIds: this.data.form.actualCategoryIds.length > 0 ? JSON.stringify(this.data.form.actualCategoryIds) : null,
+      actualCategoryNames: this.data.form.actualCategoryNames.length > 0 ? JSON.stringify(this.data.form.actualCategoryNames) : null,
+      // 实际设施
+      actualFacilityId: this.data.form.actualFacilityId || null,
+      actualFacilityName: this.data.form.actualFacilityName || null
     })
     
     if (res && Number(res.isSuccess) === 1) {

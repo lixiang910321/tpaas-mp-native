@@ -7,7 +7,13 @@ Page({
     selectedName: '',
     taskType: null, // 1-维修项点 2-维保项点，由调用方显式传入
     facilityId: null, // 设施id筛选
+    categoryId: null, // 设施分类末级id筛选
     faultTypeId: null, // 故障类型id筛选
+    // 故障类型下拉
+    faultTypes: [],
+    showFaultTypePicker: false,
+    selectedFaultTypeId: null,
+    selectedFaultTypeName: '',
     // 分页
     pageIndex: 1,
     pageSize: 10,
@@ -29,11 +35,18 @@ Page({
     if (options.facilityId) {
       this.setData({ facilityId: options.facilityId })
     }
+    if (options.categoryId) {
+      this.setData({ categoryId: options.categoryId })
+    }
     if (options.faultTypeId) {
-      this.setData({ faultTypeId: options.faultTypeId })
+      this.setData({
+        faultTypeId: options.faultTypeId,
+        selectedFaultTypeId: options.faultTypeId
+      })
     }
 
     this.setData({ taskType })
+    this.loadFaultTypes()
     this.loadList(true)
   },
 
@@ -78,12 +91,59 @@ Page({
         id: selectedPoint.id,
         name: selectedPoint.name,
         projectPointType: selectedPoint.projectPointType,
+        categoryId: selectedPoint.categoryId,
+        categoryName: selectedPoint.categoryName,
+        categoryIds: selectedPoint.categoryIds,
+        categoryNames: selectedPoint.categoryNames,
         diseaseLibraryId: selectedPoint.diseaseLibraryId,
-        diseaseLibraryName: selectedPoint.diseaseLibraryName
+        diseaseLibraryName: selectedPoint.diseaseLibraryName,
+        faultTypeId: selectedPoint.faultTypeId,
+        faultTypeName: selectedPoint.faultTypeName
       })
     }
 
     wx.navigateBack()
+  },
+
+  // ===== 故障类型下拉 =====
+  async loadFaultTypes() {
+    try {
+      const app = getApp()
+      const res = await app.mpGetAuth('/mp/refactor/projectPoint/faultTypes')
+      if (res && Number(res.isSuccess) === 1 && res.result) {
+        this.setData({ faultTypes: res.result })
+      }
+    } catch (e) {
+      // 忽略
+    }
+  },
+
+  onShowFaultTypePicker() {
+    this.setData({ showFaultTypePicker: true })
+  },
+
+  onHideFaultTypePicker() {
+    this.setData({ showFaultTypePicker: false })
+  },
+
+  onSelectFaultType(e) {
+    const item = e.currentTarget.dataset.item
+    this.setData({
+      selectedFaultTypeId: item.faultTypeId,
+      selectedFaultTypeName: item.faultTypeName,
+      faultTypeId: item.faultTypeId,
+      showFaultTypePicker: false
+    })
+    this.loadList(true)
+  },
+
+  onClearFaultType() {
+    this.setData({
+      selectedFaultTypeId: null,
+      selectedFaultTypeName: '',
+      faultTypeId: null
+    })
+    this.loadList(true)
   },
 
   async loadList(reset) {
@@ -96,8 +156,8 @@ Page({
     this.setData({ loading: true })
     const app = getApp()
     const params = {
-      pageIndex: this.data.pageIndex,
-      pageSize: this.data.pageSize
+      current: this.data.pageIndex,
+      size: this.data.pageSize
     }
     if (this.data.keyword) {
       params.keyword = this.data.keyword
@@ -107,6 +167,9 @@ Page({
     }
     if (this.data.facilityId) {
       params.facilityId = this.data.facilityId
+    }
+    if (this.data.categoryId) {
+      params.categoryId = this.data.categoryId
     }
     if (this.data.faultTypeId) {
       params.faultTypeId = this.data.faultTypeId

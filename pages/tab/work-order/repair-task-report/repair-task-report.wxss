@@ -293,3 +293,19 @@
 .btn-default::after {
   border: none;
 }
+
+/* 计划/冗余信息展示 */
+.info-extras {
+  margin-top: 16rpx;
+  padding-top: 12rpx;
+  border-top: 1rpx solid #f0f0f0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4rpx 8rpx;
+}
+
+.extra-text {
+  font-size: 24rpx;
+  color: #969799;
+  line-height: 1.6;
+}

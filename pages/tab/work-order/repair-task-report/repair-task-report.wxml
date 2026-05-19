@@ -69,6 +69,40 @@
         </view>
       </view>
 
+      <!-- 实际设施分类 -->
+      <view class="section">
+        <text class="section-title">实际设施分类</text>
+        <view class="form-item" bindtap="onSelectActualFacilityCategory">
+          <text class="form-label">设施分类</text>
+          <view class="picker-value">
+            <text wx:if="{{form.actualTemplateOwnerName}}" class="value-text">{{form.actualTemplateOwnerName}} / {{form.actualTemplateName}} / {{form.actualCategoryName}}</text>
+            <text wx:else class="placeholder-text">选择实际设施分类</text>
+            <text class="arrow">›</text>
+          </view>
+        </view>
+        <!-- 计划设施分类原文展示 -->
+        <view wx:if="{{task.planTemplateOwnerName}}" class="info-extras">
+          <text class="extra-text">计划：{{task.planTemplateOwnerName}} / {{task.planTemplateName}} / {{task.planCategoryName}}</text>
+        </view>
+      </view>
+
+      <!-- 实际设施 -->
+      <view class="section">
+        <text class="section-title">实际设施</text>
+        <view class="form-item" bindtap="onSelectActualFacility">
+          <text class="form-label">设施</text>
+          <view class="picker-value">
+            <text wx:if="{{form.actualFacilityName}}" class="value-text">{{form.actualFacilityName}}</text>
+            <text wx:else class="placeholder-text">选择实际设施</text>
+            <text class="arrow">›</text>
+          </view>
+        </view>
+        <!-- 计划设施原文展示 -->
+        <view wx:if="{{task.planFacilityName}}" class="info-extras">
+          <text class="extra-text">计划设施：{{task.planFacilityName}}</text>
+        </view>
+      </view>
+
       <!-- 实际项点 -->
       <view class="section">
         <text class="section-title">实际项点</text>
@@ -79,6 +113,10 @@
             <text wx:else class="placeholder-text">请选择实际项点</text>
             <text class="arrow">›</text>
           </view>
+        </view>
+        <!-- 计划项点原文展示 -->
+        <view wx:if="{{task.planProjectPointName}}" class="info-extras">
+          <text class="extra-text">计划项点：{{task.planProjectPointName}}</text>
         </view>
       </view>
 

@@ -45,8 +45,6 @@
 
   <!-- 底部确认 -->
   <view class="footer">
-    <button class="btn-confirm" disabled="{{!selectedArea.id}}" bindtap="onConfirm">
-      {{selectedArea.id ? '确认选择：' + selectedArea.name : '请选择区域'}}
-    </button>
+    <button class="btn-confirm" disabled="{{!selectedArea.id}}" bindtap="onConfirm">确认</button>
   </view>
 </view>

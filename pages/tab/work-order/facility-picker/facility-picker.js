@@ -6,6 +6,7 @@ Page({
     selectedId: null,
     selectedName: '',
     areaId: null,
+    categoryId: null,
     // 分页
     pageIndex: 1,
     pageSize: 10,
@@ -21,6 +22,9 @@ Page({
     }
     if (options.areaId) {
       this.setData({ areaId: options.areaId })
+    }
+    if (options.categoryId) {
+      this.setData({ categoryId: options.categoryId })
     }
     this.loadList(true)
   },
@@ -89,6 +93,9 @@ Page({
     }
     if (this.data.areaId) {
       params.areaId = this.data.areaId
+    }
+    if (this.data.categoryId) {
+      params.categoryId = this.data.categoryId
     }
 
     const res = await app.mpGetAuth('/mp/facility/list', params)

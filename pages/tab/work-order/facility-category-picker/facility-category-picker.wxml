@@ -1,0 +1,48 @@
+<view class="page">
+  <!-- 面包屑导航 -->
+  <view class="breadcrumb">
+    <view class="breadcrumb-item" bindtap="onBackLevel">
+      <text class="back-arrow">←</text>
+      <text class="back-text">返回上一级</text>
+    </view>
+    <view class="breadcrumb-path">
+      <block wx:for="{{levelStack}}" wx:key="level">
+        <text class="path-sep">/</text>
+        <text class="path-item">{{item.level === 1 ? item.selectedItem.value : item.selectedItem.name}}</text>
+      </block>
+    </view>
+  </view>
+
+  <!-- 当前层级标题 -->
+  <view class="level-title">
+    <text wx:if="{{currentLevel === 1}}">选择大类（模板归属）</text>
+    <text wx:elif="{{currentLevel === 2}}">选择中类（模板）</text>
+    <text wx:else>选择设施分类（第{{currentLevel}}级）</text>
+  </view>
+
+  <!-- 列表 -->
+  <scroll-view class="list" scroll-y>
+    <view wx:if="{{loading}}" class="loading">加载中...</view>
+    <block wx:else>
+      <view wx:if="{{items.length === 0}}" class="empty">暂无数据</view>
+      <view
+        wx:for="{{items}}"
+        wx:key="id"
+        class="item {{(currentLevel === 1 && item.id === selectedTemplateOwner.id) || (currentLevel === 2 && item.id === selectedTemplate.id) || (currentLevel >= 3 && item.id === selectedCategoryId) ? 'item-selected' : ''}}"
+        data-item="{{item}}"
+        bindtap="{{currentLevel === 1 ? 'onSelectLevel1' : (currentLevel === 2 ? 'onSelectLevel2' : 'onSelectCategory')}}"
+      >
+        <text class="item-name">{{currentLevel === 1 ? item.value : item.name}}</text>
+        <text class="item-arrow">></text>
+      </view>
+    </block>
+  </scroll-view>
+
+  <!-- 底部确认按钮 -->
+  <view class="footer" wx:if="{{canConfirm}}">
+    <view class="selected-info" wx:if="{{selectedCategoryName}}">
+      已选: {{selectedCategoryName}}
+    </view>
+    <button class="confirm-btn" bindtap="onConfirm">确认</button>
+  </view>
+</view>
