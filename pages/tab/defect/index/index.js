@@ -3,6 +3,7 @@ Page({
   data: {
     list: [],
     loading: false,
+    refreshing: false,
     hasMore: true,
     pageIndex: 1,
     pageSize: 10,
@@ -27,9 +28,9 @@ Page({
   },
 
   onPullDownRefresh() {
-    this.setData({ pageIndex: 1, hasMore: true, list: [] })
-    this.loadData().then(() => {
-      wx.stopPullDownRefresh()
+    this.setData({ pageIndex: 1, hasMore: true, list: [], refreshing: true })
+    this.loadData().finally(() => {
+      this.setData({ refreshing: false })
     })
   },
 

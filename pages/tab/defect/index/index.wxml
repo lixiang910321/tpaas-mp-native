@@ -1,6 +1,10 @@
 <view class="page">
   <!-- 列表 -->
-  <scroll-view scroll-y class="list" bindscrolltolower="loadMore" lower-threshold="100">
+  <scroll-view scroll-y class="list" 
+    refresher-enabled="{{true}}" 
+    refresher-triggered="{{refreshing}}" 
+    bindrefresherrefresh="onPullDownRefresh"
+    bindscrolltolower="loadMore" lower-threshold="100">
     <view wx:if="{{loading && list.length === 0}}" class="loading">加载中...</view>
     <view wx:elif="{{!loading && list.length === 0}}" class="empty">暂无数据</view>
     <view wx:for="{{list}}" wx:key="id" class="item">
