@@ -75,20 +75,27 @@ Page({
       setTimeout(() => wx.navigateBack(), 1500)
       return
     }
-    const app = getApp()
-    const res = await app.mpGetAuth(`/mp/maintenanceTask/detail?id=${encodeURIComponent(taskId)}`)
-    if (res && Number(res.isSuccess) === 1 && res.result) {
-      const task = res.result
-      
-      // 回显上一次的提报数据
-      const formData = this.buildReportFormData(task)
-      
-      this.setData({ 
-        task: task,
-        loading: false,
-        form: formData
-      })
-    } else {
+    try {
+      const app = getApp()
+      const res = await app.mpGetAuth(`/mp/maintenanceTask/detail?id=${encodeURIComponent(taskId)}`)
+      if (res && Number(res.isSuccess) === 1 && res.result) {
+        const task = res.result
+        
+        // 回显上一次的提报数据
+        const formData = this.buildReportFormData(task)
+        
+        this.setData({ 
+          task: task,
+          loading: false,
+          form: formData
+        })
+      } else {
+        this.setData({ loading: false })
+        wx.showToast({ title: '加载失败', icon: 'none' })
+        setTimeout(() => wx.navigateBack(), 1500)
+      }
+    } catch (error) {
+      console.error('加载任务详情异常:', error)
       this.setData({ loading: false })
       wx.showToast({ title: '加载失败', icon: 'none' })
       setTimeout(() => wx.navigateBack(), 1500)
@@ -162,19 +169,24 @@ Page({
       unit: m.unit
     }))
 
-    const res = await app.mpPostAuth('/mp/maintenanceTask/submit', {
-      taskId: this.data.taskId,
-      completionQty: this.data.form.completedQuantity,
-      completionFileUrls: this.data.form.completedImages,
-      completionRemark: this.data.form.remark,
-      materials: materials
-    })
-    if (res && Number(res.isSuccess) === 1) {
-      wx.showToast({ title: '提报成功', icon: 'success' })
-      setTimeout(() => wx.navigateBack(), 1500)
-    } else {
-      wx.showToast({ title: res?.errorMsg || '提报失败', icon: 'none' })
+    try {
+      const res = await app.mpPostAuth('/mp/maintenanceTask/submit', {
+        taskId: this.data.taskId,
+        completionQty: this.data.form.completedQuantity,
+        completionFileUrls: this.data.form.completedImages,
+        completionRemark: this.data.form.remark,
+        materials: materials
+      })
+      if (res && Number(res.isSuccess) === 1) {
+        wx.showToast({ title: '提报成功', icon: 'success' })
+        setTimeout(() => wx.navigateBack(), 1500)
+      } else {
+        wx.showToast({ title: res?.errorMsg || '提报失败', icon: 'none' })
+      }
+    } catch (error) {
+      console.error('提报请求异常:', error)
+    } finally {
+      this.setData({ submitting: false })
     }
-    this.setData({ submitting: false })
   }
 })

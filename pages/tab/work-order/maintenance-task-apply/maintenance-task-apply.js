@@ -172,13 +172,20 @@ Page({
       setTimeout(() => wx.navigateBack(), 1500)
       return
     }
-    const app = getApp()
-    const res = await app.mpGetAuth(`/mp/maintenanceTask/detail?id=${encodeURIComponent(taskId)}`)
-    if (res && Number(res.isSuccess) === 1 && res.result) {
-      // 加载工种列表
-      await this.loadWorkTypes()
-      this.setData({ loading: false })
-    } else {
+    try {
+      const app = getApp()
+      const res = await app.mpGetAuth(`/mp/maintenanceTask/detail?id=${encodeURIComponent(taskId)}`)
+      if (res && Number(res.isSuccess) === 1 && res.result) {
+        // 加载工种列表
+        await this.loadWorkTypes()
+        this.setData({ loading: false })
+      } else {
+        this.setData({ loading: false })
+        wx.showToast({ title: '加载失败', icon: 'none' })
+        setTimeout(() => wx.navigateBack(), 1500)
+      }
+    } catch (error) {
+      console.error('加载任务详情异常:', error)
       this.setData({ loading: false })
       wx.showToast({ title: '加载失败', icon: 'none' })
       setTimeout(() => wx.navigateBack(), 1500)
@@ -234,11 +241,16 @@ Page({
     
     console.log('提交数据:', JSON.stringify(submitData))
 
-    const res = await app.mpPostAuth('/mp/maintenanceTask/apply', submitData)
-    if (res && Number(res.isSuccess) === 1) {
-      wx.showToast({ title: '申请成功', icon: 'success' })
-      setTimeout(() => wx.navigateBack(), 1500)
+    try {
+      const res = await app.mpPostAuth('/mp/maintenanceTask/apply', submitData)
+      if (res && Number(res.isSuccess) === 1) {
+        wx.showToast({ title: '申请成功', icon: 'success' })
+        setTimeout(() => wx.navigateBack(), 1500)
+      }
+    } catch (error) {
+      console.error('申请请求异常:', error)
+    } finally {
+      this.setData({ submitting: false })
     }
-    this.setData({ submitting: false })
   }
 })

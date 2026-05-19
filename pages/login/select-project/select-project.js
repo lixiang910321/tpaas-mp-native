@@ -98,40 +98,50 @@ Page({
       return
     }
     
-    const res = await app.mpPost('/mp/login/loginListProjects', {
-      userName: draft.userName,
-      password: draft.password,
-      tenantId: draft.tenantId
-    })
-    
-    if (!res || res.isSuccess !== 1) {
+    try {
+      const res = await app.mpPost('/mp/login/loginListProjects', {
+        userName: draft.userName,
+        password: draft.password,
+        tenantId: draft.tenantId
+      })
+      
+      if (!res || res.isSuccess !== 1) {
+        this.setData({
+          loadError: res?.errorMsg || '获取项目失败',
+          projects: [],
+          filteredList: [],
+          loading: false
+        })
+        return
+      }
+      
+      const list = res.result || []
+      const projects = Array.isArray(list)
+        ? list.map(p => ({ 
+            ...p, 
+            id: p.id != null ? String(p.id) : p.id,
+            selected: false
+          }))
+        : []
+      
+      this.setData({ 
+        projects,
+        filteredList: projects,
+        loading: false
+      })
+      
+      // 仅一个项目时默认选中
+      if (projects.length === 1) {
+        this.selectProjectById(projects[0].id)
+      }
+    } catch (e) {
+      console.error('获取项目列表失败:', e)
       this.setData({
-        loadError: res?.errorMsg || '获取项目失败',
+        loadError: '网络错误',
         projects: [],
         filteredList: [],
         loading: false
       })
-      return
-    }
-    
-    const list = res.result || []
-    const projects = Array.isArray(list)
-      ? list.map(p => ({ 
-          ...p, 
-          id: p.id != null ? String(p.id) : p.id,
-          selected: false
-        }))
-      : []
-    
-    this.setData({ 
-      projects,
-      filteredList: projects,
-      loading: false
-    })
-    
-    // 仅一个项目时默认选中
-    if (projects.length === 1) {
-      this.selectProjectById(projects[0].id)
     }
   },
 
@@ -151,60 +161,64 @@ Page({
     
     this.setData({ submitting: true })
     
-    const app = getApp()
-    const step2 = await app.mpPost('/mp/login/loginStep2', {
-      userName: draft.userName,
-      password: draft.password,
-      tenantId: draft.tenantId != null ? String(draft.tenantId) : null,
-      projectId: String(this.data.selectedId),
-      remember: 0
-    })
-    
-    if (!step2 || step2.isSuccess !== 1) {
-      this.showToast(step2?.errorMsg || '登录失败')
+    try {
+      const app = getApp()
+      const step2 = await app.mpPost('/mp/login/loginStep2', {
+        userName: draft.userName,
+        password: draft.password,
+        tenantId: draft.tenantId != null ? String(draft.tenantId) : null,
+        projectId: String(this.data.selectedId),
+        remember: 0
+      })
+      
+      if (!step2 || step2.isSuccess !== 1) {
+        this.showToast(step2?.errorMsg || '登录失败')
+        this.setData({ submitting: false })
+        return
+      }
+      
+      const token = step2.result?.accessToken
+      if (!token) {
+        this.showToast('未返回令牌')
+        return
+      }
+
+      wx.removeStorageSync(DRAFT_KEY)
+      wx.setStorageSync(STORAGE_TOKEN, token)
+      
+      // 提取租户信息
+      const tenantVO = step2.result?.tenantVO
+      const tenantInfo = tenantVO ? {
+        id: tenantVO.tenantId,
+        name: tenantVO.tenantName,
+        tenantKind: tenantVO.tenantKind
+      } : null
+      
+      // 提取当前项目信息（从 userData.projects 中找到当前选中的项目）
+      const userData = step2.result?.userData
+      const projects = userData?.projects || []
+      const currentProject = projects.find(p => String(p.id) === String(this.data.selectedId)) || null
+      
+      // 更新全局登录信息
+      app.setLoginInfo({ token, userInfo: userData })
+      
+      // 保存租户和项目信息
+      if (tenantInfo) {
+        app.setTenantInfo(tenantInfo)
+      }
+      if (currentProject) {
+        app.setProjectInfo(currentProject)
+      }
+      
+      this.showToast('登录成功')
+      
+      setTimeout(() => {
+        wx.reLaunch({ url: '/pages/tab/work-order/index/index' })
+      }, 400)
+    } catch (error) {
+      console.error('登录失败:', error)
+    } finally {
       this.setData({ submitting: false })
-      return
     }
-    
-    const token = step2.result?.accessToken
-    if (!token) {
-      this.showToast('未返回令牌')
-      this.setData({ submitting: false })
-      return
-    }
-    
-    wx.removeStorageSync(DRAFT_KEY)
-    wx.setStorageSync(STORAGE_TOKEN, token)
-    
-    // 提取租户信息
-    const tenantVO = step2.result?.tenantVO
-    const tenantInfo = tenantVO ? {
-      id: tenantVO.tenantId,
-      name: tenantVO.tenantName,
-      tenantKind: tenantVO.tenantKind
-    } : null
-    
-    // 提取当前项目信息（从 userData.projects 中找到当前选中的项目）
-    const userData = step2.result?.userData
-    const projects = userData?.projects || []
-    const currentProject = projects.find(p => String(p.id) === String(this.data.selectedId)) || null
-    
-    // 更新全局登录信息
-    app.setLoginInfo({ token, userInfo: userData })
-    
-    // 保存租户和项目信息
-    if (tenantInfo) {
-      app.setTenantInfo(tenantInfo)
-    }
-    if (currentProject) {
-      app.setProjectInfo(currentProject)
-    }
-    
-    this.showToast('登录成功')
-    
-    setTimeout(() => {
-      wx.reLaunch({ url: '/pages/tab/work-order/index/index' })
-    }, 400)
-    this.setData({ submitting: false })
   }
 })

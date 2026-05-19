@@ -257,22 +257,29 @@ Page({
       return
     }
 
-    const app = getApp()
-    const res = await app.mpGetAuth(`/mp/repairTask/detail?id=${encodeURIComponent(taskId)}`)
+    try {
+      const app = getApp()
+      const res = await app.mpGetAuth(`/mp/repairTask/detail?id=${encodeURIComponent(taskId)}`)
 
-    if (res && Number(res.isSuccess) === 1 && res.result) {
-      const task = res.result
-      task.planCategoryDisplayName = parseJsonArray(task.planCategoryNames).join(' / ')
-      
-      // 回显上一次的提报数据
-      const formData = this.buildReportFormData(task)
-      
-      this.setData({ 
-        task: task,
-        loading: false,
-        form: formData
-      })
-    } else {
+      if (res && Number(res.isSuccess) === 1 && res.result) {
+        const task = res.result
+        task.planCategoryDisplayName = parseJsonArray(task.planCategoryNames).join(' / ')
+        
+        // 回显上一次的提报数据
+        const formData = this.buildReportFormData(task)
+        
+        this.setData({ 
+          task: task,
+          loading: false,
+          form: formData
+        })
+      } else {
+        this.setData({ loading: false })
+        wx.showToast({ title: '加载失败', icon: 'none' })
+        setTimeout(() => wx.navigateBack(), 1500)
+      }
+    } catch (error) {
+      console.error('加载任务详情异常:', error)
       this.setData({ loading: false })
       wx.showToast({ title: '加载失败', icon: 'none' })
       setTimeout(() => wx.navigateBack(), 1500)
@@ -463,43 +470,49 @@ Page({
       workTypeName: l.workTypeName
     }))
 
-    const res = await app.mpPostAuth('/mp/repairTask/submit', {
-      repairTaskId: this.data.taskId,
-      repairResult: this.data.form.repairResultId,
-      repairResultName: this.data.form.repairResultName,
-      unfixReason: this.data.form.unfixReason,
-      constructionCategoryId: this.data.form.constructionCategoryId,
-      constructionCategoryName: this.data.form.constructionCategoryName,
-      actualProjectPointId: this.data.form.actualProjectPointId,
-      actualProjectPointName: this.data.form.actualProjectPointName,
-      repairLaborers: repairLaborers,
-      materials: materials,
-      completionPhotos: this.data.form.completionPhotos,
-      submitRemark: this.data.form.submitRemark,
-      // 实际侧：模板归属（大类）
-      actualTemplateOwnerId: this.data.form.actualTemplateOwnerId || null,
-      actualTemplateOwnerValue: this.data.form.actualTemplateOwnerValue || null,
-      actualTemplateOwnerName: this.data.form.actualTemplateOwnerName || null,
-      // 实际侧：模板（中类）
-      actualTemplateId: this.data.form.actualTemplateId || null,
-      actualTemplateCode: this.data.form.actualTemplateCode || null,
-      actualTemplateName: this.data.form.actualTemplateName || null,
-      // 实际侧：设施分类（多级分类）
-      actualCategoryId: this.data.form.actualCategoryId || null,
-      actualCategoryName: this.data.form.actualCategoryName || null,
-      actualCategoryIds: this.data.form.actualCategoryIds.length > 0 ? JSON.stringify(this.data.form.actualCategoryIds) : null,
-      actualCategoryNames: this.data.form.actualCategoryNames.length > 0 ? JSON.stringify(this.data.form.actualCategoryNames) : null,
-      // 实际设施
-      actualFacilityId: this.data.form.actualFacilityId || null,
-      actualFacilityName: this.data.form.actualFacilityName || null
-    })
-    
-    if (res && Number(res.isSuccess) === 1) {
-      wx.showToast({ title: '提报成功', icon: 'success' })
-      setTimeout(() => wx.navigateBack(), 1500)
-    } else {
-      wx.showToast({ title: res?.errorMsg || '提报失败', icon: 'none' })
+    try {
+      const res = await app.mpPostAuth('/mp/repairTask/submit', {
+        repairTaskId: this.data.taskId,
+        repairResult: this.data.form.repairResultId,
+        repairResultName: this.data.form.repairResultName,
+        unfixReason: this.data.form.unfixReason,
+        constructionCategoryId: this.data.form.constructionCategoryId,
+        constructionCategoryName: this.data.form.constructionCategoryName,
+        actualProjectPointId: this.data.form.actualProjectPointId,
+        actualProjectPointName: this.data.form.actualProjectPointName,
+        repairLaborers: repairLaborers,
+        materials: materials,
+        completionPhotos: this.data.form.completionPhotos,
+        submitRemark: this.data.form.submitRemark,
+        // 实际侧：模板归属（大类）
+        actualTemplateOwnerId: this.data.form.actualTemplateOwnerId || null,
+        actualTemplateOwnerValue: this.data.form.actualTemplateOwnerValue || null,
+        actualTemplateOwnerName: this.data.form.actualTemplateOwnerName || null,
+        // 实际侧：模板（中类）
+        actualTemplateId: this.data.form.actualTemplateId || null,
+        actualTemplateCode: this.data.form.actualTemplateCode || null,
+        actualTemplateName: this.data.form.actualTemplateName || null,
+        // 实际侧：设施分类（多级分类）
+        actualCategoryId: this.data.form.actualCategoryId || null,
+        actualCategoryName: this.data.form.actualCategoryName || null,
+        actualCategoryIds: this.data.form.actualCategoryIds.length > 0 ? JSON.stringify(this.data.form.actualCategoryIds) : null,
+        actualCategoryNames: this.data.form.actualCategoryNames.length > 0 ? JSON.stringify(this.data.form.actualCategoryNames) : null,
+        // 实际设施
+        actualFacilityId: this.data.form.actualFacilityId || null,
+        actualFacilityName: this.data.form.actualFacilityName || null
+      })
+      
+      if (res && Number(res.isSuccess) === 1) {
+        wx.showToast({ title: '提报成功', icon: 'success' })
+        setTimeout(() => wx.navigateBack(), 1500)
+      } else {
+        wx.showToast({ title: res?.errorMsg || '提报失败', icon: 'none' })
+      }
+    } catch (error) {
+      // mpPostAuth 失败时已通过 showGlobalError 弹出提示，此处仅兜底
+      console.error('提报请求异常:', error)
+    } finally {
+      this.setData({ submitting: false })
     }
-    this.setData({ submitting: false })
   }
 })

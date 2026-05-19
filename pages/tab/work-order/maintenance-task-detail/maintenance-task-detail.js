@@ -103,57 +103,61 @@ Page({
 
     this.setData({ loading: true, error: '' })
 
-    const app = getApp()
-    const res = await app.mpGetAuth(`/mp/maintenanceTask/detail?id=${encodeURIComponent(taskId)}`)
+    try {
+      const app = getApp()
+      const res = await app.mpGetAuth(`/mp/maintenanceTask/detail?id=${encodeURIComponent(taskId)}`)
 
-    if (res && Number(res.isSuccess) === 1 && res.result) {
-      const task = res.result
-      
-      // 解析JSON字段
-      if (task.applyBriefingFileUrls) {
-        try {
-          task.applyBriefingFileUrls = JSON.parse(task.applyBriefingFileUrls)
-        } catch (e) {
-          task.applyBriefingFileUrls = []
-        }
-      }
-      if (task.applyMeasureFileUrls) {
-        try {
-          task.applyMeasureFileUrls = JSON.parse(task.applyMeasureFileUrls)
-        } catch (e) {
-          task.applyMeasureFileUrls = []
-        }
-      }
-      if (task.reportCompletionFileUrls) {
-        try {
-          task.reportCompletionFileUrls = JSON.parse(task.reportCompletionFileUrls)
-        } catch (e) {
-          task.reportCompletionFileUrls = []
-        }
-      }
-      if (task.reportMaterialJson) {
-        try {
-          task.reportMaterialJson = JSON.parse(task.reportMaterialJson)
-        } catch (e) {
-          task.reportMaterialJson = []
-        }
-      }
-      
-      // 区域：JSON数组转为 "-" 连接
-      if (task.areaNames && typeof task.areaNames === 'string') {
-        try {
-          const arr = JSON.parse(task.areaNames)
-          if (Array.isArray(arr) && arr.length > 0) {
-            task.areaNames = arr.join('-')
+      if (res && Number(res.isSuccess) === 1 && res.result) {
+        const task = res.result
+        
+        // 解析JSON字段
+        if (task.applyBriefingFileUrls) {
+          try {
+            task.applyBriefingFileUrls = JSON.parse(task.applyBriefingFileUrls)
+          } catch (e) {
+            task.applyBriefingFileUrls = []
           }
-        } catch (e) {
-          // 保持原样
         }
+        if (task.applyMeasureFileUrls) {
+          try {
+            task.applyMeasureFileUrls = JSON.parse(task.applyMeasureFileUrls)
+          } catch (e) {
+            task.applyMeasureFileUrls = []
+          }
+        }
+        if (task.reportCompletionFileUrls) {
+          try {
+            task.reportCompletionFileUrls = JSON.parse(task.reportCompletionFileUrls)
+          } catch (e) {
+            task.reportCompletionFileUrls = []
+          }
+        }
+        if (task.reportMaterialJson) {
+          try {
+            task.reportMaterialJson = JSON.parse(task.reportMaterialJson)
+          } catch (e) {
+            task.reportMaterialJson = []
+          }
+        }
+        
+        // 区域：JSON数组转为 "-" 连接
+        if (task.areaNames && typeof task.areaNames === 'string') {
+          try {
+            const arr = JSON.parse(task.areaNames)
+            if (Array.isArray(arr) && arr.length > 0) {
+              task.areaNames = arr.join('-')
+            }
+          } catch (e) {
+            // 保持原样
+          }
+        }
+        
+        this.setData({ task: task, loading: false })
+      } else {
+        this.setData({ error: (res && res.errorMsg) || '加载失败', loading: false })
       }
-      
-      this.setData({ task: task, loading: false })
-    } else {
-      this.setData({ error: (res && res.errorMsg) || '加载失败', loading: false })
+    } catch (e) {
+      this.setData({ error: e?.message || '网络错误', loading: false })
     }
   }
 })

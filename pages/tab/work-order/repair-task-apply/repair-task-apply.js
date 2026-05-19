@@ -30,15 +30,22 @@ Page({
       return
     }
 
-    const app = getApp()
-    const res = await app.mpGetAuth(`/mp/repairTask/detail?id=${encodeURIComponent(taskId)}`)
+    try {
+      const app = getApp()
+      const res = await app.mpGetAuth(`/mp/repairTask/detail?id=${encodeURIComponent(taskId)}`)
 
-    if (res && Number(res.isSuccess) === 1 && res.result) {
-      this.setData({ 
-        task: res.result,
-        loading: false
-      })
-    } else {
+      if (res && Number(res.isSuccess) === 1 && res.result) {
+        this.setData({ 
+          task: res.result,
+          loading: false
+        })
+      } else {
+        this.setData({ loading: false })
+        wx.showToast({ title: '加载失败', icon: 'none' })
+        setTimeout(() => wx.navigateBack(), 1500)
+      }
+    } catch (error) {
+      console.error('加载任务详情异常:', error)
       this.setData({ loading: false })
       wx.showToast({ title: '加载失败', icon: 'none' })
       setTimeout(() => wx.navigateBack(), 1500)
@@ -48,18 +55,22 @@ Page({
   async onSubmit() {
     this.setData({ submitting: true })
 
-    const app = getApp()
-    const res = await app.mpPostAuth('/mp/repairTask/apply', {
-      repairTaskId: this.data.taskId
-    })
+    try {
+      const app = getApp()
+      const res = await app.mpPostAuth('/mp/repairTask/apply', {
+        repairTaskId: this.data.taskId
+      })
 
-    if (res && Number(res.isSuccess) === 1) {
-      wx.showToast({ title: '申请成功', icon: 'success' })
-      setTimeout(() => wx.navigateBack(), 1500)
-    } else {
-      wx.showToast({ title: res?.errorMsg || '申请失败', icon: 'none' })
+      if (res && Number(res.isSuccess) === 1) {
+        wx.showToast({ title: '申请成功', icon: 'success' })
+        setTimeout(() => wx.navigateBack(), 1500)
+      } else {
+        wx.showToast({ title: res?.errorMsg || '申请失败', icon: 'none' })
+      }
+    } catch (error) {
+      console.error('申请请求异常:', error)
+    } finally {
+      this.setData({ submitting: false })
     }
-
-    this.setData({ submitting: false })
   }
 })
