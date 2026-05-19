@@ -28,6 +28,7 @@ Page({
       planCategoryName: '',
       planCategoryIds: [],
       planCategoryNames: [],
+      planCategoryDisplayName: '',
       // 计划设施
       planFacilityId: '',
       planFacilityName: ''
@@ -191,6 +192,7 @@ Page({
             'form.planCategoryName': data.categoryName || '',
             'form.planCategoryIds': data.categoryIds || [],
             'form.planCategoryNames': data.categoryNames || [],
+            'form.planCategoryDisplayName': (data.categoryNames || []).join(' / '),
             // 设施分类变更 → 清空计划设施 + 计划项点
             'form.planFacilityId': '',
             'form.planFacilityName': '',

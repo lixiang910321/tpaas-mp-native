@@ -40,6 +40,7 @@ Page({
       actualCategoryName: '',
       actualCategoryIds: [],
       actualCategoryNames: [],
+      actualCategoryDisplayName: '',
       // 实际设施
       actualFacilityId: '',
       actualFacilityName: ''
@@ -121,6 +122,7 @@ Page({
             'form.actualCategoryName': data.categoryName || '',
             'form.actualCategoryIds': data.categoryIds || [],
             'form.actualCategoryNames': data.categoryNames || [],
+            'form.actualCategoryDisplayName': (data.categoryNames || []).join(' / '),
             // 设施分类变更 → 清空实际设施 + 实际项点
             'form.actualFacilityId': '',
             'form.actualFacilityName': '',
@@ -260,6 +262,7 @@ Page({
 
     if (res && Number(res.isSuccess) === 1 && res.result) {
       const task = res.result
+      task.planCategoryDisplayName = parseJsonArray(task.planCategoryNames).join(' / ')
       
       // 回显上一次的提报数据
       const formData = this.buildReportFormData(task)
@@ -302,6 +305,7 @@ Page({
       actualCategoryName: '',
       actualCategoryIds: [],
       actualCategoryNames: [],
+      actualCategoryDisplayName: '',
       actualFacilityId: '',
       actualFacilityName: ''
     }
@@ -360,11 +364,13 @@ Page({
       formData.actualCategoryName = task.actualCategoryName || ''
       formData.actualCategoryIds = parseJsonArray(task.actualCategoryIds)
       formData.actualCategoryNames = parseJsonArray(task.actualCategoryNames)
+      formData.actualCategoryDisplayName = formData.actualCategoryNames.join(' / ')
     } else if (task.planCategoryId) {
       formData.actualCategoryId = task.planCategoryId
       formData.actualCategoryName = task.planCategoryName || ''
       formData.actualCategoryIds = parseJsonArray(task.planCategoryIds)
       formData.actualCategoryNames = parseJsonArray(task.planCategoryNames)
+      formData.actualCategoryDisplayName = formData.actualCategoryNames.join(' / ')
     }
     // 实际设施
     if (task.actualFacilityId) {

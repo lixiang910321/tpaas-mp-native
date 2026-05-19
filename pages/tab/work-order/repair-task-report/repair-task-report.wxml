@@ -75,14 +75,14 @@
         <view class="form-item" bindtap="onSelectActualFacilityCategory">
           <text class="form-label">设施分类</text>
           <view class="picker-value">
-            <text wx:if="{{form.actualTemplateOwnerName}}" class="value-text">{{form.actualTemplateOwnerName}} / {{form.actualTemplateName}} / {{form.actualCategoryName}}</text>
+            <text wx:if="{{form.actualTemplateOwnerValue}}" class="value-text">{{form.actualTemplateOwnerValue}} / {{form.actualTemplateName}} / {{form.actualCategoryDisplayName}}</text>
             <text wx:else class="placeholder-text">选择实际设施分类</text>
             <text class="arrow">›</text>
           </view>
         </view>
         <!-- 计划设施分类原文展示 -->
-        <view wx:if="{{task.planTemplateOwnerName}}" class="info-extras">
-          <text class="extra-text">计划：{{task.planTemplateOwnerName}} / {{task.planTemplateName}} / {{task.planCategoryName}}</text>
+        <view wx:if="{{task.planTemplateOwnerValue}}" class="info-extras">
+          <text class="extra-text">计划：{{task.planTemplateOwnerValue}} / {{task.planTemplateName}} / {{task.planCategoryDisplayName}}</text>
         </view>
       </view>
 

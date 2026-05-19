@@ -56,7 +56,7 @@
       <view class="section-header">
         <text class="label">设施分类</text>
         <view class="picker-value">
-          <text wx:if="{{form.planTemplateOwnerName}}" class="value-text">{{form.planTemplateOwnerName}} / {{form.planTemplateName}} / {{form.planCategoryName}}</text>
+          <text wx:if="{{form.planTemplateOwnerValue}}" class="value-text">{{form.planTemplateOwnerValue}} / {{form.planTemplateName}} / {{form.planCategoryDisplayName}}</text>
           <text wx:else class="placeholder-text">选择设施分类</text>
           <text class="arrow">›</text>
         </view>
