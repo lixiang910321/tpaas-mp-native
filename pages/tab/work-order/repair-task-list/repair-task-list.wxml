@@ -30,6 +30,10 @@
       </view>
       
       <view class="task-body">
+        <view class="task-row" wx:if="{{item.urgencyLevelText}}">
+          <text class="task-label">紧急程度</text>
+          <text class="task-value urgency {{getUrgencyClass(item.urgencyLevel)}}">{{item.urgencyLevelText}}</text>
+        </view>
         <view class="task-row">
           <text class="task-label">区域</text>
           <text class="task-value">{{item.areaName || '-'}}</text>

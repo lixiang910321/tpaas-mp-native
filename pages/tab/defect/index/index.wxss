@@ -95,6 +95,29 @@
   color: #4caf50;
 }
 
+/* 紧急程度标签 */
+.value.urgency {
+  padding: 4rpx 16rpx;
+  border-radius: 8rpx;
+  font-size: 24rpx;
+  font-weight: 500;
+}
+
+.urgency.urgency-a {
+  background: #ffebee;
+  color: #d32f2f;
+}
+
+.urgency.urgency-b {
+  background: #fff3e0;
+  color: #e65100;
+}
+
+.urgency.urgency-c {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
 .confirm-btn {
   padding: 20rpx 28rpx;
   border-top: 1rpx solid #f0f0f0;

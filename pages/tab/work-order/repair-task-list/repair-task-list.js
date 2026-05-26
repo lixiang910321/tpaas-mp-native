@@ -64,6 +64,18 @@ Page({
     return String(v).slice(0, 19).replace('T', ' ')
   },
 
+  getUrgencyText(level) {
+    const map = { 'A': 'A-严重故障', 'B': 'B-紧急故障', 'C': 'C-一般故障' }
+    return map[level] || ''
+  },
+
+  getUrgencyClass(level) {
+    if (level === 'A') return 'urgency-a'
+    if (level === 'B') return 'urgency-b'
+    if (level === 'C') return 'urgency-c'
+    return ''
+  },
+
   // 查看详情
   onDetail(e) {
     const item = e.currentTarget.dataset.item

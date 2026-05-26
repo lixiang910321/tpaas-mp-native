@@ -25,6 +25,10 @@
           <text class="label">故障现象：</text>
           <text class="value desc">{{item.description || 'XXXXXXXXXXXXXXXXXXXX'}}</text>
         </view>
+        <view class="row" wx:if="{{item.urgencyLevel}}">
+          <text class="label">紧急程度：</text>
+          <text class="value urgency {{getUrgencyClass(item.urgencyLevel)}}">{{getUrgencyText(item.urgencyLevel)}}</text>
+        </view>
         <view class="row">
           <text class="label">来源：</text>
           <text class="value">{{item.source || '-'}}</text>

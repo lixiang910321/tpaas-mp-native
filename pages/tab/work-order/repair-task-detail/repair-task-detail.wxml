@@ -124,6 +124,18 @@
           <text class="info-label">施工类别</text>
           <text class="info-value">{{task.constructionCategoryName || '-'}}</text>
         </view>
+        <view class="info-row" wx:if="{{task.urgencyLevelText}}">
+          <text class="info-label">紧急程度</text>
+          <text class="info-value urgency-text">{{task.urgencyLevelText}}</text>
+        </view>
+        <view class="info-row" wx:if="{{task.windowTimeName}}">
+          <text class="info-label">窗口时间</text>
+          <text class="info-value">{{task.windowTimeName}}</text>
+        </view>
+        <view class="info-row" wx:if="{{task.diseaseReasonName}}">
+          <text class="info-label">病害原因</text>
+          <text class="info-value">{{task.diseaseReasonName}}</text>
+        </view>
         <view class="info-row">
           <text class="info-label">确认人</text>
           <text class="info-value">{{task.confirmEmployeeName || '-'}}</text>

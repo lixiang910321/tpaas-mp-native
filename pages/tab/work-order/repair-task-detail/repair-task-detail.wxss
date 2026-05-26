@@ -113,6 +113,12 @@
   flex: 1;
 }
 
+/* 紧急程度文本样式 */
+.info-value.urgency-text {
+  color: #d32f2f;
+  font-weight: 500;
+}
+
 /* 图片列表 */
 .image-list {
   display: flex;

@@ -31,7 +31,16 @@ Page({
       planCategoryDisplayName: '',
       // 计划设施
       planFacilityId: '',
-      planFacilityName: ''
+      planFacilityName: '',
+      // 紧急程度
+      urgencyLevel: '',
+      urgencyLevelText: '',
+      // 窗口时间
+      windowTimeId: null,
+      windowTimeName: '',
+      // 病害原因
+      diseaseReasonId: null,
+      diseaseReasonName: ''
     },
     // 计划项点冗余信息
     areaInfo: { id: null, name: '' },
@@ -42,7 +51,22 @@ Page({
     selectedAreaName: '',
     showCategoryPicker: false,
     showResultPicker: false,
-    categoryList: []
+    categoryList: [],
+    // 紧急程度选项
+    urgencyOptions: [
+      { code: 'A', name: 'A-严重故障' },
+      { code: 'B', name: 'B-紧急故障' },
+      { code: 'C', name: 'C-一般故障' }
+    ],
+    // 窗口时间选项
+    windowTimeOptions: [
+      { id: 1, name: '白班' },
+      { id: 2, name: '夜班' }
+    ],
+    // 病害原因选项（从字典加载）
+    diseaseReasonOptions: [],
+    // 病害接报图片
+    diseasePhotos: []
   },
 
   onLoad(options) {
@@ -50,6 +74,7 @@ Page({
     this.setData({ diseaseReportId })
     this.loadDiseaseDetail()
     this.loadCategoryList()
+    this.loadDiseaseReasonOptions()
   },
 
   onShow() {
@@ -66,6 +91,59 @@ Page({
 
   onRemarkInput(e) {
     this.setData({ 'form.confirmRemark': e.detail.value })
+  },
+
+  // === 紧急程度选择 ===
+  onUrgencyChange(e) {
+    const idx = Number(e.detail.value)
+    const opt = this.data.urgencyOptions[idx]
+    if (opt) {
+      this.setData({
+        'form.urgencyLevel': opt.code,
+        'form.urgencyLevelText': opt.name
+      })
+    }
+  },
+
+  // === 窗口时间选择 ===
+  onWindowTimeChange(e) {
+    const idx = Number(e.detail.value)
+    const opt = this.data.windowTimeOptions[idx]
+    if (opt) {
+      this.setData({
+        'form.windowTimeId': opt.id,
+        'form.windowTimeName': opt.name
+      })
+    }
+  },
+
+  // === 病害原因选择 ===
+  onDiseaseReasonChange(e) {
+    const idx = Number(e.detail.value)
+    const opt = this.data.diseaseReasonOptions[idx]
+    if (opt) {
+      this.setData({
+        'form.diseaseReasonId': opt.id,
+        'form.diseaseReasonName': opt.name
+      })
+    }
+  },
+
+  // === 加载病害原因字典 ===
+  async loadDiseaseReasonOptions() {
+    try {
+      const app = getApp()
+      const res = await app.mpGetAuth('/mp/sys/Dict/all')
+      if (res && res.diseaseReasonTypeEnum) {
+        const options = res.diseaseReasonTypeEnum.map(item => ({
+          id: item.id,
+          name: item.value
+        }))
+        this.setData({ diseaseReasonOptions: options })
+      }
+    } catch (e) {
+      console.error('加载病害原因字典失败', e)
+    }
   },
 
   // === 区域选择（跳转独立页面） ===
@@ -123,6 +201,14 @@ Page({
     wx.previewImage({
       current: this.data.form.beforePhotoUrls[index],
       urls: this.data.form.beforePhotoUrls
+    })
+  },
+
+  previewDiseasePhoto(e) {
+    const url = e.currentTarget.dataset.url
+    wx.previewImage({
+      current: url,
+      urls: this.data.diseasePhotos
     })
   },
 
@@ -279,7 +365,8 @@ Page({
         this.setData({
           diseaseDetail: detail,
           reportDate: parts[0] || '',
-          reportTimeOnly: parts[1] || ''
+          reportTimeOnly: parts[1] || '',
+          diseasePhotos: detail.photoUrls || []
         })
       }
     } catch (e) {
@@ -321,6 +408,18 @@ Page({
       wx.showToast({ title: '请选择施工类别', icon: 'none' })
       return
     }
+    if (!this.data.form.urgencyLevel) {
+      wx.showToast({ title: '请选择紧急程度', icon: 'none' })
+      return
+    }
+    if (!this.data.form.windowTimeId) {
+      wx.showToast({ title: '请选择窗口时间', icon: 'none' })
+      return
+    }
+    if (!this.data.form.diseaseReasonId) {
+      wx.showToast({ title: '请选择病害原因', icon: 'none' })
+      return
+    }
     if (!this.data.form.confirmResult) {
       wx.showToast({ title: '请选择确认结果', icon: 'none' })
       return
@@ -357,7 +456,16 @@ Page({
         planCategoryNames: this.data.form.planCategoryNames.length > 0 ? JSON.stringify(this.data.form.planCategoryNames) : null,
         // 计划设施
         planFacilityId: this.data.form.planFacilityId || null,
-        planFacilityName: this.data.form.planFacilityName || null
+        planFacilityName: this.data.form.planFacilityName || null,
+        // 紧急程度
+        urgencyLevel: this.data.form.urgencyLevel || null,
+        urgencyLevelText: this.data.form.urgencyLevelText || null,
+        // 窗口时间
+        windowTimeId: this.data.form.windowTimeId || null,
+        windowTimeName: this.data.form.windowTimeName || null,
+        // 病害原因
+        diseaseReasonId: this.data.form.diseaseReasonId || null,
+        diseaseReasonName: this.data.form.diseaseReasonName || null
       })
 
       if (res && Number(res.isSuccess) === 1) {

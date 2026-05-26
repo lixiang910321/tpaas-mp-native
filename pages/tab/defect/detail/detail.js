@@ -6,6 +6,7 @@ Page({
     confirmDetail: {},
     beforePhotos: [],
     suggestedTools: [],
+    diseasePhotos: [],
     defectId: ''
   },
 
@@ -50,6 +51,14 @@ Page({
     })
   },
 
+  previewDiseasePhoto(e) {
+    const url = e.currentTarget.dataset.url
+    wx.previewImage({
+      current: url,
+      urls: this.data.diseasePhotos
+    })
+  },
+
   goConfirm() {
     wx.navigateTo({ url: `/pages/tab/defect/confirm/confirm?id=${encodeURIComponent(this.data.defectId)}` })
   },
@@ -73,7 +82,8 @@ Page({
           detail,
           confirmDetail: detail.confirmDetail || {},
           beforePhotos: detail.beforePhotos || [],
-          suggestedTools: detail.suggestedTools || []
+          suggestedTools: detail.suggestedTools || [],
+          diseasePhotos: detail.photoUrls || []
         })
       } else {
         this.setData({ error: (res && res.errorMsg) || '加载失败' })

@@ -27,6 +27,16 @@
     </view>
     </view>
 
+    <!-- 病害接报图片 -->
+    <view class="section" wx:if="{{diseasePhotos && diseasePhotos.length}}">
+      <view class="section-title">病害图片</view>
+      <scroll-view scroll-x class="photo-scroll">
+        <view class="photo-scroll-list">
+          <image wx:for="{{diseasePhotos}}" wx:key="index" src="{{item}}" mode="aspectFill" class="photo-item-readonly" bindtap="previewDiseasePhoto" data-url="{{item}}" />
+        </view>
+      </scroll-view>
+    </view>
+
     <!-- 区域选择 -->
     <view class="section" bindtap="onSelectArea">
       <view class="section-header">
@@ -104,6 +114,48 @@
           <text wx:else class="placeholder-text">选择处理方式</text>
           <text class="arrow">›</text>
         </view>
+      </view>
+    </view>
+
+    <!-- 紧急程度 -->
+    <view class="section">
+      <view class="section-header">
+        <text class="label">紧急程度</text>
+        <picker mode="selector" range="{{urgencyOptions}}" range-key="name" bindchange="onUrgencyChange">
+          <view class="picker-value">
+            <text wx:if="{{form.urgencyLevel}}" class="value-text">{{form.urgencyLevelText}}</text>
+            <text wx:else class="placeholder-text">请选择</text>
+            <text class="arrow">›</text>
+          </view>
+        </picker>
+      </view>
+    </view>
+
+    <!-- 窗口时间 -->
+    <view class="section">
+      <view class="section-header">
+        <text class="label">窗口时间</text>
+        <picker mode="selector" range="{{windowTimeOptions}}" range-key="name" bindchange="onWindowTimeChange">
+          <view class="picker-value">
+            <text wx:if="{{form.windowTimeName}}" class="value-text">{{form.windowTimeName}}</text>
+            <text wx:else class="placeholder-text">请选择</text>
+            <text class="arrow">›</text>
+          </view>
+        </picker>
+      </view>
+    </view>
+
+    <!-- 病害原因 -->
+    <view class="section">
+      <view class="section-header">
+        <text class="label">病害原因</text>
+        <picker mode="selector" range="{{diseaseReasonOptions}}" range-key="name" bindchange="onDiseaseReasonChange">
+          <view class="picker-value">
+            <text wx:if="{{form.diseaseReasonName}}" class="value-text">{{form.diseaseReasonName}}</text>
+            <text wx:else class="placeholder-text">请选择</text>
+            <text class="arrow">›</text>
+          </view>
+        </picker>
       </view>
     </view>
 

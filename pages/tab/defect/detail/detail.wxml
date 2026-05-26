@@ -25,6 +25,16 @@
       </view>
     </view>
 
+    <!-- 病害图片 -->
+    <view wx:if="{{diseasePhotos.length > 0}}" class="section">
+      <view class="section-title">病害图片</view>
+      <view class="photo-list">
+        <view wx:for="{{diseasePhotos}}" wx:key="index" class="photo-item">
+          <image class="photo" src="{{item}}" mode="aspectFill" bindtap="previewDiseasePhoto" data-url="{{item}}" />
+        </view>
+      </view>
+    </view>
+
     <!-- 确认信息 -->
     <view wx:if="{{confirmDetail && confirmDetail.id}}" class="section">
       <view class="section-title">确认信息</view>
@@ -47,6 +57,18 @@
       <view wx:if="{{confirmDetail.confirmRemark}}" class="info-row">
         <text class="label">确认备注</text>
         <text class="value">{{confirmDetail.confirmRemark}}</text>
+      </view>
+      <view wx:if="{{confirmDetail.urgencyLevelText}}" class="info-row">
+        <text class="label">紧急程度</text>
+        <text class="value">{{confirmDetail.urgencyLevelText}}</text>
+      </view>
+      <view wx:if="{{confirmDetail.windowTimeName}}" class="info-row">
+        <text class="label">窗口时间</text>
+        <text class="value">{{confirmDetail.windowTimeName}}</text>
+      </view>
+      <view wx:if="{{confirmDetail.diseaseReasonName}}" class="info-row">
+        <text class="label">病害原因</text>
+        <text class="value">{{confirmDetail.diseaseReasonName}}</text>
       </view>
       <view wx:if="{{confirmDetail.confirmEmployeeName}}" class="info-row">
         <text class="label">确认人</text>
