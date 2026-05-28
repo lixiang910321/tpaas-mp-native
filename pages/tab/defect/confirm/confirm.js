@@ -129,15 +129,15 @@ Page({
     }
   },
 
-  // === 加载病害原因字典 ===
+  // === 加载病害原因字典（从 dict_library 动态加载） ===
   async loadDiseaseReasonOptions() {
     try {
       const app = getApp()
-      const res = await app.mpGetAuth('/mp/sys/Dict/all')
-      if (res && res.diseaseReasonTypeEnum) {
-        const options = res.diseaseReasonTypeEnum.map(item => ({
+      const res = await app.mpGetAuth('/mp/diseaseReportConfirm/diseaseReasonOptions')
+      if (res && Number(res.isSuccess) === 1 && Array.isArray(res.result)) {
+        const options = res.result.map(item => ({
           id: item.id,
-          name: item.value
+          name: item.name
         }))
         this.setData({ diseaseReasonOptions: options })
       }
@@ -362,11 +362,23 @@ Page({
         // 解析 reportTime（格式：yyyy-MM-dd HH:mm:ss）为日期和时间
         const reportTime = detail.reportTime || ''
         const parts = reportTime.split(' ')
+        // photoUrls 后端存的是 JSON 字符串，需要解析为数组
+        let diseasePhotos = []
+        if (detail.photoUrls) {
+          try {
+            const parsed = typeof detail.photoUrls === 'string'
+              ? JSON.parse(detail.photoUrls)
+              : detail.photoUrls
+            diseasePhotos = Array.isArray(parsed) ? parsed : []
+          } catch (e) {
+            diseasePhotos = []
+          }
+        }
         this.setData({
           diseaseDetail: detail,
           reportDate: parts[0] || '',
           reportTimeOnly: parts[1] || '',
-          diseasePhotos: detail.photoUrls || []
+          diseasePhotos
         })
       }
     } catch (e) {

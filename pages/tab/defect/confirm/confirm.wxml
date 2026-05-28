@@ -24,7 +24,11 @@
       <view class="info-row info-row-desc">
         <text class="info-label">描述</text>
         <text class="info-value readonly">{{diseaseDetail.description || '-'}}</text>
-    </view>
+      </view>
+      <view class="info-row" wx:if="{{diseaseDetail.urgencyLevel}}">
+        <text class="info-label">紧急程度</text>
+        <text class="info-value readonly">{{diseaseDetail.urgencyLevelText || diseaseDetail.urgencyLevel}}（参考）</text>
+      </view>
     </view>
 
     <!-- 病害接报图片 -->
