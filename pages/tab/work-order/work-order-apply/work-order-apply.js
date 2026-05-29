@@ -136,7 +136,7 @@ Page({
 
   // 提交申请
   async onSubmit() {
-    const { workOrderId, selectedMembers, briefingFileUrls, applyRemark } = this.data
+    const { workOrderId, selectedMembers, teamMembers, briefingFileUrls, applyRemark } = this.data
 
     // 校验
     const selectedPersonIds = Object.keys(selectedMembers)
@@ -144,6 +144,15 @@ Page({
       wx.showToast({ title: '请至少选择一名人员', icon: 'none' })
       return
     }
+
+    // 提交前再校验已选人员中是否有已被占用的（防止页面停留期间状态变化）
+    const occupiedSelected = teamMembers.filter(m => selectedMembers[m.laborerId] && m.occupied)
+    if (occupiedSelected.length > 0) {
+      const names = occupiedSelected.map(m => m.laborerName || m.laborerId).join('、')
+      wx.showToast({ title: names + ' 已被其他任务占用，请重新选择', icon: 'none', duration: 3000 })
+      return
+    }
+
     if (!briefingFileUrls || briefingFileUrls.length === 0) {
       wx.showToast({ title: '请上传安全交底照片', icon: 'none' })
       return
