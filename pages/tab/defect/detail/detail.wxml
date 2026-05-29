@@ -1,3 +1,4 @@
+<wxs src="./detail.wxs" module="filters" />
 <view class="page">
   <scroll-view scroll-y class="content">
     <!-- 基本信息 -->
@@ -40,11 +41,11 @@
       <view class="section-title">确认信息</view>
       <view class="info-row">
         <text class="label">确认状态</text>
-        <text class="value {{getStatusClass(confirmDetail.status)}}">{{getStatusText(confirmDetail.status)}}</text>
+        <text class="value {{filters.statusClass(confirmDetail.status)}}">{{confirmDetail.statusText || '-'}}</text>
       </view>
       <view class="info-row">
         <text class="label">确认结果</text>
-        <text class="value">{{getResultText(confirmDetail.confirmResult)}}</text>
+        <text class="value">{{confirmDetail.resultText || '-'}}</text>
       </view>
       <view wx:if="{{confirmDetail.areaName}}" class="info-row">
         <text class="label">确认区域</text>
@@ -103,7 +104,7 @@
   </scroll-view>
 
   <!-- 底部按钮 -->
-  <view wx:if="{{detail.status === 10}}" class="footer">
+  <view wx:if="{{detail.status == 10}}" class="footer">
     <button class="confirm-btn" bindtap="goConfirm">去确认</button>
   </view>
 </view>

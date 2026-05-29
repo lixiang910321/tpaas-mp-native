@@ -1,3 +1,4 @@
+<wxs src="./index.wxs" module="filters" />
 <view class="page">
   <!-- 列表 -->
   <scroll-view scroll-y class="list" 
@@ -25,9 +26,9 @@
           <text class="label">故障现象：</text>
           <text class="value desc">{{item.description || 'XXXXXXXXXXXXXXXXXXXX'}}</text>
         </view>
-        <view class="row" wx:if="{{item.urgencyLevel}}">
+        <view class="row">
           <text class="label">紧急程度：</text>
-          <text class="value urgency {{getUrgencyClass(item.urgencyLevel)}}">{{getUrgencyText(item.urgencyLevel)}}</text>
+          <text class="value urgency {{filters.urgencyClass(item.urgencyLevel)}}">{{filters.urgencyDisplayText(item.urgencyLevel, item.urgencyLevelText)}}</text>
         </view>
         <view class="row">
           <text class="label">来源：</text>
@@ -35,11 +36,11 @@
         </view>
         <view class="row">
           <text class="label">状态：</text>
-          <text class="value status {{getStatusClass(item.status)}}">{{getStatusText(item.status)}}</text>
+          <text class="value status {{filters.statusClass(item.status)}}">{{item.statusText || '-'}}</text>
         </view>
       </view>
       <!-- 确认按钮：只有待确认状态才显示 -->
-      <view wx:if="{{item.status === 10}}" class="confirm-btn" bindtap="goConfirm" data-item="{{item}}">
+      <view wx:if="{{item.status == 10}}" class="confirm-btn" bindtap="goConfirm" data-item="{{item}}">
         <text class="confirm-text">确认</text>
       </view>
     </view>

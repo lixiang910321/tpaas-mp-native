@@ -10,37 +10,10 @@ Page({
     defectId: ''
   },
 
-  STATUS_MAP: {
-    10: '待确认',
-    20: '已确认',
-    30: '处理中',
-    40: '已完成'
-  },
-
-  RESULT_MAP: {
-    10: '正常',
-    20: '需维修',
-    30: '需更换'
-  },
-
   onLoad(options) {
     const defectId = options.id ? decodeURIComponent(String(options.id)) : ''
     this.setData({ defectId })
     this.loadDetail()
-  },
-
-  getStatusText(status) {
-    return this.STATUS_MAP[status] || '-'
-  },
-
-  getStatusClass(status) {
-    if (status === 10) return 'status-pending'
-    if (status === 20) return 'status-confirmed'
-    return ''
-  },
-
-  getResultText(result) {
-    return this.RESULT_MAP[result] || '-'
   },
 
   previewPhoto(e) {
@@ -74,13 +47,26 @@ Page({
 
     try {
       const app = getApp()
+      // 确保字典已加载
+      await app.getDict('diseaseConfirmStatusEnum')
+      await app.getDict('repairTaskResultEnum')
+
       const res = await app.mpGetAuth(`/mp/diseaseReport/detail/${defectId}`)
 
       if (res && Number(res.isSuccess) === 1 && res.result) {
         const detail = res.result
+        // 预计算确认详情的枚举文本（从字典获取，禁止硬编码）
+        const confirmDetail = detail.confirmDetail || {}
+        if (confirmDetail.status != null) {
+          confirmDetail.statusText = app.getDictLabel('diseaseConfirmStatusEnum', confirmDetail.status) || '-'
+        }
+        if (confirmDetail.confirmResult != null) {
+          confirmDetail.resultText = app.getDictLabel('repairTaskResultEnum', confirmDetail.confirmResult) || '-'
+        }
+
         this.setData({
           detail,
-          confirmDetail: detail.confirmDetail || {},
+          confirmDetail: confirmDetail,
           beforePhotos: detail.beforePhotos || [],
           suggestedTools: detail.suggestedTools || [],
           diseasePhotos: detail.photoUrls || []

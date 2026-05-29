@@ -1,0 +1,32 @@
+// WXS 模块：病害列表页紧急程度转换 + 状态样式
+// 状态文本从字典接口获取（预计算为 item.statusText），WXS 只处理样式
+// WXML 模板中不能调用 Page 方法，只能通过 WXS 模块或预计算字段
+
+function statusClass(status) {
+  // WXS 不支持 Number()，用 == 宽松比较兼容数字和字符串
+  if (status == 10) return 'status-pending'
+  if (status == 20) return 'status-confirmed'
+  if (status == 40) return 'status-completed'
+  return ''
+}
+
+function urgencyDisplayText(urgencyLevel, urgencyLevelText) {
+  if (!urgencyLevel) return '-'
+  if (urgencyLevelText) return urgencyLevel + '-' + urgencyLevelText
+  var map = { A: 'A-严重故障', B: 'B-紧急故障', C: 'C-一般故障' }
+  if (map[urgencyLevel]) return map[urgencyLevel]
+  return '-'
+}
+
+function urgencyClass(urgencyLevel) {
+  if (urgencyLevel === 'A') return 'urgency-a'
+  if (urgencyLevel === 'B') return 'urgency-b'
+  if (urgencyLevel === 'C') return 'urgency-c'
+  return ''
+}
+
+module.exports = {
+  statusClass: statusClass,
+  urgencyDisplayText: urgencyDisplayText,
+  urgencyClass: urgencyClass
+}

@@ -1,0 +1,14 @@
+// WXS 模块：病害详情页状态样式
+// 状态文本和确认结果文本从字典接口获取（预计算字段），WXS 只处理样式
+// WXML 模板中不能调用 Page 方法，只能通过 WXS 模块或预计算字段
+
+function statusClass(status) {
+  // WXS 不支持 Number()，用 == 宽松比较兼容数字和字符串
+  if (status == 10) return 'status-pending'
+  if (status == 20) return 'status-confirmed'
+  return ''
+}
+
+module.exports = {
+  statusClass: statusClass
+}

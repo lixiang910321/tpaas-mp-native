@@ -25,10 +25,6 @@
         <text class="info-label">描述</text>
         <text class="info-value readonly">{{diseaseDetail.description || '-'}}</text>
       </view>
-      <view class="info-row" wx:if="{{diseaseDetail.urgencyLevel}}">
-        <text class="info-label">紧急程度</text>
-        <text class="info-value readonly">{{diseaseDetail.urgencyLevelText || diseaseDetail.urgencyLevel}}（参考）</text>
-      </view>
     </view>
 
     <!-- 病害接报图片 -->
@@ -125,7 +121,7 @@
     <view class="section">
       <view class="section-header">
         <text class="label">紧急程度</text>
-        <picker mode="selector" range="{{urgencyOptions}}" range-key="name" bindchange="onUrgencyChange">
+        <picker mode="selector" range="{{urgencyOptions}}" range-key="name" value="{{urgencyIndex}}" bindchange="onUrgencyChange">
           <view class="picker-value">
             <text wx:if="{{form.urgencyLevel}}" class="value-text">{{form.urgencyLevelText}}</text>
             <text wx:else class="placeholder-text">请选择</text>

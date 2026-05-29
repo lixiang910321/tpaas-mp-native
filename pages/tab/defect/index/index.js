@@ -10,13 +10,6 @@ Page({
     status: null
   },
 
-  STATUS_MAP: {
-    10: '待确认',
-    20: '已确认',
-    30: '处理中',
-    40: '已完成'
-  },
-
   onLoad() {
     this.loadData()
   },
@@ -32,29 +25,6 @@ Page({
     this.loadData().finally(() => {
       this.setData({ refreshing: false })
     })
-  },
-
-  getStatusText(status) {
-    return this.STATUS_MAP[status] || '-'
-  },
-
-  getStatusClass(status) {
-    if (status === 10) return 'status-pending'
-    if (status === 20) return 'status-confirmed'
-    if (status === 40) return 'status-completed'
-    return ''
-  },
-
-  getUrgencyText(level) {
-    const map = { 'A': 'A-严重故障', 'B': 'B-紧急故障', 'C': 'C-一般故障' }
-    return map[level] || ''
-  },
-
-  getUrgencyClass(level) {
-    if (level === 'A') return 'urgency-a'
-    if (level === 'B') return 'urgency-b'
-    if (level === 'C') return 'urgency-c'
-    return ''
   },
 
   goDetail(e) {
@@ -78,6 +48,9 @@ Page({
     this.setData({ loading: true })
     
     const app = getApp()
+    // 确保字典已加载
+    await app.getDict('diseaseConfirmStatusEnum')
+
     const params = {
       pageIndex: this.data.pageIndex,
       pageSize: this.data.pageSize
@@ -94,7 +67,13 @@ Page({
     const res = await app.mpGetAuth(`/mp/diseaseReport/page?${query}`)
     
     if (res && Number(res.isSuccess) === 1 && res.result) {
-      const records = res.result.records || []
+      const rawRecords = res.result.records || []
+      // 预计算状态文本（从字典获取，禁止硬编码枚举文案）
+      const records = rawRecords.map(item => {
+        return Object.assign({}, item, {
+          statusText: app.getDictLabel('diseaseConfirmStatusEnum', item.status) || '-'
+        })
+      })
       
       if (this.data.pageIndex === 1) {
         this.setData({

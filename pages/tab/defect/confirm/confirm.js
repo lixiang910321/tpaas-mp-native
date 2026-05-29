@@ -58,6 +58,7 @@ Page({
       { code: 'B', name: 'B-紧急故障' },
       { code: 'C', name: 'C-一般故障' }
     ],
+    urgencyIndex: -1,
     // 窗口时间选项
     windowTimeOptions: [
       { id: 1, name: '白班' },
@@ -95,12 +96,13 @@ Page({
 
   // === 紧急程度选择 ===
   onUrgencyChange(e) {
-    const idx = Number(e.detail.value)
+    const idx = parseInt(e.detail.value)
     const opt = this.data.urgencyOptions[idx]
     if (opt) {
       this.setData({
         'form.urgencyLevel': opt.code,
-        'form.urgencyLevelText': opt.name
+        'form.urgencyLevelText': opt.name,
+        urgencyIndex: idx
       })
     }
   },
@@ -380,6 +382,19 @@ Page({
           reportTimeOnly: parts[1] || '',
           diseasePhotos
         })
+        // 将病害接报的紧急程度作为确认表单的默认值（与选项格式一致）
+        if (detail.urgencyLevel) {
+          var urgencyIdx = this.data.urgencyOptions.findIndex(function(opt) {
+            return opt.code === detail.urgencyLevel
+          })
+          // urgencyLevelText 统一使用选项的 name 格式（如 "A-严重故障"），与 picker 显示一致
+          var urgencyText = urgencyIdx >= 0 ? this.data.urgencyOptions[urgencyIdx].name : ''
+          this.setData({
+            'form.urgencyLevel': detail.urgencyLevel,
+            'form.urgencyLevelText': urgencyText,
+            urgencyIndex: urgencyIdx
+          })
+        }
       }
     } catch (e) {
       wx.showToast({ title: '加载失败', icon: 'none' })
