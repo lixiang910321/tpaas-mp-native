@@ -24,7 +24,7 @@
   <scroll-view class="list" scroll-y>
     <view wx:if="{{loading}}" class="loading">加载中...</view>
     <block wx:else>
-      <view wx:if="{{items.length === 0}}" class="empty">暂无数据</view>
+      <view wx:if="{{items.length === 0}}" class="empty">{{emptyText || '暂无数据'}}</view>
       <view
         wx:for="{{items}}"
         wx:key="id"

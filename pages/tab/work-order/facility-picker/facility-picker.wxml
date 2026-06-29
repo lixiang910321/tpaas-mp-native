@@ -23,6 +23,11 @@
         <view class="item-info">
           <text class="item-name">{{item.name || '-'}}</text>
           <text wx:if="{{item.code}}" class="item-desc">{{item.code}}</text>
+          <view wx:if="{{item.positionCode || item.modelSpec}}" class="item-extra">
+            <text wx:if="{{item.positionCode}}" class="item-extra-text">位置编码：{{item.positionCode}}</text>
+            <text wx:if="{{item.positionCode && item.modelSpec}}" class="item-extra-sep">  </text>
+            <text wx:if="{{item.modelSpec}}" class="item-extra-text">型号规格：{{item.modelSpec}}</text>
+          </view>
         </view>
         <view class="item-radio">
           <view class="radio {{selectedId === item.id ? 'radio-checked' : ''}}">

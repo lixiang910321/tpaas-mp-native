@@ -60,15 +60,36 @@ Page({
 
     const selected = this.data.list.find(item => item.id === this.data.selectedId)
     if (!selected) {
-      wx.showToast({ title: '设施信息异常', icon: 'none' })
+      wx.showToast({ title: '请选择设施', icon: 'none' })
       return
     }
+
+    // 解析 categoryIds 和 categoryNames（后端返回的是 JSON 字符串）
+    let categoryIds = []
+    let categoryNames = []
+    try {
+      if (selected.categoryIds) categoryIds = JSON.parse(selected.categoryIds)
+      if (selected.categoryNames) categoryNames = JSON.parse(selected.categoryNames)
+    } catch (e) { /* ignore */ }
 
     const eventChannel = this.getOpenerEventChannel()
     if (eventChannel) {
       eventChannel.emit('selectFacility', {
         id: selected.id,
-        name: selected.name
+        name: selected.name,
+        code: selected.code || '',
+        positionCode: selected.positionCode || '',
+        modelSpec: selected.modelSpec || '',
+        templateOwnerId: selected.templateOwnerId || '',
+        templateOwnerValue: selected.templateOwnerValue || '',
+        templateOwnerName: selected.templateOwnerName || '',
+        templateId: selected.templateId || '',
+        templateCode: selected.templateCode || '',
+        templateName: selected.templateName || '',
+        categoryId: selected.categoryId || '',
+        categoryName: selected.categoryName || '',
+        categoryIds: categoryIds,
+        categoryNames: categoryNames
       })
     }
 

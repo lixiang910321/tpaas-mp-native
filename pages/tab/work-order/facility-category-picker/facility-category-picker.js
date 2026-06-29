@@ -1,6 +1,9 @@
 Page({
   data: {
     loading: false,
+    areaId: '',
+    flatList: [],             // 一次性加载的扁平分类数据
+    emptyText: '',             // 空状态提示文案
     currentLevel: 1,           // 当前所在层级（1/2/3+）
     levelStack: [],            // 层级栈 [{level, items, selectedItem}]
     items: [],                 // 当前层级的数据
@@ -16,7 +19,15 @@ Page({
   },
 
   onLoad(options) {
-    // 支持回显
+    // areaId 为必传参数
+    if (!options.areaId) {
+      wx.showToast({ title: '缺少区域参数', icon: 'none' })
+      setTimeout(() => wx.navigateBack(), 1500)
+      return
+    }
+    this.setData({ areaId: options.areaId })
+
+    // 回显参数（可选）
     if (options.selectedTemplateOwnerId) {
       this.setData({
         'selectedTemplateOwner.id': options.selectedTemplateOwnerId,
@@ -31,31 +42,82 @@ Page({
         'selectedTemplate.name': options.selectedTemplateName ? decodeURIComponent(options.selectedTemplateName) : ''
       })
     }
-    this.loadLevel1()
+
+    this.loadAllCategories()
   },
 
-  // ===== 加载第一级（大类 / templateOwner）=====
-  async loadLevel1() {
-    this.setData({ loading: true, currentLevel: 1, canConfirm: false })
+  // ===== 一次性加载所有分类数据 =====
+  async loadAllCategories() {
+    const app = getApp()
+    this.setData({ loading: true })
     try {
-      const app = getApp()
-      const res = await app.mpGetAuth('/mp/dict/templateOwner')
+      const res = await app.mpGetAuth('/mp/facility/categoriesByArea', { areaId: this.data.areaId })
       if (res && Number(res.isSuccess) === 1 && res.result) {
-        const items = res.result.map(item => ({
-          id: String(item.id),
-          value: item.value || '',
-          name: item.name || ''
-        }))
-        this.setData({ items, 'levelStack': [] })
+        const flatList = res.result || []
+        this.setData({ flatList })
+        if (flatList.length === 0) {
+          this.setData({ items: [], emptyText: '该区域暂无设施' })
+          return
+        }
+        this.loadLevel1()
+        // 回显：自动跳转到已选层级
+        this.applyEchoState()
+      } else {
+        this.setData({ items: [], emptyText: '加载失败' })
       }
     } catch (e) {
       wx.showToast({ title: '加载失败', icon: 'none' })
+      this.setData({ emptyText: '加载失败' })
     } finally {
       this.setData({ loading: false })
     }
   },
 
-  // ===== 选择第一级（大类）=====
+  // ===== 回显：自动跳转到已保存的层级 =====
+  applyEchoState() {
+    if (!this.data.selectedTemplateOwner.id) return
+    const ownerId = this.data.selectedTemplateOwner.id
+    // 此时 this.data.items 为第1级数据
+    const ownerItem = this.data.items.find(i => i.id === ownerId)
+    if (!ownerItem) return
+
+    // 模拟选中第1级
+    this.setData({
+      levelStack: [{ level: 1, items: this.data.items, selectedItem: ownerItem }]
+    })
+    this.loadLevel2(ownerId)
+
+    if (!this.data.selectedTemplate.id) return
+    const templateId = this.data.selectedTemplate.id
+    // 此时 this.data.items 为第2级数据
+    const templateItem = this.data.items.find(i => i.id === templateId)
+    if (!templateItem) return
+
+    // 模拟选中第2级
+    const stack = [...this.data.levelStack, { level: 2, items: this.data.items, selectedItem: templateItem }]
+    this.setData({ levelStack: stack })
+    this.loadCategoryChildren(templateId, null)
+  },
+
+  // ===== 第1级：从 flatList 按 templateOwnerId 去重 =====
+  loadLevel1() {
+    const seen = new Set()
+    const items = []
+    this.data.flatList.forEach(item => {
+      const key = item.templateOwnerId
+      if (key && !seen.has(key)) {
+        seen.add(key)
+        items.push({
+          id: item.templateOwnerId,
+          value: item.templateOwnerValue,
+          name: item.templateOwnerName || item.templateOwnerValue
+        })
+      }
+    })
+    this.setData({ items, currentLevel: 1, levelStack: [], canConfirm: false, emptyText: '' })
+  },
+
+  // ===== 选择第1级（大类）=====
   onSelectLevel1(e) {
     const item = e.currentTarget.dataset.item
     this.setData({
@@ -67,33 +129,24 @@ Page({
     this.loadLevel2(item.id)
   },
 
-  // ===== 加载第二级（中类 / template）=====
-  async loadLevel2(ownerId) {
-    this.setData({ loading: true, currentLevel: 2 })
-    try {
-      const app = getApp()
-      const res = await app.mpGetAuth(`/mp/dict/template?ownerId=${ownerId}`)
-      if (res && Number(res.isSuccess) === 1 && res.result) {
-        const items = res.result.map(item => ({
-          id: String(item.id),
-          code: item.code || '',
-          name: item.name || '',
-          ownerId: item.ownerId || '',
-          ownerValue: item.ownerValue || '',
-          ownerName: item.ownerName || ''
-        }))
-        this.setData({ items })
-      } else {
-        this.setData({ items: [] })
+  // ===== 第2级：按 templateOwnerId 过滤，按 templateId 去重 =====
+  loadLevel2(ownerId) {
+    const seen = new Set()
+    const items = []
+    this.data.flatList.forEach(item => {
+      if (item.templateOwnerId === ownerId && !seen.has(item.templateId)) {
+        seen.add(item.templateId)
+        items.push({
+          id: item.templateId,
+          code: item.templateCode,
+          name: item.templateName
+        })
       }
-    } catch (e) {
-      wx.showToast({ title: '加载失败', icon: 'none' })
-    } finally {
-      this.setData({ loading: false })
-    }
+    })
+    this.setData({ items, currentLevel: 2, canConfirm: false })
   },
 
-  // ===== 选择第二级（中类）=====
+  // ===== 选择第2级（中类）=====
   onSelectLevel2(e) {
     const item = e.currentTarget.dataset.item
     const stack = [...this.data.levelStack]
@@ -102,40 +155,58 @@ Page({
       'selectedTemplate.id': item.id,
       'selectedTemplate.code': item.code,
       'selectedTemplate.name': item.name,
-      levelStack: stack,
-      currentLevel: 3  // 下一级为分类第一级（第三级）
+      levelStack: stack
     })
     this.loadCategoryChildren(item.id, null)
   },
 
-  // ===== 加载分类子级（第三级+）=====
-  async loadCategoryChildren(templateId, parentId) {
-    this.setData({ loading: true })
-    try {
-      const app = getApp()
-      let url = `/mp/dict/categoryChildren?templateId=${templateId}`
-      if (parentId) {
-        url += `&parentId=${parentId}`
-      }
-      const res = await app.mpGetAuth(url)
-      if (res && Number(res.isSuccess) === 1 && res.result) {
-        const items = (res.result || []).map(item => ({
-          id: String(item.id),
-          name: item.name || ''
-        }))
-        this.setData({ items })
-        if (items.length === 0) {
-          // 没有子级了，允许确认
-          this.setData({ canConfirm: true })
+  // ===== 第3级+：从 flatList 解析分类路径，构建分类树 =====
+  loadCategoryChildren(templateId, parentId) {
+    // 筛选该 templateId 的所有记录
+    const records = this.data.flatList.filter(item => item.templateId === templateId)
+
+    // 收集所有分类路径
+    const paths = []
+    records.forEach(record => {
+      try {
+        const ids = JSON.parse(record.categoryIds || '[]')
+        const names = JSON.parse(record.categoryNames || '[]')
+        if (ids.length > 0) {
+          paths.push({ ids, names })
         }
-      } else {
-        this.setData({ items: [] })
-      }
-    } catch (e) {
-      wx.showToast({ title: '加载失败', icon: 'none' })
-    } finally {
-      this.setData({ loading: false })
+      } catch (e) { /* ignore */ }
+    })
+
+    let items = []
+    if (!parentId) {
+      // 第3级入口：提取根节点（每条路径的第1个元素）
+      const seen = new Set()
+      paths.forEach(p => {
+        if (p.ids[0] && !seen.has(p.ids[0])) {
+          seen.add(p.ids[0])
+          items.push({ id: p.ids[0], name: p.names[0] || '' })
+        }
+      })
+    } else {
+      // 第4级+：找 parentId 在路径中的位置，取下一个节点
+      const seen = new Set()
+      paths.forEach(p => {
+        const idx = p.ids.indexOf(parentId)
+        if (idx >= 0 && idx + 1 < p.ids.length) {
+          const childId = p.ids[idx + 1]
+          if (!seen.has(childId)) {
+            seen.add(childId)
+            items.push({ id: childId, name: p.names[idx + 1] || '' })
+          }
+        }
+      })
     }
+
+    this.setData({
+      items,
+      currentLevel: parentId ? this.data.currentLevel + 1 : 3,
+      canConfirm: items.length === 0
+    })
   },
 
   // ===== 选择第 N 级分类（N >= 3）=====
@@ -145,7 +216,6 @@ Page({
     const stack = [...this.data.levelStack]
     stack.push({ level, items: this.data.items, selectedItem: item })
     this.setData({
-      currentLevel: level + 1,
       levelStack: stack,
       selectedCategoryId: item.id,
       selectedCategoryName: item.name,
@@ -192,6 +262,10 @@ Page({
   onConfirm() {
     if (!this.data.canConfirm) {
       wx.showToast({ title: '请至少选择到第三级分类', icon: 'none' })
+      return
+    }
+    if (!this.data.selectedCategoryId) {
+      wx.showToast({ title: '请选择设施分类', icon: 'none' })
       return
     }
 

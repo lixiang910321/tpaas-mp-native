@@ -103,8 +103,24 @@ Page({
 
   // 实际设施分类选择
   onSelectActualFacilityCategory() {
+    const areaId = this.data.task && this.data.task.areaId
+    if (!areaId) {
+      wx.showToast({ title: '请先选择区域', icon: 'none' })
+      return
+    }
+    const params = [`areaId=${areaId}`]
+    if (this.data.form.actualTemplateOwnerId) {
+      params.push(`selectedTemplateOwnerId=${this.data.form.actualTemplateOwnerId}`)
+      params.push(`selectedTemplateOwnerValue=${encodeURIComponent(this.data.form.actualTemplateOwnerValue || '')}`)
+      params.push(`selectedTemplateOwnerName=${encodeURIComponent(this.data.form.actualTemplateOwnerName || '')}`)
+    }
+    if (this.data.form.actualTemplateId) {
+      params.push(`selectedTemplateId=${this.data.form.actualTemplateId}`)
+      params.push(`selectedTemplateCode=${encodeURIComponent(this.data.form.actualTemplateCode || '')}`)
+      params.push(`selectedTemplateName=${encodeURIComponent(this.data.form.actualTemplateName || '')}`)
+    }
     wx.navigateTo({
-      url: '/pages/tab/work-order/facility-category-picker/facility-category-picker',
+      url: `/pages/tab/work-order/facility-category-picker/facility-category-picker?${params.join('&')}`,
       events: {
         selectFacilityCategory: (data) => {
           console.log('维修提报 - 选择实际设施分类结果:', data)
@@ -136,12 +152,15 @@ Page({
 
   // 实际设施选择
   onSelectActualFacility() {
-    const categoryId = this.data.form.actualCategoryId
-    if (!categoryId) {
-      wx.showToast({ title: '请先选择实际设施分类', icon: 'none' })
+    const areaId = this.data.task && this.data.task.areaId
+    if (!areaId) {
+      wx.showToast({ title: '请先选择区域', icon: 'none' })
       return
     }
-    const params = [`categoryId=${categoryId}`]
+    const params = [`areaId=${areaId}`]
+    if (this.data.form.actualCategoryId) {
+      params.push(`categoryId=${this.data.form.actualCategoryId}`)
+    }
     if (this.data.form.actualFacilityId) {
       params.push(`selectedId=${this.data.form.actualFacilityId}`)
       params.push(`selectedName=${encodeURIComponent(this.data.form.actualFacilityName)}`)
@@ -152,7 +171,22 @@ Page({
         selectFacility: (data) => {
           this.setData({
             'form.actualFacilityId': data.id,
-            'form.actualFacilityName': data.name
+            'form.actualFacilityName': data.name,
+            // 反向赋值 actual* 分类字段
+            'form.actualTemplateOwnerId': data.templateOwnerId || '',
+            'form.actualTemplateOwnerValue': data.templateOwnerValue || '',
+            'form.actualTemplateOwnerName': data.templateOwnerName || '',
+            'form.actualTemplateId': data.templateId || '',
+            'form.actualTemplateCode': data.templateCode || '',
+            'form.actualTemplateName': data.templateName || '',
+            'form.actualCategoryId': data.categoryId || '',
+            'form.actualCategoryName': data.categoryName || '',
+            'form.actualCategoryIds': data.categoryIds || [],
+            'form.actualCategoryNames': data.categoryNames || [],
+            'form.actualCategoryDisplayName': (data.categoryNames || []).join(' / '),
+            // 设施变更 → 清空项点
+            'form.actualProjectPointId': null,
+            'form.actualProjectPointName': ''
           })
         }
       }
@@ -447,6 +481,10 @@ Page({
     }
     if (this.data.form.repairResultId === 20 && !this.data.form.unfixReason) {
       wx.showToast({ title: '请填写未修复原因', icon: 'none' })
+      return
+    }
+    if (!this.data.form.actualCategoryId) {
+      wx.showToast({ title: '请选择实际设施分类', icon: 'none' })
       return
     }
 
