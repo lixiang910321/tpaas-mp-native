@@ -28,16 +28,18 @@
         bindtap="onAreaTap"
         data-item="{{item}}"
       >
-        <view class="item-icon">
-          <text class="icon-text">📍</text>
+        <!-- 勾选区域（catchtap 阻止冒泡，不触发行下钻） -->
+        <view class="item-check" catchtap="onSelectArea" data-item="{{item}}">
+          <text wx:if="{{selectedArea.id === item.id}}" class="check-icon checked">✓</text>
+          <text wx:else class="check-icon unchecked">○</text>
         </view>
         <view class="item-info">
           <text class="item-name">{{item.name}}</text>
           <text wx:if="{{item.code}}" class="item-desc">{{item.code}}</text>
         </view>
-        <!-- 选中对勾 -->
-        <view class="item-check" catchtap="onSelectDirect" data-item="{{item}}">
-          <text wx:if="{{selectedArea.id === item.id}}" class="check-icon">✓</text>
+        <!-- 下钻箭头（纯视觉指示，点击触发行 bindtap 下钻） -->
+        <view class="item-drill">
+          <text class="drill-icon">›</text>
         </view>
       </view>
     </view>

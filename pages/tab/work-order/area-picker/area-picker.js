@@ -65,40 +65,25 @@ Page({
 
   // === 交互 ===
 
-  // 点击区域项：异步判断是否有子级
+  // 整行点击：下钻，无子级则提示
   async onAreaTap(e) {
     const area = e.currentTarget.dataset.item
     const children = await this.loadChildren(area.id)
-
     if (children.length > 0) {
-      // 有子级 → 下钻
-      const stack = this.data.areaLevelStack
-      stack.push({ id: area.id, name: area.name })
-      this.setData({
-        areaLevelStack: stack,
-        currentAreas: children
-      })
+      const stack = [...this.data.areaLevelStack, { id: area.id, name: area.name }]
+      this.setData({ areaLevelStack: stack, currentAreas: children })
     } else {
-      // 无子级 → 切换选中
-      if (this.data.selectedArea.id === area.id) {
-        this.setData({ selectedArea: { id: null, name: '' } })
-      } else {
-        this.setData({
-          selectedArea: { id: area.id, name: area.name }
-        })
-      }
+      wx.showToast({ title: '已是最后一级', icon: 'none' })
     }
   },
 
-  // 点击对勾直接选中（不触发下钻）
-  onSelectDirect(e) {
+  // 勾选点击：选中/取消选中（任意层级）
+  onSelectArea(e) {
     const area = e.currentTarget.dataset.item
     if (this.data.selectedArea.id === area.id) {
       this.setData({ selectedArea: { id: null, name: '' } })
     } else {
-      this.setData({
-        selectedArea: { id: area.id, name: area.name }
-      })
+      this.setData({ selectedArea: { id: area.id, name: area.name } })
     }
   },
 

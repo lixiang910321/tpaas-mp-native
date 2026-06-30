@@ -94,6 +94,21 @@
   display: block;
 }
 
+/* 下钻箭头 */
+.item-drill {
+  width: 48rpx;
+  height: 48rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.drill-icon {
+  font-size: 36rpx;
+  color: #c8c9cc;
+}
+
 /* 选中勾 */
 .item-check {
   width: 48rpx;
@@ -101,14 +116,21 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-left: 12rpx;
+  margin-right: 12rpx;
   flex-shrink: 0;
 }
 
 .check-icon {
   font-size: 36rpx;
-  color: #7b68ee;
   font-weight: bold;
+}
+
+.check-icon.checked {
+  color: #7b68ee;
+}
+
+.check-icon.unchecked {
+  color: #c8c9cc;
 }
 
 /* 状态 */
