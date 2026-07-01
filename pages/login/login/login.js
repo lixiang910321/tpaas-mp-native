@@ -10,10 +10,10 @@ Page({
     // password: 'ys123456',
     // userName: '13521326548',
     // password: 'Aa123456',
-    userName: '18221508122',
-    password: 'wxy123123',
-      // userName: '',
-      // password: '',
+    // userName: '18221508122',
+    // password: 'wxy123123',
+      userName: '',
+      password: '',
     
     loading: false
   },
