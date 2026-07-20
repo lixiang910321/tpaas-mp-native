@@ -87,9 +87,18 @@ Page({
 
   // 实际项点选择
   onSelectActualProjectPoint() {
+    const categoryIds = this.data.form.actualCategoryIds
     const categoryId = this.data.form.actualCategoryId
+    const params = ['taskType=1']
+    // 优先传完整路径（按层级位置匹配）
+    if (categoryIds && categoryIds.length > 0) {
+      params.push(`categoryIds=${encodeURIComponent(categoryIds.join(','))}`)
+    } else if (categoryId) {
+      params.push(`categoryId=${categoryId}`)
+    }
+    params.push(`selectedId=${this.data.form.actualProjectPointId || ''}`)
     wx.navigateTo({
-      url: `/pages/tab/work-order/project-point-picker/project-point-picker?taskType=1&categoryId=${categoryId || ''}&selectedId=${this.data.form.actualProjectPointId || ''}`,
+      url: `/pages/tab/work-order/project-point-picker/project-point-picker?${params.join('&')}`,
       events: {
         selectProjectPoint: (data) => {
           this.setData({
@@ -109,6 +118,13 @@ Page({
       return
     }
     const params = [`areaId=${areaId}`]
+    // 区域路径传递（按层级位置匹配）
+    try {
+      const areaPathIds = this.data.task.areaIds ? (typeof this.data.task.areaIds === 'string' ? JSON.parse(this.data.task.areaIds) : this.data.task.areaIds) : []
+      if (Array.isArray(areaPathIds) && areaPathIds.length > 0) {
+        params.push(`areaIds=${encodeURIComponent(areaPathIds.join(','))}`)
+      }
+    } catch (e) { /* ignore */ }
     if (this.data.form.actualTemplateOwnerId) {
       params.push(`selectedTemplateOwnerId=${this.data.form.actualTemplateOwnerId}`)
       params.push(`selectedTemplateOwnerValue=${encodeURIComponent(this.data.form.actualTemplateOwnerValue || '')}`)
@@ -158,7 +174,17 @@ Page({
       return
     }
     const params = [`areaId=${areaId}`]
-    if (this.data.form.actualCategoryId) {
+    // 区域路径传递（按层级位置匹配）
+    try {
+      const areaPathIds = this.data.task.areaIds ? (typeof this.data.task.areaIds === 'string' ? JSON.parse(this.data.task.areaIds) : this.data.task.areaIds) : []
+      if (Array.isArray(areaPathIds) && areaPathIds.length > 0) {
+        params.push(`areaIds=${encodeURIComponent(areaPathIds.join(','))}`)
+      }
+    } catch (e) { /* ignore */ }
+    // 分类筛选优先传完整路径（按层级位置匹配）
+    if (this.data.form.actualCategoryIds && this.data.form.actualCategoryIds.length > 0) {
+      params.push(`categoryIds=${encodeURIComponent(this.data.form.actualCategoryIds.join(','))}`)
+    } else if (this.data.form.actualCategoryId) {
       params.push(`categoryId=${this.data.form.actualCategoryId}`)
     }
     if (this.data.form.actualFacilityId) {

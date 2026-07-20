@@ -6,7 +6,9 @@ Page({
     selectedId: null,
     selectedName: '',
     areaId: null,
+    areaIds: '',  // 区域路径（逗号分隔，按位置前缀匹配）
     categoryId: null,
+    categoryIds: '',  // 分类路径（逗号分隔，按位置前缀匹配）
     // 分页
     pageIndex: 1,
     pageSize: 10,
@@ -23,8 +25,14 @@ Page({
     if (options.areaId) {
       this.setData({ areaId: options.areaId })
     }
+    if (options.areaIds) {
+      this.setData({ areaIds: decodeURIComponent(options.areaIds) })
+    }
     if (options.categoryId) {
       this.setData({ categoryId: options.categoryId })
+    }
+    if (options.categoryIds) {
+      this.setData({ categoryIds: decodeURIComponent(options.categoryIds) })
     }
     this.loadList(true)
   },
@@ -112,10 +120,14 @@ Page({
     if (this.data.keyword) {
       params.keyword = this.data.keyword
     }
-    if (this.data.areaId) {
+    if (this.data.areaIds) {
+      params.areaIds = this.data.areaIds
+    } else if (this.data.areaId) {
       params.areaId = this.data.areaId
     }
-    if (this.data.categoryId) {
+    if (this.data.categoryIds) {
+      params.categoryIds = this.data.categoryIds
+    } else if (this.data.categoryId) {
       params.categoryId = this.data.categoryId
     }
 

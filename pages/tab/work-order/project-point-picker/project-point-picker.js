@@ -8,6 +8,7 @@ Page({
     taskType: null, // 1-维修项点 2-维保项点，由调用方显式传入
     facilityId: null, // 设施id筛选
     categoryId: null, // 设施分类末级id筛选
+    categoryIds: '', // 分类路径（逗号分隔，按位置前缀匹配）
     faultTypeId: null, // 故障类型id筛选
     // 故障类型下拉
     faultTypes: [],
@@ -37,6 +38,9 @@ Page({
     }
     if (options.categoryId) {
       this.setData({ categoryId: options.categoryId })
+    }
+    if (options.categoryIds) {
+      this.setData({ categoryIds: decodeURIComponent(options.categoryIds) })
     }
     if (options.faultTypeId) {
       this.setData({
@@ -168,7 +172,9 @@ Page({
     if (this.data.facilityId) {
       params.facilityId = this.data.facilityId
     }
-    if (this.data.categoryId) {
+    if (this.data.categoryIds) {
+      params.categoryIds = this.data.categoryIds
+    } else if (this.data.categoryId) {
       params.categoryId = this.data.categoryId
     }
     if (this.data.faultTypeId) {

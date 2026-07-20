@@ -301,6 +301,13 @@ Page({
       return
     }
     const params = [`areaId=${areaId}`]
+    // 区域路径传递（按层级位置匹配）
+    try {
+      const areaPathIds = this.data.form.areaIds ? JSON.parse(this.data.form.areaIds) : []
+      if (Array.isArray(areaPathIds) && areaPathIds.length > 0) {
+        params.push(`areaIds=${encodeURIComponent(areaPathIds.join(','))}`)
+      }
+    } catch (e) { /* ignore */ }
     // 传回显参数
     if (this.data.form.planTemplateOwnerId) {
       params.push(`selectedTemplateOwnerId=${this.data.form.planTemplateOwnerId}`)
@@ -355,8 +362,17 @@ Page({
       return
     }
     const params = [`areaId=${areaId}`]
-    // categoryId 改为可选：如果已选分类则传，未选则不传（支持方式B）
-    if (this.data.form.planCategoryId) {
+    // 区域路径传递（按层级位置匹配）
+    try {
+      const areaPathIds = this.data.form.areaIds ? JSON.parse(this.data.form.areaIds) : []
+      if (Array.isArray(areaPathIds) && areaPathIds.length > 0) {
+        params.push(`areaIds=${encodeURIComponent(areaPathIds.join(','))}`)
+      }
+    } catch (e) { /* ignore */ }
+    // 分类筛选优先传完整路径（按层级位置匹配），无路径时回退传末级 id
+    if (this.data.form.planCategoryIds && this.data.form.planCategoryIds.length > 0) {
+      params.push(`categoryIds=${encodeURIComponent(this.data.form.planCategoryIds.join(','))}`)
+    } else if (this.data.form.planCategoryId) {
       params.push(`categoryId=${this.data.form.planCategoryId}`)
     }
     if (this.data.form.planFacilityId) {
@@ -398,13 +414,20 @@ Page({
 
   onSelectProjectPoint() {
     console.log('病害确认 - 选择项点')
+    const categoryIds = this.data.form.planCategoryIds
     const categoryId = this.data.form.planCategoryId
-    if (!categoryId) {
+    if (!categoryId && (!categoryIds || categoryIds.length === 0)) {
       wx.showToast({ title: '请先选择设施分类', icon: 'none' })
       return
     }
     
-    const params = [`categoryId=${categoryId}`, 'taskType=1']
+    const params = ['taskType=1']
+    // 优先传完整路径（按层级位置匹配）
+    if (categoryIds && categoryIds.length > 0) {
+      params.push(`categoryIds=${encodeURIComponent(categoryIds.join(','))}`)
+    } else if (categoryId) {
+      params.push(`categoryId=${categoryId}`)
+    }
     if (this.data.form.planProjectPointId) {
       params.push(`selectedId=${this.data.form.planProjectPointId}`)
       params.push(`selectedName=${encodeURIComponent(this.data.form.planProjectPointName)}`)

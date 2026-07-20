@@ -2,12 +2,13 @@ Page({
   data: {
     loading: false,
     areaId: '',
+    areaIds: '',              // 区域路径（逗号分隔，按位置前缀匹配）
     flatList: [],             // 一次性加载的扁平分类数据
     emptyText: '',             // 空状态提示文案
     currentLevel: 1,           // 当前所在层级（1/2/3+）
     levelStack: [],            // 层级栈 [{level, items, selectedItem}]
     items: [],                 // 当前层级的数据
-    canConfirm: false,         // 是否可以确认（>= 第3级时为 true）
+    canConfirm: false,         // 是否可以确认（已选中至少一个第3级及以上分类即为 true，可不选到末级）
     // 大类（模板归属）
     selectedTemplateOwner: { id: '', value: '', name: '' },
     // 中类（模板）
@@ -26,6 +27,9 @@ Page({
       return
     }
     this.setData({ areaId: options.areaId })
+    if (options.areaIds) {
+      this.setData({ areaIds: decodeURIComponent(options.areaIds) })
+    }
 
     // 回显参数（可选）
     if (options.selectedTemplateOwnerId) {
@@ -51,7 +55,11 @@ Page({
     const app = getApp()
     this.setData({ loading: true })
     try {
-      const res = await app.mpGetAuth('/mp/facility/categoriesByArea', { areaId: this.data.areaId })
+      const params = { areaId: this.data.areaId }
+      if (this.data.areaIds) {
+        params.areaIds = this.data.areaIds
+      }
+      const res = await app.mpGetAuth('/mp/facility/categoriesByArea', params)
       if (res && Number(res.isSuccess) === 1 && res.result) {
         const flatList = res.result || []
         this.setData({ flatList })
@@ -155,7 +163,10 @@ Page({
       'selectedTemplate.id': item.id,
       'selectedTemplate.code': item.code,
       'selectedTemplate.name': item.name,
-      levelStack: stack
+      levelStack: stack,
+      // 切换模板后清空已选分类，需重新选择第3级
+      selectedCategoryId: '',
+      selectedCategoryName: ''
     })
     this.loadCategoryChildren(item.id, null)
   },
@@ -205,7 +216,8 @@ Page({
     this.setData({
       items,
       currentLevel: parentId ? this.data.currentLevel + 1 : 3,
-      canConfirm: items.length === 0
+      // 只要已选中过第3级及以上分类即可确认（选到哪级匹配到哪级），否则需至少选一个
+      canConfirm: !!this.data.selectedCategoryId
     })
   },
 
@@ -237,11 +249,10 @@ Page({
     const prev = stack.pop()
     // 新的当前层级：若栈为空则回到第1级，否则为上一级被选中的层级+1
     const newCurrentLevel = stack.length === 0 ? 1 : stack[stack.length - 1].level + 1
-    const canConfirm = newCurrentLevel >= 3
     // 恢复选中状态（仅当栈顶是分类层级 level>=3 时）
     let selCatId = ''
     let selCatName = ''
-    if (canConfirm && stack.length > 0) {
+    if (stack.length > 0) {
       const top = stack[stack.length - 1]
       if (top.level >= 3) {
         selCatId = top.selectedItem.id
@@ -252,7 +263,8 @@ Page({
       currentLevel: newCurrentLevel,
       levelStack: stack,
       items: prev.items,
-      canConfirm: canConfirm,
+      // 是否可确认取决于当前是否有已选分类，而非所在层级
+      canConfirm: !!selCatId,
       selectedCategoryId: selCatId,
       selectedCategoryName: selCatName
     })
