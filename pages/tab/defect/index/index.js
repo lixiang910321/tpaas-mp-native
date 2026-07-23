@@ -1,4 +1,28 @@
 const app = getApp()
+
+// 拼接区域全层级名称：优先解析 areaNames(JSON数组)，用 - 连接；兜底 areaName
+function buildAreaFullName(item) {
+  if (!item) return ''
+  var names = item.areaNames
+  if (names) {
+    if (Array.isArray(names)) {
+      var arr = names.filter(function (n) { return n != null && String(n).trim() !== '' })
+      if (arr.length) return arr.join('-')
+    } else if (typeof names === 'string' && names.trim() !== '') {
+      try {
+        var parsed = JSON.parse(names)
+        if (Array.isArray(parsed)) {
+          var arr2 = parsed.filter(function (n) { return n != null && String(n).trim() !== '' })
+          if (arr2.length) return arr2.join('-')
+        }
+      } catch (e) {
+        return names.trim()
+      }
+    }
+  }
+  return item.areaName || ''
+}
+
 Page({
   data: {
     list: [],
@@ -71,7 +95,8 @@ Page({
       // 预计算状态文本（从字典获取，禁止硬编码枚举文案）
       const records = rawRecords.map(item => {
         return Object.assign({}, item, {
-          statusText: app.getDictLabel('diseaseConfirmStatusEnum', item.status) || '-'
+          statusText: app.getDictLabel('diseaseConfirmStatusEnum', item.status) || '-',
+          areaFullName: buildAreaFullName(item)
         })
       })
       

@@ -1,3 +1,26 @@
+// 拼接区域全层级名称：优先解析 areaNames(JSON数组)，用 - 连接；兜底 areaName
+function buildAreaFullName(item) {
+  if (!item) return ''
+  var names = item.areaNames
+  if (names) {
+    if (Array.isArray(names)) {
+      var arr = names.filter(function (n) { return n != null && String(n).trim() !== '' })
+      if (arr.length) return arr.join('-')
+    } else if (typeof names === 'string' && names.trim() !== '') {
+      try {
+        var parsed = JSON.parse(names)
+        if (Array.isArray(parsed)) {
+          var arr2 = parsed.filter(function (n) { return n != null && String(n).trim() !== '' })
+          if (arr2.length) return arr2.join('-')
+        }
+      } catch (e) {
+        return names.trim()
+      }
+    }
+  }
+  return item.areaName || ''
+}
+
 Page({
   data: {
     loading: true,
@@ -55,6 +78,8 @@ Page({
 
       if (res && Number(res.isSuccess) === 1 && res.result) {
         const detail = res.result
+        // 预计算接报区域全层级名称（areaNames 为 JSON 字符串，无法在 WXML 直接展示）
+        detail.areaFullName = buildAreaFullName(detail)
         // 预计算确认详情的枚举文本（从字典获取，禁止硬编码）
         const confirmDetail = detail.confirmDetail || {}
         if (confirmDetail.status != null) {

@@ -14,7 +14,7 @@
       </view>
       <view class="info-row">
         <text class="label">区域</text>
-        <text class="value">{{detail.areaNames || '-'}}</text>
+        <text class="value">{{detail.areaFullName || detail.areaName || '-'}}</text>
       </view>
       <view class="info-row">
         <text class="label">驻站班组</text>

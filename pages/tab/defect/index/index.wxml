@@ -16,7 +16,7 @@
       <view class="item-body">
         <view class="row">
           <text class="label">区域：</text>
-          <text class="value">{{item.areaName || '-'}}</text>
+          <text class="value">{{item.areaFullName || item.areaName || '-'}}</text>
         </view>
         <view class="row">
           <text class="label">接报时间：</text>
