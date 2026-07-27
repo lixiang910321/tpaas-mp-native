@@ -211,21 +211,8 @@ Page({
     })
   },
 
-  async selectResult(e) {
+  selectResult(e) {
     const result = e.currentTarget.dataset.result
-    // 选择"现场处理"（20）时，检测自身是否已被工单占用
-    if (result === 20) {
-      try {
-        const app = getApp()
-        const res = await app.mpGetAuth('/mp/diseaseReportConfirm/checkSelfOccupied')
-        if (res && Number(res.isSuccess) === 1 && res.result && res.result.occupied) {
-          wx.showToast({ title: '您已被其他任务占用，无法选择自行处理', icon: 'none', duration: 3000 })
-          return
-        }
-      } catch (err) {
-        console.error('检测占用状态失败', err)
-      }
-    }
     this.setData({
       'form.confirmResult': result,
       showResultPicker: false

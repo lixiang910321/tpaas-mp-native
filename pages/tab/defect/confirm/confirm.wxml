@@ -218,10 +218,6 @@
           <text class="result-name">转班组</text>
           <text wx:if="{{form.confirmResult === 10}}" class="result-checked">✓</text>
         </view>
-        <view class="result-item" bindtap="selectResult" data-result="{{20}}">
-          <text class="result-name">现场处理</text>
-          <text wx:if="{{form.confirmResult === 20}}" class="result-checked">✓</text>
-        </view>
       </view>
     </view>
   </view>
