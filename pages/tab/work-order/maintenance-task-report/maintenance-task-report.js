@@ -28,22 +28,30 @@ Page({
 
   // 物料-选择(多选)
   onSelectMaterial() {
-    const selectedIds = this.data.form.materialLines.map(m => m.id)
+    const existingMap = {}
+    ;(this.data.form.materialLines || []).forEach(m => {
+      if (m && m.id != null) existingMap[String(m.id)] = m
+    })
+    const selected = Object.keys(existingMap).map(id => existingMap[id])
+    const selectedIds = selected.map(m => m.id)
+    const params = [
+      `selectedIds=${encodeURIComponent(JSON.stringify(selectedIds))}`,
+      `selectedMaterials=${encodeURIComponent(JSON.stringify(selected.map(m => ({ id: m.id, name: m.name, unit: m.unit }))))}`
+    ]
     wx.navigateTo({
-      url: `/pages/tab/work-order/material-picker/material-picker?selectedIds=${encodeURIComponent(JSON.stringify(selectedIds))}`,
+      url: `/pages/tab/work-order/material-picker/material-picker?${params.join('&')}`,
       events: {
         selectMaterials: (data) => {
-          // data.materials 是选中的物料列表,包含后端返回的完整信息
-          this.setData({ 
-            'form.materialLines': data.materials.map(m => ({
+          const materials = (data.materials || []).map(m => {
+            const prev = existingMap[String(m.id)]
+            return {
               id: m.id,
-              name: m.name,
-              categoryName: m.categoryName || m.name,
-              modelSpec: m.modelSpec,
-              unit: m.unit || '个',  // 使用物料自带的单位
-              quantity: ''
-            }))
+              name: m.name || '',
+              unit: m.unit || (prev && prev.unit) || '个',
+              quantity: prev && prev.quantity != null && prev.quantity !== '' ? prev.quantity : ''
+            }
           })
+          this.setData({ 'form.materialLines': materials })
         }
       }
     })
@@ -143,11 +151,9 @@ Page({
           : task.reportMaterialJson
         formData.materialLines = materials.map(m => ({
           id: m.materialId,
-          name: m.materialName,
-          categoryName: m.materialName,
-          modelSpec: '',
+          name: m.materialName || '',
           unit: m.unit || '个',
-          quantity: m.quantity || ''
+          quantity: m.quantity != null ? String(m.quantity) : ''
         }))
       } catch (e) {
         console.error('解析物料清单失败:', e)
@@ -164,7 +170,7 @@ Page({
     // 构建物料明细
     const materials = this.data.form.materialLines.map(m => ({
       materialId: String(m.id),
-      materialName: m.name,
+      materialName: m.name || '',
       quantity: m.quantity,
       unit: m.unit
     }))

@@ -7,15 +7,38 @@ Page({
     workTypeName: ''
   },
 
+  // 跨搜索保留已选人员详情（不用 setData，避免大对象开销）
+  selectedMap: {},
+
   onLoad(options) {
     let selectedIds = []
-    if (options.selectedIds) {
+    this.selectedMap = {}
+
+    if (options.selectedLaborers) {
       try {
-        selectedIds = JSON.parse(decodeURIComponent(options.selectedIds))
+        const laborers = JSON.parse(decodeURIComponent(options.selectedLaborers)) || []
+        laborers.forEach(l => {
+          if (l == null || l.id == null) return
+          const id = String(l.id)
+          this.selectedMap[id] = {
+            id,
+            name: l.name || l.realName || '',
+            workTypeId: l.workTypeId || l.professionTypeId || '',
+            workTypeName: l.workTypeName || l.professionTypeName || ''
+          }
+        })
+        selectedIds = Object.keys(this.selectedMap)
+      } catch (e) {
+        console.error('解析已选劳务人员失败', e)
+      }
+    } else if (options.selectedIds) {
+      try {
+        selectedIds = (JSON.parse(decodeURIComponent(options.selectedIds)) || []).map(id => String(id))
       } catch (e) {
         console.error('解析已选劳务人员ID失败', e)
       }
     }
+
     this.setData({ selectedIds })
     if (options.workTypeName) {
       this.setData({ workTypeName: decodeURIComponent(options.workTypeName) })
@@ -25,7 +48,6 @@ Page({
 
   onKeywordInput(e) {
     this.setData({ keyword: e.detail.value })
-    // 防抖搜索
     clearTimeout(this.searchTimer)
     this.searchTimer = setTimeout(() => {
       this.loadList()
@@ -38,37 +60,52 @@ Page({
     const item = list[index]
     if (!item) return
 
-    // 切换选中状态
+    const id = String(item.id)
     item.selected = !item.selected
-    this.setData({ list })
 
-    // 同步更新 selectedIds
-    const selectedIds = this.data.selectedIds
-    const idIndex = selectedIds.indexOf(item.id)
-    if (item.selected && idIndex === -1) {
-      selectedIds.push(item.id)
-    } else if (!item.selected && idIndex > -1) {
+    const selectedIds = (this.data.selectedIds || []).map(String)
+    const idIndex = selectedIds.indexOf(id)
+    if (item.selected) {
+      if (idIndex === -1) selectedIds.push(id)
+      this.selectedMap[id] = {
+        id,
+        name: item.realName || '',
+        workTypeId: item.professionTypeId || '',
+        workTypeName: item.professionTypeName || ''
+      }
+    } else if (idIndex > -1) {
       selectedIds.splice(idIndex, 1)
+      delete this.selectedMap[id]
     }
-    this.setData({ selectedIds })
+
+    this.setData({ list, selectedIds })
   },
 
   onConfirm() {
-    if (this.data.selectedIds.length === 0) {
+    const selectedIds = (this.data.selectedIds || []).map(String)
+    if (selectedIds.length === 0) {
       wx.showToast({ title: '请选择劳务人员', icon: 'none' })
       return
     }
 
-    const selectedLaborers = this.data.list
-      .filter(item => item.selected)
-      .map(item => ({
-        id: item.id,
-        name: item.realName,
-        workTypeId: item.professionTypeId,
-        workTypeName: item.professionTypeName
-      }))
+    // 按 selectedIds 顺序组装，优先取跨搜索缓存，其次当前列表
+    const selectedLaborers = selectedIds.map(id => {
+      if (this.selectedMap[id]) return this.selectedMap[id]
+      const fromList = (this.data.list || []).find(item => String(item.id) === id)
+      if (!fromList) return null
+      return {
+        id,
+        name: fromList.realName || '',
+        workTypeId: fromList.professionTypeId || '',
+        workTypeName: fromList.professionTypeName || ''
+      }
+    }).filter(Boolean)
 
-    // 使用事件通道返回数据
+    if (selectedLaborers.length === 0) {
+      wx.showToast({ title: '请选择劳务人员', icon: 'none' })
+      return
+    }
+
     const eventChannel = this.getOpenerEventChannel()
     if (eventChannel) {
       eventChannel.emit('selectLaborer', {
@@ -86,16 +123,29 @@ Page({
     if (this.data.keyword) {
       params.keyword = this.data.keyword
     }
-    
+
     const res = await app.mpGetAuth('/mp/refactor/laborer/page', params)
-    
+
     if (res && Number(res.isSuccess) === 1 && res.result) {
       const records = res.result.records || []
-      // 给每条数据添加 selected 属性
-      const list = records.map(item => ({
-        ...item,
-        selected: this.data.selectedIds.indexOf(item.id) > -1
-      }))
+      const selectedIdSet = new Set((this.data.selectedIds || []).map(String))
+      const list = records.map(item => {
+        const id = String(item.id)
+        const selected = selectedIdSet.has(id)
+        // 已选人员再次出现在列表时，刷新缓存详情
+        if (selected) {
+          this.selectedMap[id] = {
+            id,
+            name: item.realName || '',
+            workTypeId: item.professionTypeId || '',
+            workTypeName: item.professionTypeName || ''
+          }
+        }
+        return {
+          ...item,
+          selected
+        }
+      })
       this.setData({ list, loading: false })
     } else {
       this.setData({ list: [], loading: false })

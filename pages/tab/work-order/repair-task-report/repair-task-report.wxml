@@ -151,10 +151,9 @@
         </view>
         <view wx:else class="material-list">
           <view wx:for="{{form.materialLines}}" wx:key="id" class="material-item">
-            <view class="material-info">
-              <text class="material-name">{{item.categoryName || item.name}}</text>
-              <text wx:if="{{item.modelSpec}}" class="material-spec">{{item.modelSpec}}</text>
-            </view>
+						<view class="material-info">
+							<text class="material-name">{{item.name || '-'}}</text>
+						</view>
             <view class="material-row">
               <text class="material-label">数量</text>
               <input class="material-input" type="number" value="{{item.quantity}}" bindinput="onMaterialQuantityInput" data-index="{{index}}" placeholder="填写数量" placeholder-class="input-placeholder" />

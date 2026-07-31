@@ -57,15 +57,21 @@ Page({
   onAddPerson(e) {
     const lineIndex = e.currentTarget.dataset.index
     const personnelLine = this.data.form.personnelLines[lineIndex]
-    const selectedIds = personnelLine.persons.map(p => p.id)
-    
+    const selected = personnelLine.persons || []
+    const selectedIds = selected.map(p => p.id)
+    const params = [
+      `workTypeName=${encodeURIComponent(personnelLine.workTypeName || '')}`,
+      `selectedIds=${encodeURIComponent(JSON.stringify(selectedIds))}`,
+      `selectedLaborers=${encodeURIComponent(JSON.stringify(selected))}`
+    ]
+
     wx.navigateTo({
-      url: `/pages/tab/work-order/labor-picker/labor-picker?workTypeName=${encodeURIComponent(personnelLine.workTypeName)}&selectedIds=${encodeURIComponent(JSON.stringify(selectedIds))}`,
+      url: `/pages/tab/work-order/labor-picker/labor-picker?${params.join('&')}`,
       events: {
         selectLaborer: (data) => {
           const personnelLines = this.data.form.personnelLines
           // 替换该工种的所有人员，保留工种信息
-          personnelLines[lineIndex].persons = data.laborers.map(laborer => ({
+          personnelLines[lineIndex].persons = (data.laborers || []).map(laborer => ({
             id: laborer.id,
             name: laborer.name,
             workTypeId: laborer.workTypeId,

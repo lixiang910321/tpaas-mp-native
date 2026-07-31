@@ -22,6 +22,10 @@
         <text class="info-value readonly">{{diseaseDetail.source || '-'}}</text>
       </view>
       <view class="info-row info-row-desc">
+        <text class="info-label">区域</text>
+        <text class="info-value readonly">{{reportAreaFullName || '-'}}</text>
+      </view>
+      <view class="info-row info-row-desc">
         <text class="info-label">描述</text>
         <text class="info-value readonly">{{diseaseDetail.description || '-'}}</text>
       </view>
@@ -163,9 +167,9 @@
     <view class="section">
       <view class="section-title">上传施工前照片</view>
       <view class="photo-list">
-        <view wx:for="{{form.beforePhotoUrls}}" wx:key="index" class="photo-item">
+        <view wx:for="{{form.beforePhotoUrls}}" wx:key="*this" class="photo-item">
           <image class="photo" src="{{item}}" mode="aspectFill" bindtap="previewPhoto" data-index="{{index}}" />
-          <view class="photo-delete" bindtap="deletePhoto" data-index="{{index}}" catchtap="">
+          <view class="photo-delete" catchtap="deletePhoto" data-index="{{index}}">
             <text class="delete-icon">×</text>
           </view>
         </view>

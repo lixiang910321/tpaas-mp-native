@@ -31,19 +31,23 @@ Page({
       this.setData({ areaIds: decodeURIComponent(options.areaIds) })
     }
 
-    // 回显参数（可选）
+    // 回显参数（可选）；query 中文已 encode，需对称 decode
     if (options.selectedTemplateOwnerId) {
       this.setData({
         'selectedTemplateOwner.id': options.selectedTemplateOwnerId,
-        'selectedTemplateOwner.value': options.selectedTemplateOwnerValue || '',
-        'selectedTemplateOwner.name': options.selectedTemplateOwnerName ? decodeURIComponent(options.selectedTemplateOwnerName) : ''
+        'selectedTemplateOwner.value': options.selectedTemplateOwnerValue
+          ? decodeURIComponent(options.selectedTemplateOwnerValue) : '',
+        'selectedTemplateOwner.name': options.selectedTemplateOwnerName
+          ? decodeURIComponent(options.selectedTemplateOwnerName) : ''
       })
     }
     if (options.selectedTemplateId) {
       this.setData({
         'selectedTemplate.id': options.selectedTemplateId,
-        'selectedTemplate.code': options.selectedTemplateCode || '',
-        'selectedTemplate.name': options.selectedTemplateName ? decodeURIComponent(options.selectedTemplateName) : ''
+        'selectedTemplate.code': options.selectedTemplateCode
+          ? decodeURIComponent(options.selectedTemplateCode) : '',
+        'selectedTemplate.name': options.selectedTemplateName
+          ? decodeURIComponent(options.selectedTemplateName) : ''
       })
     }
 
@@ -89,8 +93,11 @@ Page({
     const ownerItem = this.data.items.find(i => i.id === ownerId)
     if (!ownerItem) return
 
-    // 模拟选中第1级
+    // 用接口明文覆盖 query 回显值，避免二次确认时带回编码串
     this.setData({
+      'selectedTemplateOwner.id': ownerItem.id,
+      'selectedTemplateOwner.value': ownerItem.value || '',
+      'selectedTemplateOwner.name': ownerItem.name || '',
       levelStack: [{ level: 1, items: this.data.items, selectedItem: ownerItem }]
     })
     this.loadLevel2(ownerId)
@@ -103,7 +110,12 @@ Page({
 
     // 模拟选中第2级
     const stack = [...this.data.levelStack, { level: 2, items: this.data.items, selectedItem: templateItem }]
-    this.setData({ levelStack: stack })
+    this.setData({
+      'selectedTemplate.id': templateItem.id,
+      'selectedTemplate.code': templateItem.code || '',
+      'selectedTemplate.name': templateItem.name || '',
+      levelStack: stack
+    })
     this.loadCategoryChildren(templateId, null)
   },
 

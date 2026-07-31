@@ -1,8 +1,32 @@
+// 拼接接报区域全层级名称：优先解析 areaNames(JSON数组)，用 - 连接；兜底 areaName
+function buildAreaFullName(item) {
+  if (!item) return ''
+  var names = item.areaNames
+  if (names) {
+    if (Array.isArray(names)) {
+      var arr = names.filter(function (n) { return n != null && String(n).trim() !== '' })
+      if (arr.length) return arr.join('-')
+    } else if (typeof names === 'string' && names.trim() !== '') {
+      try {
+        var parsed = JSON.parse(names)
+        if (Array.isArray(parsed)) {
+          var arr2 = parsed.filter(function (n) { return n != null && String(n).trim() !== '' })
+          if (arr2.length) return arr2.join('-')
+        }
+      } catch (e) {
+        return names.trim()
+      }
+    }
+  }
+  return item.areaName || ''
+}
+
 Page({
   data: {
     submitting: false,
     diseaseReportId: '',
     diseaseDetail: {},
+    reportAreaFullName: '',
     form: {
       constructionCategoryId: null,
       constructionCategoryName: '',
@@ -271,7 +295,8 @@ Page({
   },
 
   deletePhoto(e) {
-    const index = e.currentTarget.dataset.index
+    const index = Number(e.currentTarget.dataset.index)
+    if (Number.isNaN(index)) return
     const beforePhotoUrls = this.data.form.beforePhotoUrls.filter((_, i) => i !== index)
     this.setData({ 'form.beforePhotoUrls': beforePhotoUrls })
   },
@@ -465,6 +490,7 @@ Page({
           diseaseDetail: detail,
           reportDate: parts[0] || '',
           reportTimeOnly: parts[1] || '',
+          reportAreaFullName: buildAreaFullName(detail),
           diseasePhotos
         })
         // 将病害接报的紧急程度作为确认表单的默认值（与选项格式一致）
@@ -497,7 +523,7 @@ Page({
       this.setData({
         categoryList: [
           { id: 10, name: '维修' },
-          { id: 20, name: '临补' }
+          { id: 20, name: '更换' }
         ]
       })
     }

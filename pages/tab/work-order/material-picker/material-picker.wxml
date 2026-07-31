@@ -19,7 +19,7 @@
         </view>
         <view class="item-info">
           <text class="item-name">{{item.name || '-'}}</text>
-          <text class="item-desc">{{item.specification || '未设置规格'}}</text>
+          <text class="item-desc">{{item.modelSpec || '未设置规格'}}</text>
         </view>
         <view class="item-check">
           <text wx:if="{{item.selected}}" class="check-icon">✓</text>
