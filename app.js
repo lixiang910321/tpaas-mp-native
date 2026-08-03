@@ -14,16 +14,23 @@ App({
   },
 
   onLaunch() {
-    // 检查登录状态
+    // 恢复本地登录态（token 由后端签发：remember=1 有效 7 天，否则 3 小时）
     const token = wx.getStorageSync('tpaas_mp_access_token')
-    if (token) {
-      this.globalData.token = token
-      this.globalData.userInfo = wx.getStorageSync('tpaas_mp_user_info')
-      this.globalData.currentProject = wx.getStorageSync('tpaas_mp_project')
-      this.globalData.currentTenant = wx.getStorageSync('tpaas_mp_tenant')
-      // 从 userInfo 中恢复 employeeId
-      const userInfo = this.globalData.userInfo
-      this.globalData.employeeId = userInfo?.employeeId ? String(userInfo.employeeId) : null
+    if (!token) return
+    // 过期 token 直接清掉，避免带着无效态进入业务页
+    if (request.isAccessTokenExpired && request.isAccessTokenExpired(token)) {
+      this.clearLoginInfo()
+      return
+    }
+    this.globalData.token = token
+    this.globalData.userInfo = wx.getStorageSync('tpaas_mp_user_info')
+    this.globalData.currentProject = wx.getStorageSync('tpaas_mp_project')
+    this.globalData.currentTenant = wx.getStorageSync('tpaas_mp_tenant')
+    const userInfo = this.globalData.userInfo
+    this.globalData.employeeId = userInfo?.employeeId ? String(userInfo.employeeId) : null
+    this.globalData.laborersId = userInfo?.laborersId ? String(userInfo.laborersId) : null
+    if (this.globalData.currentProject && this.globalData.currentProject.id != null) {
+      this.globalData.projectId = this.globalData.currentProject.id
     }
   },
 

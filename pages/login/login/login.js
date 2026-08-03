@@ -1,4 +1,5 @@
 const app = getApp()
+const { isAccessTokenExpired } = require('../../../utils/request')
 
 // 草稿存储 key
 const DRAFT_KEY = 'tpaas_mp_login_draft'
@@ -19,7 +20,36 @@ Page({
   },
 
   onLoad() {
-    // 页面加载时的初始化逻辑
+    this.tryAutoEnter()
+  },
+
+  onShow() {
+    this.tryAutoEnter()
+  },
+
+  // 已有本地未过期 token 时直接进入业务页（remember=1 为 7 天，否则 3 小时）
+  tryAutoEnter() {
+    const token = wx.getStorageSync('tpaas_mp_access_token')
+    if (!token) return
+    // 本地先看 exp，过期则清登录态，停留登录页（避免先进业务页再被 401 踢回）
+    if (isAccessTokenExpired(token)) {
+      const appInst = getApp()
+      if (appInst && appInst.clearLoginInfo) {
+        appInst.clearLoginInfo()
+      }
+      return
+    }
+    const appInst = getApp()
+    if (appInst && !appInst.globalData.token) {
+      appInst.globalData.token = token
+      appInst.globalData.userInfo = wx.getStorageSync('tpaas_mp_user_info')
+      appInst.globalData.currentProject = wx.getStorageSync('tpaas_mp_project')
+      appInst.globalData.currentTenant = wx.getStorageSync('tpaas_mp_tenant')
+      const userInfo = appInst.globalData.userInfo
+      appInst.globalData.employeeId = userInfo?.employeeId ? String(userInfo.employeeId) : null
+      appInst.globalData.laborersId = userInfo?.laborersId ? String(userInfo.laborersId) : null
+    }
+    wx.reLaunch({ url: '/pages/tab/work-order/index/index' })
   },
 
   // 手机号输入

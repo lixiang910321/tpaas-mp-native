@@ -3,8 +3,8 @@
  */
 function joinUrl(path) {
   // const baseURL = 'http://127.0.0.1:28201'
-  // const baseURL = 'https://tpaas-app-api-qa.fantuo.co/'
-  const baseURL = 'https://cywb-mp-api.fantuo.co/'
+  const baseURL = 'https://tpaas-app-api-qa.fantuo.co/'
+  // const baseURL = 'https://cywb-mp-api.fantuo.co/'
 
   
   if (!path.startsWith('/')) {
@@ -31,9 +31,53 @@ function showGlobalError(message) {
 const TOKEN_KEY = 'tpaas_mp_access_token'
 
 /**
+ * 解析 JWT payload（不校验签名，仅用于本地过期判断）
+ * 后端 hutool JWT 的 exp/iat 为秒级时间戳
+ */
+function parseJwtPayload(token) {
+  try {
+    const part = String(token || '').split('.')[1]
+    if (!part) return null
+    let base64 = part.replace(/-/g, '+').replace(/_/g, '/')
+    const pad = base64.length % 4
+    if (pad) base64 += '='.repeat(4 - pad)
+    const bytes = new Uint8Array(wx.base64ToArrayBuffer(base64))
+    let str = ''
+    for (let i = 0; i < bytes.length; i++) {
+      str += String.fromCharCode(bytes[i])
+    }
+    return JSON.parse(str)
+  } catch (e) {
+    return null
+  }
+}
+
+/**
+ * 本地判断 token 是否已过期（后端仍会再校验一次）
+ */
+export function isAccessTokenExpired(token) {
+  const payload = parseJwtPayload(token)
+  if (!payload || payload.exp == null) return true
+  let expMs = Number(payload.exp)
+  if (Number.isNaN(expMs)) {
+    const t = Date.parse(payload.exp)
+    if (Number.isNaN(t)) return true
+    expMs = t
+  } else if (expMs < 1e12) {
+    // 秒级时间戳（hutool JWT）
+    expMs = expMs * 1000
+  }
+  return Date.now() >= expMs
+}
+
+let handling401 = false
+
+/**
  * 401 统一处理：清除所有登录信息并跳转登录页
  */
 function handle401() {
+  if (handling401) return
+  handling401 = true
   try {
     const app = getApp()
     if (app && app.clearLoginInfo) {
@@ -47,7 +91,13 @@ function handle401() {
     wx.removeStorageSync('tpaas_mp_tenant')
   }
   wx.reLaunch({
-    url: '/pages/login/login/login'
+    url: '/pages/login/login/login',
+    complete: () => {
+      // 允许下次过期再次触发
+      setTimeout(() => {
+        handling401 = false
+      }, 800)
+    }
   })
 }
 

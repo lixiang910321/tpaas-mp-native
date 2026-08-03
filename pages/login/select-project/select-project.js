@@ -168,7 +168,7 @@ Page({
         password: draft.password,
         tenantId: draft.tenantId != null ? String(draft.tenantId) : null,
         projectId: String(this.data.selectedId),
-        remember: 0
+        remember: 1
       })
       
       if (!step2 || step2.isSuccess !== 1) {

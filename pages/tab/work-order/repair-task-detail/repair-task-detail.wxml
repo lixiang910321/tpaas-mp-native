@@ -40,7 +40,48 @@
       </view>
     </view>
 
-    <!-- 病害项点信息 -->
+    <!-- 确认信息 -->
+    <view class="detail-card">
+      <view class="card-header">
+        <text class="header-title">确认信息</text>
+      </view>
+      <view class="card-body">
+        <view class="info-row">
+          <text class="info-label">施工类别</text>
+          <text class="info-value">{{task.constructionCategoryName || '-'}}</text>
+        </view>
+        <view class="info-row" wx:if="{{task.urgencyLevelText}}">
+          <text class="info-label">紧急程度</text>
+          <text class="info-value urgency-text">{{task.urgencyLevelText}}</text>
+        </view>
+        <view class="info-row" wx:if="{{task.windowTimeName}}">
+          <text class="info-label">窗口时间</text>
+          <text class="info-value">{{task.windowTimeName}}</text>
+        </view>
+        <view class="info-row" wx:if="{{task.diseaseReasonName}}">
+          <text class="info-label">病害原因</text>
+          <text class="info-value">{{task.diseaseReasonName}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">确认人</text>
+          <text class="info-value">{{task.confirmEmployeeName || '-'}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">确认时间</text>
+          <text class="info-value">{{task.confirmTime || '-'}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">确认备注</text>
+          <text class="info-value">{{task.confirmRemark || '-'}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">接报描述</text>
+          <text class="info-value">{{task.diseaseReportDescription || '-'}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 计划项点信息 -->
     <view class="detail-card">
       <view class="card-header">
         <text class="header-title">计划项点信息</text>
@@ -110,47 +151,6 @@
         <view class="info-row" wx:if="{{task.actualProjectPointDetail}}">
           <text class="info-label">安全交底</text>
           <text class="info-value">{{task.actualProjectPointDetail.safetyDisclosureName || '-'}}</text>
-        </view>
-      </view>
-    </view>
-
-    <!-- 确认信息 -->
-    <view class="detail-card">
-      <view class="card-header">
-        <text class="header-title">确认信息</text>
-      </view>
-      <view class="card-body">
-        <view class="info-row">
-          <text class="info-label">施工类别</text>
-          <text class="info-value">{{task.constructionCategoryName || '-'}}</text>
-        </view>
-        <view class="info-row" wx:if="{{task.urgencyLevelText}}">
-          <text class="info-label">紧急程度</text>
-          <text class="info-value urgency-text">{{task.urgencyLevelText}}</text>
-        </view>
-        <view class="info-row" wx:if="{{task.windowTimeName}}">
-          <text class="info-label">窗口时间</text>
-          <text class="info-value">{{task.windowTimeName}}</text>
-        </view>
-        <view class="info-row" wx:if="{{task.diseaseReasonName}}">
-          <text class="info-label">病害原因</text>
-          <text class="info-value">{{task.diseaseReasonName}}</text>
-        </view>
-        <view class="info-row">
-          <text class="info-label">确认人</text>
-          <text class="info-value">{{task.confirmEmployeeName || '-'}}</text>
-        </view>
-        <view class="info-row">
-          <text class="info-label">确认时间</text>
-          <text class="info-value">{{task.confirmTime || '-'}}</text>
-        </view>
-        <view class="info-row">
-          <text class="info-label">确认备注</text>
-          <text class="info-value">{{task.confirmRemark || '-'}}</text>
-        </view>
-        <view class="info-row">
-          <text class="info-label">接报描述</text>
-          <text class="info-value">{{task.diseaseReportDescription || '-'}}</text>
         </view>
       </view>
     </view>
