@@ -1,0 +1,10 @@
+<view class="splash">
+  <image class="logo" src="/static/login/logo.png" mode="widthFix" />
+  <text class="app-name">蜻蜓维保</text>
+  <view class="loading-row">
+    <view class="dot" />
+    <view class="dot" />
+    <view class="dot" />
+  </view>
+  <text class="tip">加载中…</text>
+</view>
