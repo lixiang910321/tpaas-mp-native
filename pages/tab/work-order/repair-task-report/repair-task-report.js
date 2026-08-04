@@ -479,7 +479,7 @@ Page({
       formData.submitRemark = task.repairRemark
     }
 
-    // 回显维修人员（后端字段名：reportPersonnelList）
+    // 回显维修人员：优先历史提报人员，否则回显工单申请执行人员
     if (task.reportPersonnelList && task.reportPersonnelList.length > 0) {
       try {
         formData.repairLaborers = task.reportPersonnelList.map(l => ({
@@ -490,6 +490,17 @@ Page({
         }))
       } catch (e) {
         console.error('解析维修人员失败:', e)
+      }
+    } else if (task.applyPersonnelList && task.applyPersonnelList.length > 0) {
+      try {
+        formData.repairLaborers = task.applyPersonnelList.map(l => ({
+          id: l.laborerId,
+          name: l.laborerName,
+          workTypeId: l.professionTypeId != null ? String(l.professionTypeId) : '',
+          workTypeName: l.professionTypeName || ''
+        }))
+      } catch (e) {
+        console.error('解析工单申请人员失败:', e)
       }
     }
 
