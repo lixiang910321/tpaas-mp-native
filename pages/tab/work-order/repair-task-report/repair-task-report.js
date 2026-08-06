@@ -49,7 +49,8 @@ Page({
     constructionCategoryOptions: [
       { id: 10, name: '维修' },
       { id: 20, name: '更换' }
-    ]
+    ],
+    constructionCategoryIndex: 0
   },
 
   onLoad(options) {
@@ -77,9 +78,11 @@ Page({
 
   // 施工类别选择
   onConstructionCategoryChange(e) {
-    const index = e.detail.value
+    const index = Number(e.detail.value)
     const selected = this.data.constructionCategoryOptions[index]
+    if (!selected) return
     this.setData({
+      constructionCategoryIndex: index,
       'form.constructionCategoryId': selected.id,
       'form.constructionCategoryName': selected.name
     })
@@ -340,11 +343,16 @@ Page({
         
         // 回显上一次的提报数据
         const formData = this.buildReportFormData(task)
+        const constructionCategoryIndex = this.findConstructionCategoryIndex(
+          formData.constructionCategoryId,
+          formData.constructionCategoryName
+        )
         
         this.setData({ 
           task: task,
           loading: false,
-          form: formData
+          form: formData,
+          constructionCategoryIndex
         })
       } else {
         this.setData({ loading: false })
@@ -403,9 +411,12 @@ Page({
     }
 
     // 回显施工类别
-    if (task.constructionCategoryId) {
+    if (task.constructionCategoryId != null && task.constructionCategoryId !== '') {
       formData.constructionCategoryId = task.constructionCategoryId
-      formData.constructionCategoryName = task.constructionCategoryName
+      formData.constructionCategoryName = task.constructionCategoryName || ''
+    } else if (task.actualConstructionCategoryId != null && task.actualConstructionCategoryId !== '') {
+      formData.constructionCategoryId = task.actualConstructionCategoryId
+      formData.constructionCategoryName = task.actualConstructionCategoryName || ''
     }
 
     // 回显实际项点（默认从计划项点获取，优先使用已保存的实际项点）
@@ -521,6 +532,23 @@ Page({
     return formData
   },
 
+  findConstructionCategoryIndex(id, name) {
+    const options = this.data.constructionCategoryOptions || []
+    const idNum = id != null && id !== '' ? Number(id) : NaN
+    let idx = options.findIndex(o => Number(o.id) === idNum)
+    if (idx < 0 && name) {
+      idx = options.findIndex(o => o.name === name)
+    }
+    return idx >= 0 ? idx : 0
+  },
+
+  /** 仅「更换」时物料必填；优先按名称判断，避免 picker 下标绑错导致 id 失真 */
+  isReplaceConstructionCategory() {
+    const name = this.data.form.constructionCategoryName
+    if (name) return name === '更换'
+    return Number(this.data.form.constructionCategoryId) === 20
+  },
+
   async onSubmit() {
     // 校验必填项
     if (!this.data.form.repairResultId) {
@@ -534,6 +562,34 @@ Page({
     if (!this.data.form.actualCategoryId) {
       wx.showToast({ title: '请选择实际设施分类', icon: 'none' })
       return
+    }
+    if (!this.data.form.constructionCategoryId && !this.data.form.constructionCategoryName) {
+      wx.showToast({ title: '请选择施工类别', icon: 'none' })
+      return
+    }
+    // 施工类别为「更换」时，物料必填
+    if (this.isReplaceConstructionCategory()) {
+      const materialLines = this.data.form.materialLines || []
+      const hasMaterial = materialLines.some(m => m && m.id != null && String(m.id) !== '')
+      if (!hasMaterial) {
+        wx.showToast({ title: '当前物料还未提报，请填写物料后再提报', icon: 'none' })
+        return
+      }
+    }
+    // 已添加物料时，数量必填
+    const materialLines = this.data.form.materialLines || []
+    if (materialLines.length > 0) {
+      const missingQty = materialLines.some(m => {
+        if (!m) return true
+        const q = m.quantity
+        if (q === '' || q == null) return true
+        const num = Number(q)
+        return Number.isNaN(num) || num <= 0
+      })
+      if (missingQty) {
+        wx.showToast({ title: '请填写物料数量', icon: 'none' })
+        return
+      }
     }
 
     this.setData({ submitting: true })

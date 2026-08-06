@@ -61,6 +61,10 @@
             <text class="kv-label">项点</text>
             <text class="kv-val">{{item.projectPointName || '-'}}</text>
           </view>
+          <view class="kv-row" wx:if="{{item.taskType === 10}}">
+            <text class="kv-label">接报描述</text>
+            <text class="kv-val">{{item.diseaseReportDescription || '-'}}</text>
+          </view>
           <view class="kv-row" wx:if="{{item.faultTypeName}}">
             <text class="kv-label">故障类型</text>
             <text class="kv-val">{{item.faultTypeName}}</text>

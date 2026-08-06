@@ -59,7 +59,7 @@
         <text class="section-title">施工信息</text>
         <view class="form-item">
           <text class="form-label">施工类别</text>
-          <picker mode="selector" range="{{constructionCategoryOptions}}" range-key="name" bindchange="onConstructionCategoryChange" value="{{form.constructionCategoryId}}">
+          <picker mode="selector" range="{{constructionCategoryOptions}}" range-key="name" bindchange="onConstructionCategoryChange" value="{{constructionCategoryIndex}}">
             <view class="picker-value">
               <text wx:if="{{form.constructionCategoryName}}" class="value-text">{{form.constructionCategoryName}}</text>
               <text wx:else class="placeholder-text">请选择施工类别</text>
