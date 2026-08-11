@@ -3,8 +3,8 @@
  */
 function joinUrl(path) {
   // const baseURL = 'http://127.0.0.1:28201'
-  // const baseURL = 'https://tpaas-app-api-qa.fantuo.co/'
-  const baseURL = 'https://cywb-mp-api.fantuo.co/'
+  const baseURL = 'https://tpaas-app-api-qa.fantuo.co/'
+  // const baseURL = 'https://cywb-mp-api.fantuo.co/'
 
   
   if (!path.startsWith('/')) {

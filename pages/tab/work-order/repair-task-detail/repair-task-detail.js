@@ -131,6 +131,11 @@ Page({
             task.acceptancePhotoUrls = []
           }
         }
+
+        // WXML 不能调用 Page 方法，展示字段需在 setData 前算好
+        task.statusText = this.getStatusText(task.status)
+        task.statusClass = this.getStatusClass(task.status)
+        task.reportTimeDisplay = this.formatTime(task.reportTime)
         
         this.setData({ task: task })
         

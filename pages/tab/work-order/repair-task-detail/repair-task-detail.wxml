@@ -9,7 +9,7 @@
     <view class="detail-card">
       <view class="card-header">
         <text class="header-title">维修任务详情</text>
-        <text class="header-status {{getStatusClass(task.status)}}">{{getStatusText(task.status)}}</text>
+        <text class="header-status {{task.statusClass}}">{{task.statusText}}</text>
       </view>
       
       <view class="card-body">
@@ -204,7 +204,7 @@
         </view>
         <view class="info-row" wx:if="{{task.reportTime}}">
           <text class="info-label">提报时间</text>
-          <text class="info-value">{{formatTime(task.reportTime)}}</text>
+          <text class="info-value">{{task.reportTimeDisplay}}</text>
         </view>
         <view class="info-row-vertical" wx:if="{{task.completionPhotoUrls}}">
           <text class="info-label">完工照片</text>
