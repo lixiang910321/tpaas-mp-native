@@ -230,8 +230,7 @@
 }
 
 .group-title,
-.group-subtitle,
-.filter-hint {
+.group-subtitle {
   display: block;
 }
 
@@ -337,13 +336,6 @@
   height: 76rpx;
   color: #333333;
   font-size: 26rpx;
-}
-
-.filter-hint {
-  margin-top: 14rpx;
-  color: #aaaaaa;
-  font-size: 22rpx;
-  line-height: 34rpx;
 }
 
 .drawer-footer {

@@ -109,7 +109,7 @@
       </view>
 
       <view class="filter-group">
-        <text class="group-title">区域（仅到站点）</text>
+        <text class="group-title">区域</text>
         <text class="group-subtitle">线路</text>
         <view class="option-chips">
           <view class="option-chip {{!draftLineId ? 'active' : ''}}" bindtap="onLineSelect" data-id="" data-name="">全部线路</view>
@@ -134,7 +134,6 @@
             placeholder-class="station-placeholder"
           />
         </view>
-        <text class="filter-hint">直接输入站点名称筛选 · 楼层/方向/具体位置不参与筛选</text>
       </view>
     </scroll-view>
 
