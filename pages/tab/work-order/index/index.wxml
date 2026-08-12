@@ -1,4 +1,24 @@
 <view class="page">
+  <view class="filter-bar">
+    <view class="order-search">
+      <text class="order-search-icon">⌕</text>
+      <input
+        class="order-search-input"
+        value="{{orderNoInput}}"
+        bindinput="onOrderNoInput"
+        bindconfirm="onOrderNoConfirm"
+        confirm-type="search"
+        placeholder="输入工单编号"
+        placeholder-class="order-search-placeholder"
+      />
+    </view>
+    <view class="filter-button {{filterCount ? 'active' : ''}}" bindtap="openFilter">
+      <text class="filter-icon">⚙</text>
+      <text>筛选</text>
+      <text wx:if="{{filterCount}}" class="filter-badge">{{filterCount}}</text>
+    </view>
+  </view>
+
   <view wx:if="{{loading}}" class="state-card">
     <text class="state-text">加载中…</text>
   </view>
@@ -49,6 +69,78 @@
         <text class="wo-detail">查看详情</text>
         <text class="wo-chevron">›</text>
       </view>
+    </view>
+  </view>
+
+  <view wx:if="{{filterVisible}}" class="drawer-mask" bindtap="closeFilter"></view>
+  <view class="filter-drawer {{filterVisible ? 'show' : ''}}" catchtap="stopPropagation">
+    <view class="drawer-head">
+      <text class="drawer-title">筛选</text>
+      <view class="drawer-close" bindtap="closeFilter">×</view>
+    </view>
+
+    <scroll-view scroll-y class="drawer-body">
+      <view class="filter-group">
+        <text class="group-title">工单状态</text>
+        <view class="option-chips">
+          <view class="option-chip {{draftStatus === '' ? 'active' : ''}}" bindtap="onStatusSelect" data-id="" data-name="">全部</view>
+          <view
+            wx:for="{{statusOptions}}"
+            wx:key="id"
+            class="option-chip {{draftStatus === item.id ? 'active' : ''}}"
+            bindtap="onStatusSelect"
+            data-id="{{item.id}}"
+            data-name="{{item.name}}"
+          >{{item.name}}</view>
+        </view>
+      </view>
+
+      <view class="filter-group">
+        <text class="group-title">创建时间</text>
+        <view class="date-row">
+          <picker class="date-picker" mode="date" value="{{draftCreateStartDate}}" bindchange="onStartDateChange">
+            <view class="date-value {{draftCreateStartDate ? '' : 'placeholder'}}">{{draftCreateStartDate || '开始日期'}}</view>
+          </picker>
+          <text class="date-separator">至</text>
+          <picker class="date-picker" mode="date" value="{{draftCreateEndDate}}" bindchange="onEndDateChange">
+            <view class="date-value {{draftCreateEndDate ? '' : 'placeholder'}}">{{draftCreateEndDate || '结束日期'}}</view>
+          </picker>
+        </view>
+      </view>
+
+      <view class="filter-group">
+        <text class="group-title">区域（仅到站点）</text>
+        <text class="group-subtitle">线路</text>
+        <view class="option-chips">
+          <view class="option-chip {{!draftLineId ? 'active' : ''}}" bindtap="onLineSelect" data-id="" data-name="">全部线路</view>
+          <view
+            wx:for="{{lines}}"
+            wx:key="id"
+            class="option-chip {{draftLineId === item.id ? 'active' : ''}}"
+            bindtap="onLineSelect"
+            data-id="{{item.id}}"
+            data-name="{{item.name}}"
+          >{{item.name}}</view>
+        </view>
+
+        <text class="group-subtitle station-title">站点</text>
+        <view class="station-search">
+          <text class="search-icon">⌕</text>
+          <input
+            class="station-input"
+            value="{{draftStationName}}"
+            bindinput="onStationInput"
+            placeholder="输入站点名称搜索"
+            placeholder-class="station-placeholder"
+          />
+        </view>
+        <text class="filter-hint">直接输入站点名称筛选 · 楼层/方向/具体位置不参与筛选</text>
+      </view>
+    </scroll-view>
+
+    <view class="drawer-footer">
+      <button class="drawer-action reset" bindtap="resetFilter">重置</button>
+      <button class="drawer-action confirm" bindtap="applyFilter">确定</button>
     </view>
   </view>
 </view>
