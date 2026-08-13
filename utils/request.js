@@ -3,14 +3,79 @@
  */
 function joinUrl(path) {
   // const baseURL = 'http://127.0.0.1:28201'
-  // const baseURL = 'https://tpaas-app-api-qa.fantuo.co/'
-  const baseURL = 'https://cywb-mp-api.fantuo.co/'
+  const baseURL = 'https://tpaas-app-api-qa.fantuo.co/'
+  // const baseURL = 'https://cywb-mp-api.fantuo.co/'
 
   
   if (!path.startsWith('/')) {
     return `${baseURL}/${path}`
   }
   return `${baseURL}${path}`
+}
+
+function sanitizeLogData(data) {
+  try {
+    const source = typeof data === 'string' ? JSON.parse(data) : data
+    return JSON.parse(JSON.stringify(source, (key, value) => {
+      const normalizedKey = String(key).toLowerCase()
+      if (normalizedKey.includes('token') || normalizedKey === 'authorization' || normalizedKey.includes('password') || normalizedKey.includes('secret')) {
+        return '[REDACTED]'
+      }
+      return value
+    }))
+  } catch (e) {
+    return data
+  }
+}
+
+function shellQuote(value) {
+  return `'${String(value).replace(/'/g, `'\\''`)}'`
+}
+
+function buildCurlCommand(method, url, requestData, options = {}) {
+  const curlMethod = method === 'UPLOAD' ? 'POST' : method === 'DOWNLOAD' ? 'GET' : method
+  const parts = ['curl', '-X', curlMethod, shellQuote(url)]
+  if (options.authenticated) {
+    parts.push('-H', shellQuote('Authorization: Bearer [REDACTED]'))
+  }
+  if (method === 'UPLOAD') {
+    parts.push('-F', shellQuote(`file=@${options.filePath || ''}`))
+  } else if (curlMethod === 'POST' || curlMethod === 'PUT') {
+    parts.push('-H', shellQuote('Content-Type: application/json'))
+    parts.push('--data-raw', shellQuote(JSON.stringify(sanitizeLogData(requestData || {}))))
+  }
+  return parts.join(' ')
+}
+
+function logResponse(method, url, requestData, res, options = {}) {
+  const logData = {
+    request: {
+      method,
+      url,
+      data: sanitizeLogData(requestData),
+      curl: buildCurlCommand(method, url, requestData, options)
+    },
+    response: {
+      statusCode: res.statusCode,
+      data: sanitizeLogData(res.data)
+    }
+  }
+  if (res.tempFilePath) {
+    logData.response.tempFilePath = res.tempFilePath
+  }
+  console.log(`[网络请求响应] ${method} ${url}`, logData)
+}
+
+function logRequestFailure(method, url, requestData, err, options = {}) {
+  console.error(`[网络请求失败] ${method} ${url}`, {
+    request: {
+      method,
+      url,
+      data: sanitizeLogData(requestData),
+      curl: buildCurlCommand(method, url, requestData, options)
+    },
+    error: err
+  })
 }
 
 /**
@@ -126,6 +191,7 @@ export function mpGetAuth(path, params = {}) {
         'Authorization': token ? `Bearer ${token}` : ''
       },
       success: (res) => {
+        logResponse('GET', url, params, res, { authenticated: true })
         if (res.statusCode >= 200 && res.statusCode < 300) {
           // 检查业务错误
           if (res.data && Number(res.data.isSuccess) !== 1) {
@@ -145,6 +211,7 @@ export function mpGetAuth(path, params = {}) {
         }
       },
       fail: (err) => {
+        logRequestFailure('GET', url, params, err, { authenticated: true })
         showGlobalError('网络请求失败')
         reject(err)
       }
@@ -173,6 +240,7 @@ export function mpGet(path, params = {}) {
         'Content-Type': 'application/json'
       },
       success: (res) => {
+        logResponse('GET', url, params, res)
         if (res.statusCode >= 200 && res.statusCode < 300) {
           // 检查业务错误
           if (res.data && Number(res.data.isSuccess) !== 1) {
@@ -189,6 +257,7 @@ export function mpGet(path, params = {}) {
         }
       },
       fail: (err) => {
+        logRequestFailure('GET', url, params, err)
         showGlobalError('网络请求失败')
         reject(err)
       }
@@ -202,9 +271,10 @@ export function mpGet(path, params = {}) {
 export function mpPostAuth(path, data = {}) {
   return new Promise((resolve, reject) => {
     const token = wx.getStorageSync(TOKEN_KEY)
+    const url = joinUrl(path)
     
     wx.request({
-      url: joinUrl(path),
+      url: url,
       method: 'POST',
       header: {
         'Content-Type': 'application/json',
@@ -212,6 +282,7 @@ export function mpPostAuth(path, data = {}) {
       },
       data: data,
       success: (res) => {
+        logResponse('POST', url, data, res, { authenticated: true })
         if (res.statusCode >= 200 && res.statusCode < 300) {
           // 检查业务错误
           if (res.data && Number(res.data.isSuccess) !== 1) {
@@ -231,6 +302,7 @@ export function mpPostAuth(path, data = {}) {
         }
       },
       fail: (err) => {
+        logRequestFailure('POST', url, data, err, { authenticated: true })
         showGlobalError('网络请求失败')
         reject(err)
       }
@@ -243,14 +315,17 @@ export function mpPostAuth(path, data = {}) {
  */
 export function mpPost(path, data = {}) {
   return new Promise((resolve, reject) => {
+    const url = joinUrl(path)
+
     wx.request({
-      url: joinUrl(path),
+      url: url,
       method: 'POST',
       header: {
         'Content-Type': 'application/json'
       },
       data: data,
       success: (res) => {
+        logResponse('POST', url, data, res)
         if (res.statusCode >= 200 && res.statusCode < 300) {
           // 检查业务错误
           if (res.data && Number(res.data.isSuccess) !== 1) {
@@ -267,6 +342,7 @@ export function mpPost(path, data = {}) {
         }
       },
       fail: (err) => {
+        logRequestFailure('POST', url, data, err)
         showGlobalError('网络请求失败')
         reject(err)
       }
@@ -280,9 +356,10 @@ export function mpPost(path, data = {}) {
 export function mpPutAuth(path, data = {}) {
   return new Promise((resolve, reject) => {
     const token = wx.getStorageSync(TOKEN_KEY)
+    const url = joinUrl(path)
     
     wx.request({
-      url: joinUrl(path),
+      url: url,
       method: 'PUT',
       header: {
         'Content-Type': 'application/json',
@@ -290,6 +367,7 @@ export function mpPutAuth(path, data = {}) {
       },
       data: data,
       success: (res) => {
+        logResponse('PUT', url, data, res, { authenticated: true })
         if (res.statusCode >= 200 && res.statusCode < 300) {
           // 检查业务错误
           if (res.data && Number(res.data.isSuccess) !== 1) {
@@ -309,6 +387,7 @@ export function mpPutAuth(path, data = {}) {
         }
       },
       fail: (err) => {
+        logRequestFailure('PUT', url, data, err, { authenticated: true })
         showGlobalError('网络请求失败')
         reject(err)
       }
@@ -322,15 +401,17 @@ export function mpPutAuth(path, data = {}) {
 export function mpUploadFile(filePath) {
   return new Promise((resolve, reject) => {
     const token = wx.getStorageSync(TOKEN_KEY)
+    const url = joinUrl('/mp/file/upload')
     
     wx.uploadFile({
-      url: joinUrl('/mp/file/upload'),
+      url: url,
       filePath: filePath,
       name: 'file',
       header: {
         'Authorization': token ? `Bearer ${token}` : ''
       },
       success: (res) => {
+        logResponse('UPLOAD', url, { filePath }, res, { authenticated: true, filePath })
         if (res.statusCode >= 200 && res.statusCode < 300) {
           try {
             const data = JSON.parse(res.data)
@@ -345,7 +426,10 @@ export function mpUploadFile(filePath) {
           reject(new Error(`HTTP ${res.statusCode}`))
         }
       },
-      fail: (err) => reject(err)
+      fail: (err) => {
+        logRequestFailure('UPLOAD', url, { filePath }, err, { authenticated: true, filePath })
+        reject(err)
+      }
     })
   })
 }
@@ -356,13 +440,15 @@ export function mpUploadFile(filePath) {
 export function mpDownloadFile(url) {
   return new Promise((resolve, reject) => {
     const token = wx.getStorageSync(TOKEN_KEY)
+    const requestUrl = joinUrl(url)
     
     wx.downloadFile({
-      url: joinUrl(url),
+      url: requestUrl,
       header: {
         'Authorization': token ? `Bearer ${token}` : ''
       },
       success: (res) => {
+        logResponse('DOWNLOAD', requestUrl, {}, res, { authenticated: true })
         if (res.statusCode >= 200 && res.statusCode < 300) {
           resolve(res.tempFilePath)
         } else if (res.statusCode === 401) {
@@ -372,7 +458,10 @@ export function mpDownloadFile(url) {
           reject(new Error(`HTTP ${res.statusCode}`))
         }
       },
-      fail: (err) => reject(err)
+      fail: (err) => {
+        logRequestFailure('DOWNLOAD', requestUrl, {}, err, { authenticated: true })
+        reject(err)
+      }
     })
   })
 }

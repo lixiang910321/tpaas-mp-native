@@ -76,6 +76,8 @@ Page({
     showCategoryPicker: false,
     showResultPicker: false,
     categoryList: [],
+    confirmResultOptions: [],
+    confirmResultText: '',
     // 紧急程度选项
     urgencyOptions: [
       { code: 'A', name: 'A-严重故障' },
@@ -100,6 +102,7 @@ Page({
     this.loadDiseaseDetail()
     this.loadCategoryList()
     this.loadDiseaseReasonOptions()
+    this.loadConfirmResultOptions()
   },
 
   onShow() {
@@ -109,9 +112,23 @@ Page({
     console.log('病害确认 - form.planProjectPointName:', this.data.form.planProjectPointName)
   },
 
-  getResultText(result) {
-    const map = { 10: '转班组', 20: '现场处理' }
-    return map[result] || ''
+  async loadConfirmResultOptions() {
+    try {
+      const dict = await getApp().getDict('repairTaskResultEnum')
+      const options = Array.isArray(dict)
+        ? dict.map(item => ({
+          id: Number(item.id),
+          name: item.value || item.desc || ''
+        })).filter(item => !Number.isNaN(item.id) && item.name)
+        : []
+      const selected = options.find(item => item.id === this.data.form.confirmResult)
+      this.setData({
+        confirmResultOptions: options,
+        confirmResultText: selected ? selected.name : ''
+      })
+    } catch (e) {
+      console.error('加载确认结果字典失败', e)
+    }
   },
 
   onRemarkInput(e) {
@@ -236,9 +253,12 @@ Page({
   },
 
   selectResult(e) {
-    const result = e.currentTarget.dataset.result
+    const result = Number(e.currentTarget.dataset.result)
+    const selected = this.data.confirmResultOptions.find(item => item.id === result)
+    if (!selected) return
     this.setData({
-      'form.confirmResult': result,
+      'form.confirmResult': selected.id,
+      confirmResultText: selected.name,
       showResultPicker: false
     })
   },

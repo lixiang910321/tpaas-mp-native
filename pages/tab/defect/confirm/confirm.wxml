@@ -113,8 +113,7 @@
       <view class="section-header">
         <text class="label">确认结果</text>
         <view class="picker-value">
-          <text wx:if="{{form.confirmResult === 10}}" class="value-text">转班组</text>
-          <text wx:elif="{{form.confirmResult === 20}}" class="value-text">现场处理</text>
+          <text wx:if="{{confirmResultText}}" class="value-text">{{confirmResultText}}</text>
           <text wx:else class="placeholder-text">选择处理方式</text>
           <text class="arrow">›</text>
         </view>
@@ -218,9 +217,9 @@
         <text class="modal-close" bindtap="onHideResultPicker">×</text>
       </view>
       <view class="result-list">
-        <view class="result-item" bindtap="selectResult" data-result="{{10}}">
-          <text class="result-name">转班组</text>
-          <text wx:if="{{form.confirmResult === 10}}" class="result-checked">✓</text>
+        <view wx:for="{{confirmResultOptions}}" wx:key="id" class="result-item" bindtap="selectResult" data-result="{{item.id}}">
+          <text class="result-name">{{item.name}}</text>
+          <text wx:if="{{form.confirmResult === item.id}}" class="result-checked">✓</text>
         </view>
       </view>
     </view>
