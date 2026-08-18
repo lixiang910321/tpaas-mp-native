@@ -8,6 +8,20 @@
     </block>
   </scroll-view>
 
+  <view class="search-bar">
+    <view class="search-input-wrapper">
+      <input
+        class="search-input"
+        value="{{keyword}}"
+        bindinput="onKeywordInput"
+        placeholder="搜索当前层级区域名称"
+        placeholder-class="search-ph"
+        confirm-type="search"
+      />
+      <text wx:if="{{keyword}}" class="clear-icon" bindtap="onClear">✕</text>
+    </view>
+  </view>
+
   <!-- 加载中 -->
   <view wx:if="{{loading}}" class="state-card">
     <text class="state-text">加载中…</text>
@@ -18,11 +32,16 @@
     <text class="state-text">此级暂无区域</text>
   </view>
 
+  <!-- 搜索无结果 -->
+  <view wx:elif="{{filteredAreas.length === 0}}" class="state-card">
+    <text class="state-text">未找到匹配区域</text>
+  </view>
+
   <!-- 区域列表 -->
   <scroll-view wx:else scroll-y class="scroll">
     <view class="list">
       <view
-        wx:for="{{currentAreas}}"
+        wx:for="{{filteredAreas}}"
         wx:key="id"
         class="item"
         bindtap="onAreaTap"

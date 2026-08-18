@@ -41,6 +41,39 @@
   flex-shrink: 0;
 }
 
+/* 当前层级搜索 */
+.search-bar {
+  background: #fff;
+  padding: 16rpx 24rpx 24rpx;
+  flex-shrink: 0;
+}
+
+.search-input-wrapper {
+  display: flex;
+  align-items: center;
+  background: #f7f8fa;
+  border-radius: 8rpx;
+  padding: 0 24rpx;
+}
+
+.search-input {
+  flex: 1;
+  height: 72rpx;
+  background: transparent;
+  font-size: 28rpx;
+}
+
+.clear-icon {
+  font-size: 28rpx;
+  color: #c8c9cc;
+  padding: 8rpx 0 8rpx 16rpx;
+  flex-shrink: 0;
+}
+
+.search-ph {
+  color: #c8c9cc;
+}
+
 /* 区域列表 */
 .scroll {
   flex: 1;

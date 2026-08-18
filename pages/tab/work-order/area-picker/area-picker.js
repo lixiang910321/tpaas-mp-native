@@ -2,6 +2,8 @@ Page({
   data: {
     loading: false,
     currentAreas: [],        // 当前级显示的区域列表
+    filteredAreas: [],       // 当前级按名称模糊匹配后的区域列表
+    keyword: '',
     areaLevelStack: [],      // [{id, name}] 面包屑路径栈
     selectedArea: { id: null, name: '' },  // 当前选中
     areaCache: {}            // { parentId → [areas] } 缓存，root 用 'root'
@@ -32,6 +34,8 @@ Page({
         this.data.areaCache['root'] = areas
         this.setData({
           currentAreas: areas,
+          filteredAreas: areas,
+          keyword: '',
           areaLevelStack: [],
           loading: false
         })
@@ -71,7 +75,12 @@ Page({
     const children = await this.loadChildren(area.id)
     if (children.length > 0) {
       const stack = [...this.data.areaLevelStack, { id: area.id, name: area.name }]
-      this.setData({ areaLevelStack: stack, currentAreas: children })
+      this.setData({
+        areaLevelStack: stack,
+        currentAreas: children,
+        filteredAreas: children,
+        keyword: ''
+      })
     } else {
       wx.showToast({ title: '已是最后一级', icon: 'none' })
     }
@@ -85,6 +94,23 @@ Page({
     } else {
       this.setData({ selectedArea: { id: area.id, name: area.name } })
     }
+  },
+
+  // 仅过滤当前层级已加载的数据
+  onKeywordInput(e) {
+    const keyword = (e.detail.value || '').trim()
+    const filteredAreas = keyword
+      ? this.data.currentAreas.filter(item => String(item.name || '').includes(keyword))
+      : this.data.currentAreas
+
+    this.setData({ keyword: e.detail.value, filteredAreas })
+  },
+
+  onClear() {
+    this.setData({
+      keyword: '',
+      filteredAreas: this.data.currentAreas
+    })
   },
 
   // 点击面包屑回退
@@ -103,7 +129,9 @@ Page({
 
     this.setData({
       areaLevelStack: stack,
-      currentAreas: areas
+      currentAreas: areas,
+      filteredAreas: areas,
+      keyword: ''
     })
   },
 
@@ -151,7 +179,9 @@ Page({
 
     this.setData({
       areaLevelStack: stack,
-      currentAreas: currentAreas
+      currentAreas: currentAreas,
+      filteredAreas: currentAreas,
+      keyword: ''
     })
   },
 
