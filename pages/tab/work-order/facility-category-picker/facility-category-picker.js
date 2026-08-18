@@ -8,6 +8,8 @@ Page({
     currentLevel: 1,           // 当前所在层级（1/2/3+）
     levelStack: [],            // 层级栈 [{level, items, selectedItem}]
     items: [],                 // 当前层级的数据
+    filteredItems: [],         // 当前层级按名称模糊匹配后的数据
+    keyword: '',
     canConfirm: false,         // 是否可以确认（已选中至少一个第3级及以上分类即为 true，可不选到末级）
     // 大类（模板归属）
     selectedTemplateOwner: { id: '', value: '', name: '' },
@@ -68,14 +70,14 @@ Page({
         const flatList = res.result || []
         this.setData({ flatList })
         if (flatList.length === 0) {
-          this.setData({ items: [], emptyText: '该区域暂无设施' })
+          this.setData({ items: [], filteredItems: [], emptyText: '该区域暂无设施' })
           return
         }
         this.loadLevel1()
         // 回显：自动跳转到已选层级
         this.applyEchoState()
       } else {
-        this.setData({ items: [], emptyText: '加载失败' })
+        this.setData({ items: [], filteredItems: [], emptyText: '加载失败' })
       }
     } catch (e) {
       wx.showToast({ title: '加载失败', icon: 'none' })
@@ -134,7 +136,15 @@ Page({
         })
       }
     })
-    this.setData({ items, currentLevel: 1, levelStack: [], canConfirm: false, emptyText: '' })
+    this.setData({
+      items,
+      filteredItems: items,
+      keyword: '',
+      currentLevel: 1,
+      levelStack: [],
+      canConfirm: false,
+      emptyText: ''
+    })
   },
 
   // ===== 选择第1级（大类）=====
@@ -163,7 +173,13 @@ Page({
         })
       }
     })
-    this.setData({ items, currentLevel: 2, canConfirm: false })
+    this.setData({
+      items,
+      filteredItems: items,
+      keyword: '',
+      currentLevel: 2,
+      canConfirm: false
+    })
   },
 
   // ===== 选择第2级（中类）=====
@@ -227,9 +243,31 @@ Page({
 
     this.setData({
       items,
+      filteredItems: items,
+      keyword: '',
       currentLevel: parentId ? this.data.currentLevel + 1 : 3,
       // 只要已选中过第3级及以上分类即可确认（选到哪级匹配到哪级），否则需至少选一个
       canConfirm: !!this.data.selectedCategoryId
+    })
+  },
+
+  // 仅从第3级开始，按当前层级的设施分类名称过滤已加载数据
+  onKeywordInput(e) {
+    if (this.data.currentLevel < 3) return
+
+    const inputValue = e.detail.value || ''
+    const keyword = inputValue.trim().toLowerCase()
+    const filteredItems = keyword
+      ? this.data.items.filter(item => String(item.name || '').toLowerCase().includes(keyword))
+      : this.data.items
+
+    this.setData({ keyword: inputValue, filteredItems })
+  },
+
+  onClear() {
+    this.setData({
+      keyword: '',
+      filteredItems: this.data.items
     })
   },
 
@@ -275,6 +313,8 @@ Page({
       currentLevel: newCurrentLevel,
       levelStack: stack,
       items: prev.items,
+      filteredItems: prev.items,
+      keyword: '',
       // 是否可确认取决于当前是否有已选分类，而非所在层级
       canConfirm: !!selCatId,
       selectedCategoryId: selCatId,

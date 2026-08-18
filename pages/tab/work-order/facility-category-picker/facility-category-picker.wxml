@@ -20,13 +20,28 @@
     <text wx:else>选择设施分类（第{{currentLevel}}级）</text>
   </view>
 
+  <view wx:if="{{currentLevel >= 3}}" class="search-bar">
+    <view class="search-input-wrapper">
+      <input
+        class="search-input"
+        value="{{keyword}}"
+        bindinput="onKeywordInput"
+        placeholder="搜索当前层级名称"
+        placeholder-class="search-ph"
+        confirm-type="search"
+      />
+      <text wx:if="{{keyword}}" class="clear-icon" bindtap="onClear">✕</text>
+    </view>
+  </view>
+
   <!-- 列表 -->
   <scroll-view class="list" scroll-y>
     <view wx:if="{{loading}}" class="loading">加载中...</view>
     <block wx:else>
       <view wx:if="{{items.length === 0}}" class="empty">{{emptyText || '暂无数据'}}</view>
+      <view wx:elif="{{filteredItems.length === 0}}" class="empty">未找到匹配分类</view>
       <view
-        wx:for="{{items}}"
+        wx:for="{{filteredItems}}"
         wx:key="id"
         class="item {{(currentLevel === 1 && item.id === selectedTemplateOwner.id) || (currentLevel === 2 && item.id === selectedTemplate.id) || (currentLevel >= 3 && item.id === selectedCategoryId) ? 'item-selected' : ''}}"
         data-item="{{item}}"
