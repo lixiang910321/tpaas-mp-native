@@ -70,11 +70,16 @@
 
 .kv-val {
   flex: 1;
+  min-width: 0;
   font-size: 28rpx;
   font-weight: 600;
   color: #000000;
   text-align: right;
   word-break: break-all;
+}
+
+.kv-area {
+  white-space: pre-line;
 }
 
 .st-green {

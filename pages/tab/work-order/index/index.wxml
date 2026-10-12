@@ -28,9 +28,36 @@
   <view wx:else class="card-list">
     <view wx:for="{{list}}" wx:key="id" class="wo-card">
       <view class="wo-rows">
+        <view class="wo-area-summary">
+          <text class="wo-area-path"><text class="wo-area-pin">📍</text>{{item.firstArea || '-'}}</text>
+          <button
+            wx:if="{{item.areaPaths.length > 1}}"
+            class="wo-area-toggle"
+            hover-class="wo-area-toggle-hover"
+            catchtap="onToggleAreas"
+            data-id="{{item.id}}"
+            aria-label="{{item.areasExpanded ? '收起区域' : '查看全部' + item.areaPaths.length + '个区域'}}"
+            aria-expanded="{{item.areasExpanded}}"
+          >
+            <view class="wo-area-arrow {{item.areasExpanded ? 'expanded' : ''}}"></view>
+            <text>{{item.areasExpanded ? '收起区域' : '等' + item.areaPaths.length + '个区域'}}</text>
+          </button>
+          <view wx:if="{{item.areasExpanded}}" class="wo-area-more">
+            <text
+              wx:for="{{item.remainingAreas}}"
+              wx:for-item="areaPath"
+              wx:key="*this"
+              class="wo-area-path wo-area-secondary"
+            ><text class="wo-area-pin">📍</text>{{areaPath}}</text>
+          </view>
+        </view>
         <view class="wo-row">
           <text class="wo-label">工单编号</text>
           <text class="wo-val wo-val-strong">{{item.orderNo || '-'}}</text>
+        </view>
+        <view class="wo-row">
+          <text class="wo-label">类型</text>
+          <text class="wo-val wo-val-strong">{{item.workOrderTypeName || '-'}}</text>
         </view>
         <view class="wo-row">
           <text class="wo-label">班组</text>

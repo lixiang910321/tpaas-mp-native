@@ -18,6 +18,10 @@
         <text class="kv-val">{{workOrder.laborTeamName || '-'}}</text>
       </view>
       <view class="kv-row">
+        <text class="kv-label">区域</text>
+        <text class="kv-val kv-area">{{workOrder.areaName || '-'}}</text>
+      </view>
+      <view class="kv-row">
         <text class="kv-label">工单状态</text>
         <text class="kv-val st-bold">{{workOrder.statusText || '-'}}</text>
       </view>
@@ -50,12 +54,12 @@
             <text class="kv-val kv-val-strong">{{item.taskTypeName || '-'}}</text>
           </view>
           <view class="kv-row">
+            <text class="kv-label">区域</text>
+            <text class="kv-val kv-area">{{item.areaName || '-'}}</text>
+          </view>
+          <view class="kv-row">
             <text class="kv-label">任务状态</text>
             <text class="kv-val kv-val-strong">{{item.statusName || '-'}}</text>
-          </view>
-          <view class="kv-row" wx:if="{{item.areaName}}">
-            <text class="kv-label">区域</text>
-            <text class="kv-val">{{item.areaName}}</text>
           </view>
           <view class="kv-row">
             <text class="kv-label">项点</text>

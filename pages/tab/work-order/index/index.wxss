@@ -130,11 +130,88 @@
 
 .wo-val {
   flex: 1;
+  min-width: 0;
   font-size: 28rpx;
   font-weight: 600;
   color: #000000;
   text-align: right;
   word-break: break-all;
+}
+
+.wo-area-summary {
+  margin-bottom: 24rpx;
+  padding: 20rpx;
+  background: #f6f7f9;
+  border-radius: 12rpx;
+}
+
+.wo-area-path {
+  display: block;
+  color: #333333;
+  font-size: 28rpx;
+  font-weight: 500;
+  line-height: 1.6;
+  word-break: break-all;
+}
+
+.wo-area-pin {
+  margin-right: 8rpx;
+  font-size: 26rpx;
+}
+
+.wo-area-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8rpx;
+  min-height: 64rpx;
+  margin: 4rpx 0 -8rpx;
+  padding: 8rpx 0;
+  color: #1677ff;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  font-size: 26rpx;
+  font-weight: 400;
+  line-height: 1.5;
+  text-align: left;
+}
+
+.wo-area-toggle::after {
+  border: 0;
+}
+
+.wo-area-toggle-hover {
+  opacity: 0.7;
+}
+
+.wo-area-arrow {
+  flex-shrink: 0;
+  width: 0;
+  height: 0;
+  border-left: 5rpx solid transparent;
+  border-right: 5rpx solid transparent;
+  border-top: 7rpx solid currentColor;
+}
+
+.wo-area-arrow.expanded {
+  transform: rotate(180deg);
+}
+
+.wo-area-more {
+  margin-top: 12rpx;
+  padding-top: 12rpx;
+  border-top: 1rpx dashed #d9d9d9;
+}
+
+.wo-area-secondary {
+  margin-bottom: 8rpx;
+  color: #666666;
+  font-weight: 400;
+}
+
+.wo-area-secondary:last-child {
+  margin-bottom: 0;
 }
 
 .wo-val-strong {

@@ -65,6 +65,15 @@ Page({
     wx.navigateTo({ url: `/pages/tab/work-order/detail/detail?id=${id}` })
   },
 
+  onToggleAreas(e) {
+    const id = e.currentTarget.dataset.id
+    const index = this.data.list.findIndex(item => String(item.id) === String(id))
+    if (index < 0 || this.data.list[index].areaPaths.length <= 1) return
+    this.setData({
+      ['list[' + index + '].areasExpanded']: !this.data.list[index].areasExpanded
+    })
+  },
+
   async loadLines() {
     try {
       const res = await app.mpGetAuth('/mp/area/list')
@@ -225,10 +234,17 @@ Page({
       if (res && Number(res.isSuccess) === 1 && res.result) {
         const records = res.result.records || []
         const total = res.result.total || 0
-        const list = records.map(item => ({
-          ...item,
-          statusText: this.formatStatus(item.status)
-        }))
+        const list = records.map(item => {
+          const areaPaths = Array.isArray(item.areaPaths) ? item.areaPaths : []
+          return {
+            ...item,
+            statusText: this.formatStatus(item.status),
+            areaPaths,
+            firstArea: areaPaths[0] || '',
+            remainingAreas: areaPaths.slice(1),
+            areasExpanded: false
+          }
+        })
         const finalList = this.data.pageIndex === 1 ? list : [...this.data.list, ...list]
         this.setData({ list: finalList, total })
       }
